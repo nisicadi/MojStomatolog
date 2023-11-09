@@ -18,9 +18,9 @@ namespace MojStomatolog.Controllers
 
 
         [HttpPost]
-        public UserResponse Add(AddUserRequest request)
+        public async Task<UserResponse> Add(AddUserRequest request)
         {
-            return _userService.Add(request);
+            return await _userService.Add(request);
         }
     }
 }

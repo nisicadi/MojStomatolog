@@ -21,7 +21,7 @@ namespace MojStomatolog.Services.Services
         }
 
 
-        public UserResponse Add(AddUserRequest request)
+        public async Task<UserResponse> Add(AddUserRequest request)
         {
             var entity = new User();
             _mapper.Map(request, entity);
@@ -30,7 +30,7 @@ namespace MojStomatolog.Services.Services
             entity.PasswordHash = GenerateHash(entity.PasswordSalt, request.Password);
 
             _context.Users.Add(entity);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             return _mapper.Map<UserResponse>(entity);
         }

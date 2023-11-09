@@ -6,6 +6,6 @@ namespace MojStomatolog.Services.Interfaces
 {
     public interface IUserService
     {
-        UserResponse Add(AddUserRequest  request);
+        Task<UserResponse> Add(AddUserRequest  request);
     }
 }
