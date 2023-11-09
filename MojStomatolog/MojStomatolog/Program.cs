@@ -1,3 +1,5 @@
+using Microsoft.EntityFrameworkCore;
+using MojStomatolog.Database;
 using MojStomatolog.Services.Interfaces;
 using MojStomatolog.Services.Services;
 
@@ -10,6 +12,10 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+builder.Services.AddDbContext<MojStomatologContext>(options =>
+    options.UseSqlServer(connectionString));
 
 // AutoMapper
 builder.Services.AddAutoMapper(typeof(IUserService));

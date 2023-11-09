@@ -1,4 +1,7 @@
 ﻿using AutoMapper;
+using MojStomatolog.Models.Core;
+using MojStomatolog.Models.Requests;
+using MojStomatolog.Models.Responses;
 
 namespace MojStomatolog.Services.Mapper
 {
@@ -6,7 +9,8 @@ namespace MojStomatolog.Services.Mapper
     {
         public MapperProfile()
         {
-
+            CreateMap<AddUserRequest, User>();
+            CreateMap<User, UserResponse>();
         }
     }
 }
