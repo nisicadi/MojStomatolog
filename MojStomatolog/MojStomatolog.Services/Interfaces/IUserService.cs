@@ -1,11 +1,11 @@
-﻿using MojStomatolog.Models.Core;
-using MojStomatolog.Models.Requests;
+﻿using MojStomatolog.Models.Requests;
 using MojStomatolog.Models.Responses;
+using MojStomatolog.Services.Common;
 
 namespace MojStomatolog.Services.Interfaces
 {
-    public interface IUserService
+    public interface IUserService : IBaseCrudService<UserResponse, BaseSearchObject, AddUserRequest, UpdateUserRequest>
     {
-        Task<UserResponse> Add(AddUserRequest  request);
+        public Task<LoginResponse> Login(string username, string password);
     }
 }

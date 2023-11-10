@@ -1,38 +1,60 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using MojStomatolog.Database;
 using MojStomatolog.Models.Core;
 using MojStomatolog.Models.Requests;
+using MojStomatolog.Models.Responses;
+using MojStomatolog.Services.Common;
+using MojStomatolog.Services.Common.Enums;
 using MojStomatolog.Services.Interfaces;
 using System.Security.Cryptography;
 using System.Text;
-using MojStomatolog.Models.Responses;
 
 namespace MojStomatolog.Services.Services
 {
-    public class UserService : IUserService
+    public class UserService : BaseCrudService<UserResponse, User, BaseSearchObject, AddUserRequest, UpdateUserRequest>, IUserService
     {
-        private readonly MojStomatologContext _context;
-        private readonly IMapper _mapper;
-
-        public UserService(MojStomatologContext context, IMapper mapper)
+        public UserService(MojStomatologContext context, IMapper mapper) : base(context, mapper)
         {
-            _context = context;
-            _mapper = mapper;
+        }
+
+        public async Task<LoginResponse> Login(string username, string password)
+        {
+            try
+            {
+                var user = await Context.Users.SingleOrDefaultAsync(x => x.Username == username);
+
+                if (user == null)
+                {
+                    return new LoginResponse { Result = LoginResult.UserNotFound };
+                }
+
+                if (!VerifyPassword(password, user.PasswordSalt, user.PasswordHash))
+                {
+                    return new LoginResponse { Result = LoginResult.IncorrectPassword };
+                }
+
+                return new LoginResponse
+                {
+                    Result = LoginResult.Success,
+                    User = Mapper.Map<UserResponse>(user)
+                };
+            }
+            catch (Exception)
+            {
+                return new LoginResponse { Result = LoginResult.UnexpectedError };
+            }
         }
 
 
-        public async Task<UserResponse> Add(AddUserRequest request)
-        {
-            var entity = new User();
-            _mapper.Map(request, entity);
+        #region Helpers
 
+        public override async Task BeforeInsert(User entity, AddUserRequest request)
+        {
             entity.PasswordSalt = GenerateSalt();
             entity.PasswordHash = GenerateHash(entity.PasswordSalt, request.Password);
 
-            _context.Users.Add(entity);
-            await _context.SaveChangesAsync();
-
-            return _mapper.Map<UserResponse>(entity);
+            await base.BeforeInsert(entity, request);
         }
 
         public static string GenerateSalt()
@@ -46,16 +68,26 @@ namespace MojStomatolog.Services.Services
 
         public static string GenerateHash(string salt, string password)
         {
-            var src = Convert.FromBase64String(salt);
-            var bytes = Encoding.UTF8.GetBytes(password);
-            var dst = new byte[src.Length + bytes.Length];
+            var passwordBytes = Encoding.UTF8.GetBytes(password);
+            var saltBytes = Convert.FromBase64String(salt);
 
-            Buffer.BlockCopy(src, 0, dst, 0, src.Length);
-            Buffer.BlockCopy(bytes, 0, dst, src.Length, bytes.Length);
+            var combinedBytes = new byte[saltBytes.Length + passwordBytes.Length];
+            Buffer.BlockCopy(saltBytes, 0, combinedBytes, 0, saltBytes.Length);
+            Buffer.BlockCopy(passwordBytes, 0, combinedBytes, saltBytes.Length, passwordBytes.Length);
 
-            using var algorithm = SHA256.Create();
-            var inArray = algorithm.ComputeHash(dst);
-            return Convert.ToBase64String(inArray);
+            using var sha256 = SHA256.Create();
+            var hashBytes = sha256.ComputeHash(combinedBytes);
+
+            return Convert.ToBase64String(hashBytes);
         }
+
+        private static bool VerifyPassword(string password, string storedSalt, string storedHash)
+        {
+            var hash = GenerateHash(storedSalt, password);
+
+            return hash == storedHash;
+        }
+
+        #endregion
     }
 }

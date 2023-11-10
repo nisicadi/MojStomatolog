@@ -4,22 +4,13 @@
     /// Interface for a CRUD service, extending the base service with insert and update operations.
     /// </summary>
     /// <typeparam name="T">The type of the entity DTO.</typeparam>
-    /// <typeparam name="TDb">The type of the entity in the database.</typeparam>
     /// <typeparam name="TSearch">The type used for search operations.</typeparam>
     /// <typeparam name="TInsert">The type used for insertion.</typeparam>
     /// <typeparam name="TUpdate">The type used for update.</typeparam>
-    public interface IBaseCrudService<T, in TDb, TSearch, in TInsert, in TUpdate> : IBaseService<T, TSearch>
-        where TDb : class
+    public interface IBaseCrudService<T, in TSearch, in TInsert, in TUpdate> : IBaseService<T, TSearch>
         where T : class
-        where TSearch : BaseSearchObject
+        where TSearch : class
     {
-        /// <summary>
-        /// Executed before inserting the entity, allowing pre-insert operations.
-        /// </summary>
-        /// <param name="entity">The entity being inserted.</param>
-        /// <param name="insert">The data used for insertion.</param>
-        /// <returns>Task indicating the completion of pre-insert operations.</returns>
-        Task BeforeInsert(TDb entity, TInsert insert);
 
         /// <summary>
         /// Inserts a new entity into the database.

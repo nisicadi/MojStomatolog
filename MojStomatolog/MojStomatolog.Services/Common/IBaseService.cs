@@ -5,7 +5,9 @@
     /// </summary>
     /// <typeparam name="T">The type of the entity DTO.</typeparam>
     /// <typeparam name="TSearch">The type used for search operations.</typeparam>
-    public interface IBaseService<T, in TSearch> where T : class where TSearch : BaseSearchObject
+    public interface IBaseService<T, in TSearch>
+        where T : class
+        where TSearch : class
     {
         /// <summary>
         /// Retrieves a paged result of entities based on search criteria.

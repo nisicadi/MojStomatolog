@@ -1,26 +1,24 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MojStomatolog.Models.Requests;
 using MojStomatolog.Models.Responses;
+using MojStomatolog.Services.Common;
 using MojStomatolog.Services.Interfaces;
 
 namespace MojStomatolog.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class UserController : ControllerBase
+    public class UserController : BaseCrudController<UserResponse, BaseSearchObject, AddUserRequest, UpdateUserRequest>
     {
-        private readonly IUserService _userService;
-
-        public UserController(IUserService userService)
+        public UserController(ILogger<BaseController<UserResponse, BaseSearchObject>> logger, IUserService service) : base(logger, service)
         {
-            _userService = userService;
         }
 
-
-        [HttpPost]
-        public async Task<UserResponse> Add(AddUserRequest request)
+        [AllowAnonymous]
+        public override Task<ActionResult<UserResponse>> Insert([FromBody] AddUserRequest insert)
         {
-            return await _userService.Add(request);
+            return base.Insert(insert);
         }
     }
 }
