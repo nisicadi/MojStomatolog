@@ -10,6 +10,7 @@ namespace MojStomatolog.Services.Mapper
         public MapperProfile()
         {
             CreateMap<AddUserRequest, User>();
+            CreateMap<UpdateUserRequest, User>();
             CreateMap<User, UserResponse>();
         }
     }
