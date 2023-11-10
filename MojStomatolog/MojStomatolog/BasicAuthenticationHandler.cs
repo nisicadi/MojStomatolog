@@ -11,7 +11,15 @@ namespace MojStomatolog
     public class BasicAuthenticationHandler : AuthenticationHandler<AuthenticationSchemeOptions>
     {
         private readonly IUserService _userService;
-        public BasicAuthenticationHandler(IUserService userService, IOptionsMonitor<AuthenticationSchemeOptions> options, ILoggerFactory logger, UrlEncoder encoder, ISystemClock clock) : base(options, logger, encoder, clock)
+        public BasicAuthenticationHandler
+            (
+                IUserService userService,
+                IOptionsMonitor<AuthenticationSchemeOptions> options,
+                ILoggerFactory logger,
+                UrlEncoder encoder,
+                ISystemClock clock
+                ) 
+            : base(options, logger, encoder, clock)
         {
             _userService = userService;
         }
