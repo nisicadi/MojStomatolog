@@ -51,27 +51,25 @@ namespace MojStomatolog
             {
                 return AuthenticateResult.Fail("Incorrect username or password");
             }
-            else
+
+            var claims = new List<Claim>
             {
-                var claims = new List<Claim>
-                {
-                    new(ClaimTypes.Name, user.FirstName),
-                    new(ClaimTypes.NameIdentifier, user.Username)
-                };
+                new(ClaimTypes.Name, user.FirstName),
+                new(ClaimTypes.NameIdentifier, user.Username)
+            };
 
-                //foreach(var role in user.UserRoles)
-                //{
-                //    claims.Add(new Claim(ClaimTypes.Role, role.Role.Name));
-                //}
+            //foreach(var role in user.UserRoles)
+            //{
+            //    claims.Add(new Claim(ClaimTypes.Role, role.Role.Name));
+            //}
 
-                var identity = new ClaimsIdentity(claims, Scheme.Name);
+            var identity = new ClaimsIdentity(claims, Scheme.Name);
 
-                var principal = new ClaimsPrincipal(identity);
+            var principal = new ClaimsPrincipal(identity);
 
-                var ticket = new AuthenticationTicket(principal, Scheme.Name);
+            var ticket = new AuthenticationTicket(principal, Scheme.Name);
 
-                return AuthenticateResult.Success(ticket);
-            }
+            return AuthenticateResult.Success(ticket);
         }
     }
 }
