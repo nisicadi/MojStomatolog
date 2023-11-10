@@ -5,11 +5,16 @@ VisualStudioVersion = 17.7.34221.43
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MojStomatolog", "MojStomatolog\MojStomatolog.csproj", "{1F20AABD-6A76-4230-973C-E8F232530C74}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MojStomatolog.Models", "MojStomatolog.Models\MojStomatolog.Models.csproj", "{D076AFDB-C954-42A1-85BB-377767788C79}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MojStomatolog.Models", "MojStomatolog.Models\MojStomatolog.Models.csproj", "{D076AFDB-C954-42A1-85BB-377767788C79}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MojStomatolog.Services", "MojStomatolog.Services\MojStomatolog.Services.csproj", "{8F379BCE-74B3-41A2-90E8-2AF40BA5A49C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MojStomatolog.Services", "MojStomatolog.Services\MojStomatolog.Services.csproj", "{8F379BCE-74B3-41A2-90E8-2AF40BA5A49C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MojStomatolog.Database", "MojStomatolog.Database\MojStomatolog.Database.csproj", "{7DB8A5D3-018F-4472-8336-369D1D7D20F0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MojStomatolog.Database", "MojStomatolog.Database\MojStomatolog.Database.csproj", "{7DB8A5D3-018F-4472-8336-369D1D7D20F0}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{F233D6B2-2F7E-4501-9301-00CAFDD50552}"
+	ProjectSection(SolutionItems) = preProject
+		Dockerfile = Dockerfile
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
