@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using MojStomatolog.Models.Requests;
 using MojStomatolog.Models.Responses;
 using MojStomatolog.Services.Common;
+using MojStomatolog.Services.Common.Enums;
 using MojStomatolog.Services.Interfaces;
 
 namespace MojStomatolog.Controllers
@@ -11,8 +12,24 @@ namespace MojStomatolog.Controllers
     [Route("[controller]")]
     public class UserController : BaseCrudController<UserResponse, BaseSearchObject, AddUserRequest, UpdateUserRequest>
     {
+        private readonly IUserService _userService;
         public UserController(ILogger<BaseController<UserResponse, BaseSearchObject>> logger, IUserService service) : base(logger, service)
         {
+            _userService = service;
+        }
+
+        [AllowAnonymous]
+        [HttpPost("Login")]
+        public async Task<ActionResult<LoginResponse>> Login([FromBody] LoginRequest login)
+        {
+            var loginResponse = await _userService.Login(login.Username, login.Password);
+
+            if (loginResponse.Result == LoginResult.Success)
+            {
+                return Ok(loginResponse.User);
+            }
+
+            return BadRequest(loginResponse.Result);
         }
 
         [AllowAnonymous]

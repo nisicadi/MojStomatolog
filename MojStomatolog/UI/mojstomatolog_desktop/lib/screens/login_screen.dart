@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:mojstomatolog_desktop/providers/user_provider.dart';
 import 'package:mojstomatolog_desktop/screens/employees.dart';
-import 'package:mojstomatolog_desktop/utils/util.dart';
 
-// ignore: must_be_immutable
 class LoginPage extends StatelessWidget {
   LoginPage({Key? key});
 
@@ -68,19 +67,33 @@ class LoginPage extends StatelessWidget {
                       height: 8,
                     ),
                     ElevatedButton(
-                      onPressed: () {
+                      onPressed: () async {
                         if (_formKey.currentState!.validate()) {
                           var username = _usernameController.text;
                           var password = _passwordController.text;
 
-                          Authorization.username = username;
-                          Authorization.password = password;
+                          var userProvider = UserProvider();
 
-                          Navigator.of(context).pushReplacement(
-                            MaterialPageRoute(
-                              builder: (context) => const EmployeeListScreen(),
-                            ),
+                          var loginSuccess = await userProvider.login(
+                            username,
+                            password,
                           );
+
+                          if (loginSuccess) {
+                            Navigator.of(context).pushReplacement(
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    const EmployeeListScreen(),
+                              ),
+                            );
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text(
+                                    'Login failed. Please check your credentials.'),
+                              ),
+                            );
+                          }
                         }
                       },
                       child: const Text('Login'),
