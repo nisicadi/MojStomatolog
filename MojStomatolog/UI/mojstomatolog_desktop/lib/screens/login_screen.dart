@@ -82,8 +82,7 @@ class LoginPage extends StatelessWidget {
                           if (loginSuccess) {
                             Navigator.of(context).pushReplacement(
                               MaterialPageRoute(
-                                builder: (context) =>
-                                    const EmployeeListScreen(),
+                                builder: (context) => EmployeeListScreen(),
                               ),
                             );
                           } else {
