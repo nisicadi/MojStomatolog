@@ -1,4 +1,4 @@
-﻿namespace MojStomatolog.Models.Requests
+﻿namespace MojStomatolog.Models.Requests.User
 {
     public class LoginRequest
     {

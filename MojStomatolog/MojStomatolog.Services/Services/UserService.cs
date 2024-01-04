@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using MojStomatolog.Database;
 using MojStomatolog.Models.Core;
-using MojStomatolog.Models.Requests;
+using MojStomatolog.Models.Requests.User;
 using MojStomatolog.Models.Responses;
 using MojStomatolog.Services.Common;
 using MojStomatolog.Services.Common.Enums;

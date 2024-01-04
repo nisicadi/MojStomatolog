@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using MojStomatolog.Models.Requests;
+using MojStomatolog.Models.Requests.User;
 using MojStomatolog.Models.Responses;
 using MojStomatolog.Services.Common;
 using MojStomatolog.Services.Common.Enums;
