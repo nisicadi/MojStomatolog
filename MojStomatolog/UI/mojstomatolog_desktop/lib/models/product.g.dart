@@ -17,7 +17,7 @@ Product _$ProductFromJson(Map<String, dynamic> json) => Product()
   ..active = json['active'] as bool?;
 
 Map<String, dynamic> _$ProductToJson(Product instance) => <String, dynamic>{
-      'pruductId': instance.productId,
+      'productId': instance.productId,
       'name': instance.name,
       'description': instance.description,
       'category': instance.category,
