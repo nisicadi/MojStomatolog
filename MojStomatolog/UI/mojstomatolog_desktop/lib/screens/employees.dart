@@ -1,7 +1,35 @@
 import 'package:flutter/material.dart';
+import 'package:mojstomatolog_desktop/models/employee.dart';
 import 'package:mojstomatolog_desktop/widgets/list_screen.dart';
+import 'package:mojstomatolog_desktop/providers/employee_provider.dart';
 
-class EmployeeListScreen extends StatelessWidget {
+class EmployeeListScreen extends StatefulWidget {
+  @override
+  _EmployeeListScreenState createState() => _EmployeeListScreenState();
+}
+
+class _EmployeeListScreenState extends State<EmployeeListScreen> {
+  final EmployeeProvider _employeeProvider = EmployeeProvider();
+  late List<Employee> _employees;
+
+  @override
+  void initState() {
+    super.initState();
+    _employees = [];
+    _fetchEmployees();
+  }
+
+  Future<void> _fetchEmployees() async {
+    try {
+      final result = await _employeeProvider.get();
+      setState(() {
+        _employees = result.results;
+      });
+    } catch (e) {
+      print("Error fetching employees: $e");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final List<DataColumn> columns = [
@@ -13,32 +41,22 @@ class EmployeeListScreen extends StatelessWidget {
       DataColumn(label: Text('Briši')),
     ];
 
-    final List<DataRow> rows = List.generate(
-      2,
-      (index) {
-        final employeeId = 'ID $index';
-        final firstName = 'Ime $index';
-        final lastName = 'Prezime $index';
-        final position = 'Pozicija $index';
-        final isOddRow = index.isOdd;
-
-        return DataRow(
-          color: isOddRow ? MaterialStateProperty.all(Colors.grey[200]) : null,
-          cells: [
-            DataCell(Text(employeeId)),
-            DataCell(Text(firstName)),
-            DataCell(Text(lastName)),
-            DataCell(Text(position)),
-            DataCell(_buildIconButton(Icons.edit, 'Uredi', () {
-              // Edit button logic
-            })),
-            DataCell(_buildIconButton(Icons.delete, 'Briši', () {
-              _showDeleteConfirmationDialog(context);
-            })),
-          ],
-        );
-      },
-    );
+    final List<DataRow> rows = _employees.map((employee) {
+      return DataRow(
+        cells: [
+          DataCell(Text(employee.employeeId.toString())),
+          DataCell(Text(employee.firstName ?? '')),
+          DataCell(Text(employee.lastName ?? '')),
+          DataCell(Text(employee.specialization ?? '')),
+          DataCell(_buildIconButton(Icons.edit, 'Uredi', () {
+            // Edit button logic
+          })),
+          DataCell(_buildIconButton(Icons.delete, 'Briši', () {
+            _showDeleteConfirmationDialog(context, employee.employeeId!);
+          })),
+        ],
+      );
+    }).toList();
 
     return ListScreen(
       currentPage: 'Uposlenici',
@@ -74,7 +92,11 @@ class EmployeeListScreen extends StatelessWidget {
     // Search logic with the provided search term
   }
 
-  void _showDeleteConfirmationDialog(BuildContext context) {
+  void _showFilterModal(BuildContext context) {
+    // Implement filter logic for employees
+  }
+
+  void _showDeleteConfirmationDialog(BuildContext context, int employeeId) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -84,8 +106,9 @@ class EmployeeListScreen extends StatelessWidget {
               Text('Jeste li sigurni da želite obrisati ovog zaposlenika?'),
           actions: [
             TextButton(
-              onPressed: () {
-                // Delete logic here
+              onPressed: () async {
+                await _employeeProvider.delete(employeeId);
+                _fetchEmployees(); // Refresh the list after deletion
                 Navigator.of(context).pop();
               },
               child: Text('Da'),
@@ -100,9 +123,5 @@ class EmployeeListScreen extends StatelessWidget {
         );
       },
     );
-  }
-
-  void _showFilterModal(BuildContext context) {
-    // Implement filter logic for employees
   }
 }

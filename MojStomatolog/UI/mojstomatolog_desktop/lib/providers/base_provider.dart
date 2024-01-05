@@ -4,6 +4,7 @@ import 'dart:async';
 import 'package:http/http.dart';
 import 'package:http/io_client.dart';
 import 'package:flutter/foundation.dart';
+import 'package:mojstomatolog_desktop/models/search_result.dart';
 import 'package:mojstomatolog_desktop/utils/util.dart';
 
 abstract class BaseProvider<T> with ChangeNotifier {
@@ -30,7 +31,7 @@ abstract class BaseProvider<T> with ChangeNotifier {
   Future<T> getById(int id, [dynamic additionalData]) async {
     var url = Uri.parse("$_baseUrl$_endpoint/$id");
 
-    Map<String, String> headers = await createHeaders();
+    var headers = await createHeaders();
 
     var response = await http!.get(url, headers: headers);
 
@@ -45,28 +46,35 @@ abstract class BaseProvider<T> with ChangeNotifier {
     }
   }
 
-  Future<List<T>> get([dynamic search]) async {
+  Future<SearchResult<T>> get({dynamic filter}) async {
     var url = "$_baseUrl$_endpoint";
 
-    if (search != null) {
-      String queryString = getQueryString(search);
+    if (filter != null) {
+      var queryString = getQueryString(filter);
       url = "$url?$queryString";
     }
 
     var uri = Uri.parse(url);
+    var headers = await createHeaders();
 
-    Map<String, String> headers = await createHeaders();
-    print("get me");
     var response = await http!.get(uri, headers: headers);
-    print("done $response");
+
     if (isValidResponseCode(response)) {
-      print("good");
       var data = jsonDecode(response.body);
-      return data.map((x) => fromJson(x)).cast<T>().toList();
+
+      var result = SearchResult<T>();
+
+      result.count = data['count'];
+
+      for (var item in data['results']) {
+        result.results.add(fromJson(item));
+      }
+
+      return result;
     } else {
-      print("not good");
-      throw Exception("Exception... handle this gracefully");
+      throw new Exception("Unknown error");
     }
+    // print("response: ${response.request} ${response.statusCode}, ${response.body}");
   }
 
   Future<T?> insert(dynamic request) async {
