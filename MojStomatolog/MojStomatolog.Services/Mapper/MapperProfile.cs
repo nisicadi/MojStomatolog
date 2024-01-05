@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using MojStomatolog.Models.Core;
+using MojStomatolog.Models.Requests.Appointment;
 using MojStomatolog.Models.Requests.Employee;
 using MojStomatolog.Models.Requests.Product;
 using MojStomatolog.Models.Requests.User;
@@ -32,6 +33,14 @@ namespace MojStomatolog.Services.Mapper
             CreateMap<AddProductRequest, Product>();
             CreateMap<UpdateProductRequest, Product>();
             CreateMap<Product, ProductResponse>();
+
+            #endregion
+
+            #region Appointment
+
+            CreateMap<AddAppointmentRequest, Appointment>();
+            CreateMap<UpdateAppointmentRequest, Appointment>();
+            CreateMap<Appointment, AppointmentResponse>();
 
             #endregion
         }
