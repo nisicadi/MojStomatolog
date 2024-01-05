@@ -26,5 +26,14 @@
         /// <param name="update">The data used for updating the entity.</param>
         /// <returns>The updated entity.</returns>
         Task<T> Update(int id, TUpdate update);
+
+        /// <summary>
+        /// Deletes an existing entity in the database based on its ID.
+        /// </summary>
+        /// <param name="id">The unique identifier of the entity to be deleted.</param>
+        /// <returns>
+        ///   <c>true</c> if the deletion was successful; otherwise, <c>false</c> if the entity with the specified ID was not found.
+        /// </returns>
+        Task<bool> Delete(int id);
     }
 }

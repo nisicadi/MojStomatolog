@@ -43,5 +43,18 @@ namespace MojStomatolog.Services.Common
 
             return Mapper.Map<T>(entity);
         }
+
+        public virtual async Task<bool> Delete(int id)
+        {
+            var set = Context.Set<TDb>();
+            var entity = await set.FindAsync(id);
+
+            if (entity == null) 
+                return false;
+
+            set.Remove(entity);
+            await Context.SaveChangesAsync();
+            return true;
+        }
     }
 }

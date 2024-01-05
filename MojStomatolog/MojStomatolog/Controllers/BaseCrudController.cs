@@ -49,5 +49,21 @@ namespace MojStomatolog.Controllers
                 return StatusCode(500, "Internal Server Error");
             }
         }
+
+        [HttpDelete("{id}")]
+        public virtual async Task<ActionResult> Delete(int id)
+        {
+            try
+            {
+                var result = await CrudService.Delete(id);
+
+                return result ? NoContent() : NotFound();
+            }
+            catch (Exception ex)
+            {
+                CrudLogger.LogError(ex, "Error occurred while processing the request.");
+                return StatusCode(500, "Internal Server Error");
+            }
+        }
     }
 }
