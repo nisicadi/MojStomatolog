@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mojstomatolog_desktop/modals/add-employee.dart';
 import 'package:mojstomatolog_desktop/models/employee.dart';
 import 'package:mojstomatolog_desktop/widgets/list_screen.dart';
 import 'package:mojstomatolog_desktop/providers/employee_provider.dart';
@@ -49,7 +50,7 @@ class _EmployeeListScreenState extends State<EmployeeListScreen> {
           DataCell(Text(employee.lastName ?? '')),
           DataCell(Text(employee.specialization ?? '')),
           DataCell(_buildIconButton(Icons.edit, 'Uredi', () {
-            // Edit button logic
+            _editEmployee(context, employee);
           })),
           DataCell(_buildIconButton(Icons.delete, 'Briši', () {
             _showDeleteConfirmationDialog(context, employee.employeeId!);
@@ -85,7 +86,30 @@ class _EmployeeListScreenState extends State<EmployeeListScreen> {
   }
 
   void _addEmployee(BuildContext context) {
-    // Add employee logic
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AddEmployeeModal(
+          onEmployeeAdded: (newEmployee) {
+            _fetchEmployees(); // Refresh the list after adding a new employee
+          },
+        );
+      },
+    );
+  }
+
+  void _editEmployee(BuildContext context, Employee employee) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AddEmployeeModal(
+          onEmployeeAdded: (updatedEmployee) {
+            _fetchEmployees(); // Refresh the list after editing an employee
+          },
+          initialEmployee: employee,
+        );
+      },
+    );
   }
 
   void _searchEmployees(String searchTerm) {
