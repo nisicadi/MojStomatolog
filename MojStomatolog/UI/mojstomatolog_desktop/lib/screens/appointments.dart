@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mojstomatolog_desktop/modals/add-appointment.dart';
 import 'package:mojstomatolog_desktop/models/appointment.dart';
 import 'package:mojstomatolog_desktop/widgets/list_screen.dart';
 import 'package:mojstomatolog_desktop/providers/appointment_provider.dart';
@@ -36,7 +37,7 @@ class _AppointmentListScreenState extends State<AppointmentListScreen> {
       DataColumn(label: Text('Id')),
       DataColumn(label: Text('Datum')),
       DataColumn(label: Text('Procedura')),
-      DataColumn(label: Text('Potvrdeno')),
+      DataColumn(label: Text('Potvrđeno')),
       DataColumn(label: Text('Komentar')),
       DataColumn(label: Text('Detalji')),
       DataColumn(label: Text('Briši')),
@@ -51,7 +52,7 @@ class _AppointmentListScreenState extends State<AppointmentListScreen> {
           DataCell(Text(appointment.isConfirmed?.toString() ?? '')),
           DataCell(Text(appointment.notes ?? '')),
           DataCell(_buildIconButton(Icons.edit, 'Uredi', () {
-            // Edit button logic
+            _editAppointment(context, appointment);
           })),
           DataCell(_buildIconButton(Icons.delete, 'Briši', () {
             _showCancelConfirmationDialog(context, appointment.appointmentId!);
@@ -87,7 +88,30 @@ class _AppointmentListScreenState extends State<AppointmentListScreen> {
   }
 
   void _addAppointment(BuildContext context) {
-    // Add appointment logic
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AddAppointmentModal(
+          onAppointmentAdded: (newAppointment) {
+            _fetchAppointments(); // Refresh the list after adding a new appointment
+          },
+        );
+      },
+    );
+  }
+
+  void _editAppointment(BuildContext context, Appointment appointment) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AddAppointmentModal(
+          onAppointmentAdded: (newAppointment) {
+            _fetchAppointments(); // Refresh the list after editing an appointment
+          },
+          initialAppointment: appointment,
+        );
+      },
+    );
   }
 
   void _searchAppointments(String searchTerm) {
