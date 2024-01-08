@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mojstomatolog_desktop/modals/add-product.dart'; // Import your AddProductModal
 import 'package:mojstomatolog_desktop/models/product.dart';
 import 'package:mojstomatolog_desktop/widgets/list_screen.dart';
 import 'package:mojstomatolog_desktop/providers/product_provider.dart';
@@ -34,7 +35,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
   Widget build(BuildContext context) {
     final List<DataColumn> columns = [
       DataColumn(label: Text('Id')),
-      DataColumn(label: Text('Ime')),
+      DataColumn(label: Text('Naziv')),
       DataColumn(label: Text('Opis')),
       DataColumn(label: Text('Kategorija')),
       DataColumn(label: Text('Cijena')),
@@ -51,7 +52,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
           DataCell(Text(product.category ?? '')),
           DataCell(Text(product.price?.toString() ?? '')),
           DataCell(_buildIconButton(Icons.edit, 'Uredi', () {
-            // Edit button logic
+            _editProduct(context, product);
           })),
           DataCell(_buildIconButton(Icons.delete, 'Briši', () {
             _showDeleteConfirmationDialog(context, product.productId!);
@@ -87,11 +88,38 @@ class _ProductListScreenState extends State<ProductListScreen> {
   }
 
   void _addProduct(BuildContext context) {
-    // Add product logic
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AddProductModal(
+          onProductAdded: (newProduct) {
+            _fetchProducts(); // Refresh the list after adding a new product
+          },
+        );
+      },
+    );
+  }
+
+  void _editProduct(BuildContext context, Product product) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AddProductModal(
+          onProductAdded: (updatedProduct) {
+            _fetchProducts(); // Refresh the list after editing a product
+          },
+          initialProduct: product,
+        );
+      },
+    );
   }
 
   void _searchProducts(String searchTerm) {
     // Search logic with the provided search term
+  }
+
+  void _showFilterModal(BuildContext context) {
+    // Implement filter logic for products
   }
 
   void _showDeleteConfirmationDialog(BuildContext context, int productId) {
@@ -120,9 +148,5 @@ class _ProductListScreenState extends State<ProductListScreen> {
         );
       },
     );
-  }
-
-  void _showFilterModal(BuildContext context) {
-    // Implement filter logic for products
   }
 }

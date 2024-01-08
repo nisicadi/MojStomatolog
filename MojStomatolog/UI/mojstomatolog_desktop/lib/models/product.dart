@@ -9,7 +9,6 @@ class Product {
   String? description;
   String? category;
   double? price;
-  String? number;
   String? imageUrl;
   bool? active;
 
