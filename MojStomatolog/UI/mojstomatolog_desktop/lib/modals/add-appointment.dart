@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:mojstomatolog_desktop/models/appointment.dart';
 import 'package:mojstomatolog_desktop/providers/appointment_provider.dart';
 
@@ -40,7 +41,7 @@ class _AddAppointmentModalState extends State<AddAppointmentModal> {
   void _loadInitialData(Appointment appointment) {
     _selectedDate = appointment.appointmentDateTime;
     _dateController.text = _selectedDate != null
-        ? '${_selectedDate!.day}-${_selectedDate!.month}-${_selectedDate!.year}'
+        ? DateFormat('dd.MM.yyyy').format(_selectedDate!)
         : '';
     _procedureController.text = appointment.procedure ?? '';
     _notesController.text = appointment.notes ?? '';
@@ -50,15 +51,18 @@ class _AddAppointmentModalState extends State<AddAppointmentModal> {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: Text(_isEditing ? 'Uredi termin' : 'Dodaj novi termin'),
-      content: Form(
-        key: _formKey,
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              _buildDateField(),
-              _buildTextField(_procedureController, 'Procedura'),
-              _buildTextField(_notesController, 'Komentar', isOptional: true),
-            ],
+      content: Container(
+        width: MediaQuery.of(context).size.width * 0.5,
+        child: Form(
+          key: _formKey,
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                _buildDateField(),
+                _buildTextField(_procedureController, 'Procedura'),
+                _buildTextField(_notesController, 'Komentar', isOptional: true),
+              ],
+            ),
           ),
         ),
       ),
@@ -131,27 +135,41 @@ class _AddAppointmentModalState extends State<AddAppointmentModal> {
       children: [
         TextFormField(
           controller: _dateController,
-          decoration: InputDecoration(labelText: 'Datum termina'),
+          decoration: InputDecoration(labelText: 'Datum i vrijeme termina'),
           readOnly: true,
           onTap: () async {
             DateTime? pickedDate = await showDatePicker(
               context: context,
-              initialDate: DateTime.now(),
-              firstDate: DateTime.now(),
+              initialDate: _selectedDate ?? DateTime.now(),
+              firstDate: DateTime(2000),
               lastDate: DateTime(2101),
             );
 
-            if (pickedDate != null && pickedDate != _selectedDate) {
-              setState(() {
-                _selectedDate = pickedDate;
-                _dateController.text =
-                    '${_selectedDate!.day}-${_selectedDate!.month}-${_selectedDate!.year}';
-              });
+            if (pickedDate != null) {
+              final TimeOfDay? pickedTime = await showTimePicker(
+                context: context,
+                initialTime:
+                    TimeOfDay.fromDateTime(_selectedDate ?? DateTime.now()),
+              );
+
+              if (pickedTime != null) {
+                setState(() {
+                  _selectedDate = DateTime(
+                    pickedDate.year,
+                    pickedDate.month,
+                    pickedDate.day,
+                    pickedTime.hour,
+                    pickedTime.minute,
+                  );
+                  _dateController.text =
+                      DateFormat('dd.MM.yyyy HH:mm').format(_selectedDate!);
+                });
+              }
             }
           },
           validator: (value) {
             if (_selectedDate == null) {
-              return 'Datum termina je obavezno polje';
+              return 'Datum i vrijeme termina je obavezno polje';
             }
             return null;
           },

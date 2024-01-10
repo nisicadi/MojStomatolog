@@ -55,15 +55,18 @@ class _AddProductModalState extends State<AddProductModal> {
       content: Form(
         key: _formKey,
         child: SingleChildScrollView(
-          child: Column(
-            children: [
-              _buildTextField(_nameController, 'Naziv'),
-              _buildTextField(_descriptionController, 'Opis'),
-              _buildTextField(_categoryController, 'Kategorija'),
-              _buildTextField(_priceController, 'Cijena', numericOnly: true),
-              _buildTextField(_imageUrlController, 'URL slike'),
-              _buildCheckbox(_activeController, 'Aktivan'),
-            ],
+          child: Container(
+            width: MediaQuery.of(context).size.width * 0.5,
+            child: Column(
+              children: [
+                _buildTextField(_nameController, 'Naziv'),
+                _buildTextField(_descriptionController, 'Opis'),
+                _buildTextField(_categoryController, 'Kategorija'),
+                _buildTextField(_priceController, 'Cijena', numericOnly: true),
+                _buildTextField(_imageUrlController, 'URL slike'),
+                _buildCheckbox(_activeController, 'Aktivan'),
+              ],
+            ),
           ),
         ),
       ),

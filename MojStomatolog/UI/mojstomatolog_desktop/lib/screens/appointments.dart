@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:mojstomatolog_desktop/modals/add-appointment.dart';
 import 'package:mojstomatolog_desktop/models/appointment.dart';
 import 'package:mojstomatolog_desktop/models/search/base_search.dart';
@@ -52,7 +53,8 @@ class _AppointmentListScreenState extends State<AppointmentListScreen> {
       return DataRow(
         cells: [
           DataCell(Text(appointment.appointmentId.toString())),
-          DataCell(Text(appointment.appointmentDateTime?.toString() ?? '')),
+          DataCell(Text(DateFormat('dd.MM.yyyy  HH:mm')
+              .format(appointment.appointmentDateTime ?? DateTime.now()))),
           DataCell(Text(appointment.procedure ?? '')),
           DataCell(Text(appointment.isConfirmed?.toString() ?? '')),
           DataCell(Text(appointment.notes ?? '')),

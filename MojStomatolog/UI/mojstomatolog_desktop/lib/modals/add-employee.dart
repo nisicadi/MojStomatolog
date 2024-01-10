@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:mojstomatolog_desktop/models/employee.dart';
 import 'package:mojstomatolog_desktop/providers/employee_provider.dart';
 
@@ -56,19 +57,22 @@ class _AddEmployeeModalState extends State<AddEmployeeModal> {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: Text(_isEditing ? 'Uredi zaposlenika' : 'Dodaj novog zaposlenika'),
-      content: Form(
-        key: _formKey,
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              _buildTextField(_firstNameController, 'Ime'),
-              _buildTextField(_lastNameController, 'Prezime'),
-              _buildTextField(_genderController, 'Spol'),
-              _buildTextField(_emailController, 'Email'),
-              _buildTextField(_numberController, 'Broj telefona'),
-              _buildTextField(_specializationController, 'Specijalizacija'),
-              _buildDateField(),
-            ],
+      content: Container(
+        width: MediaQuery.of(context).size.width * 0.5,
+        child: Form(
+          key: _formKey,
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                _buildTextField(_firstNameController, 'Ime'),
+                _buildTextField(_lastNameController, 'Prezime'),
+                _buildTextField(_genderController, 'Spol'),
+                _buildTextField(_emailController, 'Email'),
+                _buildTextField(_numberController, 'Broj telefona'),
+                _buildTextField(_specializationController, 'Specijalizacija'),
+                _buildDateField(),
+              ],
+            ),
           ),
         ),
       ),
@@ -149,21 +153,17 @@ class _AddEmployeeModalState extends State<AddEmployeeModal> {
 
             if (pickedDate != null && pickedDate != _selectedDate) {
               setState(() {
-                if (pickedDate.isAfter(DateTime.now())) {
-                  // Show an error message for a date in the future
-                  _showErrorMessage(
-                      'Datum početka rada ne može biti u budućnosti.');
-                } else {
-                  _selectedDate = pickedDate;
-                  _startDateController.text =
-                      '${_selectedDate!.day}-${_selectedDate!.month}-${_selectedDate!.year}';
-                }
+                _selectedDate = pickedDate;
+                _startDateController.text =
+                    DateFormat('dd.MM.yyyy').format(_selectedDate!);
               });
             }
           },
           validator: (value) {
             if (_selectedDate == null) {
               return 'Datum početka rada je obavezno polje';
+            } else if (_selectedDate!.isAfter(DateTime.now())) {
+              return 'Datum početka rada ne može biti u budućnosti';
             }
             return null;
           },
