@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:mojstomatolog_desktop/modals/add-employee.dart';
 import 'package:mojstomatolog_desktop/models/employee.dart';
-import 'package:mojstomatolog_desktop/widgets/list_screen.dart';
 import 'package:mojstomatolog_desktop/providers/employee_provider.dart';
+import 'package:mojstomatolog_desktop/widgets/paginated_list_screen.dart';
 
 class EmployeeListScreen extends StatefulWidget {
   @override
@@ -59,7 +59,7 @@ class _EmployeeListScreenState extends State<EmployeeListScreen> {
       );
     }).toList();
 
-    return ListScreen(
+    return PageableListScreen(
       currentPage: 'Uposlenici',
       columns: columns,
       rows: rows,
@@ -72,6 +72,7 @@ class _EmployeeListScreenState extends State<EmployeeListScreen> {
       filterButtonCallback: () {
         _showFilterModal(context);
       },
+      totalCount: _employees.length,
     );
   }
 
