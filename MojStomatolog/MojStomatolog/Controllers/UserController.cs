@@ -33,6 +33,7 @@ namespace MojStomatolog.Controllers
         }
 
         [AllowAnonymous]
+        [HttpPost("Register")]
         public override Task<ActionResult<UserResponse>> Insert([FromBody] AddUserRequest insert)
         {
             return base.Insert(insert);
