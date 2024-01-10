@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mojstomatolog_desktop/providers/user_provider.dart';
 import 'package:mojstomatolog_desktop/screens/employees.dart';
+import 'package:mojstomatolog_desktop/screens/register_screen.dart';
 
 class LoginPage extends StatelessWidget {
   LoginPage({Key? key});
@@ -89,13 +90,27 @@ class LoginPage extends StatelessWidget {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
                                 content: Text(
-                                    'Login failed. Please check your credentials.'),
+                                  'Login failed. Please check your credentials.',
+                                ),
                               ),
                             );
                           }
                         }
                       },
                       child: const Text('Login'),
+                    ),
+                    const SizedBox(
+                      height: 8,
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => RegisterPage(),
+                          ),
+                        );
+                      },
+                      child: Text('Register'),
                     ),
                   ],
                 ),
