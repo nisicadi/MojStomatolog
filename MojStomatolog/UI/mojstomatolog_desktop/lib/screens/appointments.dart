@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:mojstomatolog_desktop/modals/add-appointment.dart';
 import 'package:mojstomatolog_desktop/models/appointment.dart';
-import 'package:mojstomatolog_desktop/widgets/list_screen.dart';
+import 'package:mojstomatolog_desktop/models/search/base_search.dart';
 import 'package:mojstomatolog_desktop/providers/appointment_provider.dart';
+import 'package:mojstomatolog_desktop/widgets/paginated_list_screen.dart';
 
 class AppointmentListScreen extends StatefulWidget {
   @override
@@ -11,24 +12,28 @@ class AppointmentListScreen extends StatefulWidget {
 
 class _AppointmentListScreenState extends State<AppointmentListScreen> {
   final AppointmentProvider _appointmentProvider = AppointmentProvider();
-  late List<Appointment> _appointments;
+  List<Appointment> _appointments = [];
+  int _currentPage = 1;
+  int _totalCount = 0;
 
   @override
   void initState() {
     super.initState();
-    _appointments = [];
     _fetchAppointments();
   }
 
-  Future<void> _fetchAppointments() async {
-    try {
-      final result = await _appointmentProvider.get();
-      setState(() {
-        _appointments = result.results;
-      });
-    } catch (e) {
-      print("Error fetching appointments: $e");
-    }
+  Future<void> _fetchAppointments({int page = 1}) async {
+    var searchObject = BaseSearchObject();
+    searchObject.page = page;
+    searchObject.pageSize = 10;
+
+    final result =
+        await _appointmentProvider.get(filter: searchObject.toJson());
+    setState(() {
+      _appointments = result.results;
+      _currentPage = page;
+      _totalCount = result.count;
+    });
   }
 
   @override
@@ -61,19 +66,16 @@ class _AppointmentListScreenState extends State<AppointmentListScreen> {
       );
     }).toList();
 
-    return ListScreen(
+    return PageableListScreen(
       currentPage: 'Termini',
       columns: columns,
       rows: rows,
-      addButtonCallback: () {
-        _addAppointment(context);
-      },
-      searchCallback: (value) {
-        _searchAppointments(value);
-      },
-      filterButtonCallback: () {
-        _showFilterModal(context);
-      },
+      addButtonCallback: () => _addAppointment(context),
+      searchCallback: (value) => _searchAppointments(value),
+      filterButtonCallback: () => _showFilterModal(context),
+      totalCount: _totalCount,
+      onPageChanged: (int newPage) => _fetchAppointments(page: newPage),
+      currentPageIndex: _currentPage,
     );
   }
 
@@ -93,7 +95,7 @@ class _AppointmentListScreenState extends State<AppointmentListScreen> {
       builder: (BuildContext context) {
         return AddAppointmentModal(
           onAppointmentAdded: (newAppointment) {
-            _fetchAppointments(); // Refresh the list after adding a new appointment
+            _fetchAppointments();
           },
         );
       },
@@ -106,7 +108,7 @@ class _AppointmentListScreenState extends State<AppointmentListScreen> {
       builder: (BuildContext context) {
         return AddAppointmentModal(
           onAppointmentAdded: (newAppointment) {
-            _fetchAppointments(); // Refresh the list after editing an appointment
+            _fetchAppointments();
           },
           initialAppointment: appointment,
         );
@@ -115,11 +117,11 @@ class _AppointmentListScreenState extends State<AppointmentListScreen> {
   }
 
   void _searchAppointments(String searchTerm) {
-    // Search logic with the provided search term
+    // Implement search logic
   }
 
   void _showFilterModal(BuildContext context) {
-    // Filter modal logic
+    // Implement filter modal logic
   }
 
   void _showCancelConfirmationDialog(BuildContext context, int appointmentId) {
@@ -133,7 +135,7 @@ class _AppointmentListScreenState extends State<AppointmentListScreen> {
             TextButton(
               onPressed: () async {
                 await _appointmentProvider.delete(appointmentId);
-                _fetchAppointments(); // Refresh the list after deletion
+                _fetchAppointments();
                 Navigator.of(context).pop();
               },
               child: Text('Da'),

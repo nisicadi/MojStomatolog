@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mojstomatolog_desktop/modals/add-employee.dart';
 import 'package:mojstomatolog_desktop/models/employee.dart';
+import 'package:mojstomatolog_desktop/models/search/base_search.dart';
 import 'package:mojstomatolog_desktop/providers/employee_provider.dart';
 import 'package:mojstomatolog_desktop/widgets/paginated_list_screen.dart';
 
@@ -11,20 +12,27 @@ class EmployeeListScreen extends StatefulWidget {
 
 class _EmployeeListScreenState extends State<EmployeeListScreen> {
   final EmployeeProvider _employeeProvider = EmployeeProvider();
-  late List<Employee> _employees;
+  List<Employee> _employees = [];
+  int _currentPage = 1;
+  int _totalCount = 0;
 
   @override
   void initState() {
     super.initState();
-    _employees = [];
     _fetchEmployees();
   }
 
-  Future<void> _fetchEmployees() async {
+  Future<void> _fetchEmployees({int page = 1}) async {
     try {
-      final result = await _employeeProvider.get();
+      var searchObject = BaseSearchObject();
+      searchObject.page = page;
+      searchObject.pageSize = 10;
+
+      final result = await _employeeProvider.get(filter: searchObject.toJson());
       setState(() {
         _employees = result.results;
+        _currentPage = page;
+        _totalCount = result.count;
       });
     } catch (e) {
       print("Error fetching employees: $e");
@@ -63,16 +71,12 @@ class _EmployeeListScreenState extends State<EmployeeListScreen> {
       currentPage: 'Uposlenici',
       columns: columns,
       rows: rows,
-      addButtonCallback: () {
-        _addEmployee(context);
-      },
-      searchCallback: (value) {
-        _searchEmployees(value);
-      },
-      filterButtonCallback: () {
-        _showFilterModal(context);
-      },
-      totalCount: _employees.length,
+      addButtonCallback: () => _addEmployee(context),
+      searchCallback: (value) => _searchEmployees(value),
+      filterButtonCallback: () => _showFilterModal(context),
+      totalCount: _totalCount,
+      onPageChanged: (int newPage) => _fetchEmployees(page: newPage),
+      currentPageIndex: _currentPage,
     );
   }
 

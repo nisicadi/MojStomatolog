@@ -31,7 +31,7 @@ namespace MojStomatolog.Services.Common
             if (search?.Page.HasValue == true && search.PageSize.HasValue)
             {
                 // First page is 1, hence the (search.Page.Value - 1)
-                query = query.Take(search.PageSize.Value).Skip((search.Page.Value - 1) * search.PageSize.Value);
+                query = query.Skip((search.Page.Value - 1) * search.PageSize.Value).Take(search.PageSize.Value);
             }
 
             var list = await query.ToListAsync().ConfigureAwait(false);

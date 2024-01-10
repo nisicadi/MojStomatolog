@@ -9,6 +9,8 @@ class PageableListScreen extends StatefulWidget {
   final Function(String)? searchCallback;
   final Function()? filterButtonCallback;
   final int totalCount;
+  final Function(int) onPageChanged;
+  final int currentPageIndex;
 
   const PageableListScreen({
     Key? key,
@@ -19,6 +21,8 @@ class PageableListScreen extends StatefulWidget {
     this.searchCallback,
     this.filterButtonCallback,
     required this.totalCount,
+    required this.onPageChanged,
+    required this.currentPageIndex,
   }) : super(key: key);
 
   @override
@@ -26,12 +30,38 @@ class PageableListScreen extends StatefulWidget {
 }
 
 class _PageableListScreenState extends State<PageableListScreen> {
-  final int _rowsPerPage = 10;
-  int _currentPage = 1;
+  List<DataRow> _getRowsWithAlternatingColor(List<DataRow> rows) {
+    for (var i = 0; i < rows.length; i++) {
+      final originalRow = rows[i];
+      rows[i] = DataRow(
+        color: MaterialStateProperty.resolveWith<Color>(
+            (Set<MaterialState> states) {
+          return i % 2 == 0 ? Colors.white : Colors.grey[100]!;
+        }),
+        cells: originalRow.cells,
+      );
+    }
+    return rows;
+  }
 
   @override
   Widget build(BuildContext context) {
-    final List<DataRow> paginatedRows = _getPaginatedRows();
+    List<DataRow> coloredRows = _getRowsWithAlternatingColor(widget.rows);
+
+    List<DataColumn> fixedWidthColumns = widget.columns.map((column) {
+      return DataColumn(
+        label: ConstrainedBox(
+          constraints:
+              BoxConstraints(maxWidth: 200), // Fixed width for each column
+          child: Text(
+            (column.label as Text)
+                .data!, // Correctly extract text from Text widget
+            overflow: TextOverflow.ellipsis, // Handle overflowing text
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+        ),
+      );
+    }).toList();
 
     return MasterScreenWidget(
       currentPage: widget.currentPage,
@@ -44,8 +74,14 @@ class _PageableListScreenState extends State<PageableListScreen> {
             SizedBox(height: 8),
             Expanded(
               child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: _buildDataTable(paginatedRows),
+                scrollDirection: Axis.vertical,
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: DataTable(
+                    columns: fixedWidthColumns,
+                    rows: coloredRows,
+                  ),
+                ),
               ),
             ),
             _buildPaginationControls(),
@@ -90,38 +126,23 @@ class _PageableListScreenState extends State<PageableListScreen> {
     );
   }
 
-  Widget _buildDataTable(List<DataRow> paginatedRows) {
-    return SingleChildScrollView(
-      scrollDirection: Axis.vertical,
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: DataTable(
-          columns: widget.columns,
-          rows: paginatedRows,
-        ),
-      ),
-    );
-  }
-
-  Color _getRowColor(int index) {
-    return index % 2 == 0 ? Colors.white : Colors.grey[100]!;
-  }
-
   Widget _buildPaginationControls() {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text('Stranica $_currentPage'),
+          Text('Stranica ${widget.currentPageIndex}'),
           IconButton(
             icon: Icon(Icons.arrow_back),
-            onPressed: _currentPage > 1 ? () => _changePage(-1) : null,
+            onPressed: widget.currentPageIndex > 1
+                ? () => widget.onPageChanged(widget.currentPageIndex - 1)
+                : null,
           ),
           IconButton(
             icon: Icon(Icons.arrow_forward),
-            onPressed: _currentPage * _rowsPerPage < widget.totalCount
-                ? () => _changePage(1)
+            onPressed: widget.currentPageIndex * 10 < widget.totalCount
+                ? () => widget.onPageChanged(widget.currentPageIndex + 1)
                 : null,
           ),
         ],
@@ -130,49 +151,16 @@ class _PageableListScreenState extends State<PageableListScreen> {
   }
 
   Widget _buildResultInfo() {
-    final int startIndex = (_currentPage - 1) * _rowsPerPage + 1;
-    final int endIndex = _currentPage * _rowsPerPage;
+    final int startIndex = (widget.currentPageIndex - 1) * 10 + 1;
+    final int endIndex = widget.currentPageIndex * 10;
     final int totalResults = widget.totalCount;
 
-    String infoText;
-    if (endIndex <= totalResults) {
-      infoText =
-          'Prikazano $startIndex - $endIndex od ukupno $totalResults rezultata';
-    } else {
-      infoText =
-          'Prikazano $startIndex - $totalResults od ukupno $totalResults rezultata';
-    }
+    String infoText =
+        'Prikazano $startIndex - ${endIndex > totalResults ? totalResults : endIndex} od ukupno $totalResults rezultata';
 
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Text(infoText),
-    );
-  }
-
-  void _changePage(int delta) {
-    setState(() {
-      _currentPage += delta;
-    });
-  }
-
-  List<DataRow> _getPaginatedRows() {
-    final int startIndex = (_currentPage - 1) * _rowsPerPage;
-    final int endIndex = startIndex + _rowsPerPage;
-
-    return List.generate(
-      endIndex > widget.rows.length
-          ? widget.rows.length - startIndex
-          : _rowsPerPage,
-      (index) {
-        final originalIndex = startIndex + index;
-        return DataRow(
-          color: MaterialStateProperty.resolveWith<Color>(
-              (Set<MaterialState> states) {
-            return _getRowColor(originalIndex);
-          }),
-          cells: widget.rows[originalIndex].cells,
-        );
-      },
     );
   }
 }
