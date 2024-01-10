@@ -38,4 +38,29 @@ class UserProvider extends BaseProvider<dynamic> {
     Authorization.username = null;
     Authorization.password = null;
   }
+
+  Future<bool> register(
+    String username,
+    String email,
+    String password
+  ) async {
+    var response = await http?.post(Uri.parse("${baseUrl}User/Register"),
+        body: jsonEncode(<String, dynamic>{
+          "username": username,
+          "email": email,
+          "password": password
+        }),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        });
+
+    print(response?.statusCode);
+    if (response?.statusCode == 200) {
+      print("Registration success");
+      return true;
+    } else {
+      print("Registration error here");
+      return false;
+    }
+  }
 }
