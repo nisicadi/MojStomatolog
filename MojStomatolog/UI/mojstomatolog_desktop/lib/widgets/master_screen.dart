@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:mojstomatolog_desktop/screens/appointments.dart';
 import 'package:mojstomatolog_desktop/screens/employees.dart';
+import 'package:mojstomatolog_desktop/screens/login_screen.dart';
 import 'package:mojstomatolog_desktop/screens/news.dart';
 import 'package:mojstomatolog_desktop/screens/product_list_screen.dart';
 import 'package:mojstomatolog_desktop/screens/settings.dart';
+import 'package:mojstomatolog_desktop/providers/user_provider.dart';
 
 class MasterScreenWidget extends StatefulWidget {
   final Widget? child;
@@ -29,6 +31,8 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
             buildButton('Proizvodi'),
             buildButton('Novosti'),
             buildButton('Postavke'),
+            Spacer(),
+            buildLogoutButton(),
           ],
         ),
       ),
@@ -65,6 +69,35 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
           }
         },
       ),
+    );
+  }
+
+  Widget buildLogoutButton() {
+    return Container(
+      child: TextButton(
+        style: TextButton.styleFrom(
+          foregroundColor: Colors.white,
+          padding: const EdgeInsets.symmetric(vertical: 22.0, horizontal: 20),
+        ),
+        child: Text(
+          'Logout',
+          style: const TextStyle(
+            fontSize: 19.0,
+          ),
+        ),
+        onPressed: () {
+          handleLogout();
+        },
+      ),
+    );
+  }
+
+  void handleLogout() {
+    UserProvider().logOut();
+
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(builder: (context) => LoginPage()),
+      (Route<dynamic> route) => false,
     );
   }
 
