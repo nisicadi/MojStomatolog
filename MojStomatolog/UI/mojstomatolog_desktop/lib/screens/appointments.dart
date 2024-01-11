@@ -87,7 +87,7 @@ class _AppointmentListScreenState extends State<AppointmentListScreen> {
       _searchTimer!.cancel();
     }
 
-    _searchTimer = Timer(Duration(milliseconds: 500), () {
+    _searchTimer = Timer(Duration(milliseconds: 300), () {
       _fetchAppointments(
         page: 1,
         searchTerm: searchTerm,

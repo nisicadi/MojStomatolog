@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:mojstomatolog_desktop/modals/add-product.dart';
+import 'package:mojstomatolog_desktop/modals/filter-products.dart';
 import 'package:mojstomatolog_desktop/models/product.dart';
 import 'package:mojstomatolog_desktop/models/search/product_search.dart';
 import 'package:mojstomatolog_desktop/providers/product_provider.dart';
@@ -17,6 +18,9 @@ class _ProductListScreenState extends State<ProductListScreen> {
   int _currentPage = 1;
   int _totalCount = 0;
   String? _currentSearchTerm;
+  double? _currentPriceFrom;
+  double? _currentPriceTo;
+  bool? _currentIsActive;
   Timer? _searchTimer;
 
   @override
@@ -25,12 +29,20 @@ class _ProductListScreenState extends State<ProductListScreen> {
     _fetchProducts();
   }
 
-  Future<void> _fetchProducts({int page = 1, String? searchTerm}) async {
+  Future<void> _fetchProducts(
+      {int page = 1,
+      String? searchTerm,
+      double? priceFrom,
+      double? priceTo,
+      bool? isActive}) async {
     try {
-      var searchObject = ProductSearchObject();
-      searchObject.page = page;
-      searchObject.pageSize = 10;
-      searchObject.searchTerm = searchTerm;
+      var searchObject = ProductSearchObject()
+        ..page = page
+        ..pageSize = 10
+        ..searchTerm = searchTerm
+        ..priceFrom = priceFrom
+        ..priceTo = priceTo
+        ..isActive = isActive;
 
       final result = await _productProvider.get(filter: searchObject.toJson());
       setState(() {
@@ -38,10 +50,91 @@ class _ProductListScreenState extends State<ProductListScreen> {
         _currentPage = page;
         _totalCount = result.count;
         _currentSearchTerm = searchTerm;
+        _currentPriceFrom = priceFrom;
+        _currentPriceTo = priceTo;
+        _currentIsActive = isActive;
       });
     } catch (e) {
       print("Error fetching products: $e");
     }
+  }
+
+  void _addOrUpdateProduct(Product product, {bool isUpdate = false}) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AddProductModal(
+          onProductAdded: (newProduct) {
+            _fetchProducts(
+              page: _currentPage,
+              searchTerm: _currentSearchTerm,
+              priceFrom: _currentPriceFrom,
+              priceTo: _currentPriceTo,
+              isActive: _currentIsActive,
+            );
+          },
+          initialProduct: isUpdate ? product : null,
+        );
+      },
+    );
+  }
+
+  void _searchProducts(String searchTerm) {
+    if (_searchTimer != null && _searchTimer!.isActive) {
+      _searchTimer!.cancel();
+    }
+
+    _searchTimer = Timer(Duration(milliseconds: 300), () {
+      _fetchProducts(
+        page: 1,
+        searchTerm: searchTerm,
+        priceFrom: _currentPriceFrom,
+        priceTo: _currentPriceTo,
+        isActive: _currentIsActive,
+      );
+    });
+  }
+
+  void _showFilterModal() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return ProductFilterModal(
+          initialPriceFrom: _currentPriceFrom,
+          initialPriceTo: _currentPriceTo,
+          initialIsActive: _currentIsActive,
+          onFilter: (priceFrom, priceTo, isActive) {
+            _fetchProducts(
+              page: 1,
+              searchTerm: _currentSearchTerm,
+              priceFrom: priceFrom,
+              priceTo: priceTo,
+              isActive: isActive,
+            );
+          },
+        );
+      },
+    );
+  }
+
+  void _clearFilters() {
+    _fetchProducts(
+      page: 1,
+      searchTerm: null,
+      priceFrom: null,
+      priceTo: null,
+      isActive: null,
+    );
+  }
+
+  Widget _buildIconButton(IconData icon, String tooltip, Function onPressed) {
+    return Tooltip(
+      message: tooltip,
+      child: IconButton(
+        icon: Icon(icon),
+        onPressed: () => onPressed(),
+      ),
+    );
   }
 
   @override
@@ -65,7 +158,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
           DataCell(Text(product.category ?? '')),
           DataCell(Text(product.price?.toString() ?? '')),
           DataCell(_buildIconButton(Icons.edit, 'Uredi', () {
-            _editProduct(context, product);
+            _addOrUpdateProduct(product, isUpdate: true);
           })),
           DataCell(_buildIconButton(Icons.delete, 'Briši', () {
             _showDeleteConfirmationDialog(context, product.productId!);
@@ -78,68 +171,19 @@ class _ProductListScreenState extends State<ProductListScreen> {
       currentPage: 'Proizvodi',
       columns: columns,
       rows: rows,
-      addButtonCallback: () => _addProduct(context),
+      addButtonCallback: () => _addOrUpdateProduct(Product()),
       searchCallback: (value) => _searchProducts(value),
-      filterButtonCallback: () => _showFilterModal(context),
+      filterButtonCallback: () => _showFilterModal(),
       totalCount: _totalCount,
-      onPageChanged: (int newPage) => _fetchProducts(page: newPage, searchTerm: _currentSearchTerm),
+      onPageChanged: (int newPage) => _fetchProducts(
+        page: newPage,
+        searchTerm: _currentSearchTerm,
+        priceFrom: _currentPriceFrom,
+        priceTo: _currentPriceTo,
+        isActive: _currentIsActive,
+      ),
       currentPageIndex: _currentPage,
     );
-  }
-
-  Widget _buildIconButton(IconData icon, String tooltip, Function onPressed) {
-    return Tooltip(
-      message: tooltip,
-      child: IconButton(
-        icon: Icon(icon),
-        onPressed: () => onPressed(),
-      ),
-    );
-  }
-
-  void _addProduct(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AddProductModal(
-          onProductAdded: (newProduct) {
-            _fetchProducts();
-          },
-        );
-      },
-    );
-  }
-
-  void _editProduct(BuildContext context, Product product) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AddProductModal(
-          onProductAdded: (updatedProduct) {
-            _fetchProducts();
-          },
-          initialProduct: product,
-        );
-      },
-    );
-  }
-
-  void _searchProducts(String searchTerm) {
-    if (_searchTimer != null && _searchTimer!.isActive) {
-      _searchTimer!.cancel();
-    }
-
-    _searchTimer = Timer(Duration(milliseconds: 500), () {
-      if (searchTerm.isEmpty) {
-        _fetchProducts();
-      } else {
-        _fetchProducts(searchTerm: searchTerm);
-      }
-    });
-  }
-
-  void _showFilterModal(BuildContext context) {
-    // Implement filter modal logic
   }
 
   void _showDeleteConfirmationDialog(BuildContext context, int productId) {
@@ -153,7 +197,13 @@ class _ProductListScreenState extends State<ProductListScreen> {
             TextButton(
               onPressed: () async {
                 await _productProvider.delete(productId);
-                _fetchProducts(page: _currentPage, searchTerm: _currentSearchTerm);
+                _fetchProducts(
+                  page: _currentPage,
+                  searchTerm: _currentSearchTerm,
+                  priceFrom: _currentPriceFrom,
+                  priceTo: _currentPriceTo,
+                  isActive: _currentIsActive,
+                );
                 Navigator.of(context).pop();
               },
               child: Text('Da'),

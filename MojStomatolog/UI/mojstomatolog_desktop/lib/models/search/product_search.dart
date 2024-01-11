@@ -6,6 +6,9 @@ part 'product_search.g.dart';
 @JsonSerializable()
 class ProductSearchObject extends BaseSearchObject {
   String? searchTerm;
+  double? priceFrom;
+  double? priceTo;
+  bool? isActive;
 
   ProductSearchObject();
 
