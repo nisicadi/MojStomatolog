@@ -6,6 +6,9 @@ part 'appointment_search.g.dart';
 @JsonSerializable()
 class AppointmentSearchObject extends BaseSearchObject {
   String? searchTerm;
+  DateTime? dateTimeFrom;
+  DateTime? dateTimeTo;
+  bool? isConfirmed;
 
   AppointmentSearchObject();
 

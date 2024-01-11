@@ -38,14 +38,14 @@ class _EmployeeFilterModalState extends State<EmployeeFilterModal> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text('Filter Zaposlenika'),
+      title: Text('Filter uposlenika'),
       content: Form(
         key: _formKey,
         child: SingleChildScrollView(
           child: Column(
             children: [
-              _buildDateField(_dateFromController, 'Datum početka rada od'),
-              _buildDateField(_dateToController, 'Datum početka rada do'),
+              _buildDateField(_dateFromController, 'Datum početka rada - od'),
+              _buildDateField(_dateToController, 'Datum početka rada - do'),
             ],
           ),
         ),

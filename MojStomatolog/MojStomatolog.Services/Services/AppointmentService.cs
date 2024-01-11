@@ -17,11 +17,31 @@ namespace MojStomatolog.Services.Services
 
         public override IQueryable<Appointment> AddFilter(IQueryable<Appointment> query, AppointmentSearchObject? search = null)
         {
-            if (!string.IsNullOrWhiteSpace(search?.SearchTerm))
+            if (search is null)
+            {
+                return query;
+            }
+
+            if (!string.IsNullOrWhiteSpace(search.SearchTerm))
             {
                 var searchTermLower = search.SearchTerm.ToLower();
 
                 query = query.Where(x => x.Procedure.Contains(searchTermLower));
+            }
+
+            if (search.DateTimeFrom is not null)
+            {
+                query = query.Where(x => x.AppointmentDateTime >= search.DateTimeFrom);
+            }
+
+            if (search.DateTimeTo is not null)
+            {
+                query = query.Where(x => x.AppointmentDateTime <= search.DateTimeTo);
+            }
+
+            if (search.IsConfirmed is not null)
+            {
+                query = query.Where(x => x.IsConfirmed == search.IsConfirmed);
             }
 
             return query;

@@ -11,7 +11,14 @@ AppointmentSearchObject _$AppointmentSearchObjectFromJson(
     AppointmentSearchObject()
       ..page = json['page'] as int?
       ..pageSize = json['pageSize'] as int?
-      ..searchTerm = json['searchTerm'] as String?;
+      ..searchTerm = json['searchTerm'] as String?
+      ..dateTimeFrom = json['dateTimeFrom'] == null
+          ? null
+          : DateTime.parse(json['dateTimeFrom'] as String)
+      ..dateTimeTo = json['dateTimeTo'] == null
+          ? null
+          : DateTime.parse(json['dateTimeTo'] as String)
+      ..isConfirmed = json['isConfirmed'] as bool?;
 
 Map<String, dynamic> _$AppointmentSearchObjectToJson(
         AppointmentSearchObject instance) =>
@@ -19,4 +26,7 @@ Map<String, dynamic> _$AppointmentSearchObjectToJson(
       'page': instance.page,
       'pageSize': instance.pageSize,
       'searchTerm': instance.searchTerm,
+      'dateTimeFrom': instance.dateTimeFrom?.toIso8601String(),
+      'dateTimeTo': instance.dateTimeTo?.toIso8601String(),
+      'isConfirmed': instance.isConfirmed,
     };
