@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'dart:async';
 import 'package:mojstomatolog_desktop/modals/add-appointment.dart';
 import 'package:mojstomatolog_desktop/models/appointment.dart';
-import 'package:mojstomatolog_desktop/models/search/base_search.dart';
+import 'package:mojstomatolog_desktop/models/search/appointment_search.dart';
 import 'package:mojstomatolog_desktop/providers/appointment_provider.dart';
 import 'package:mojstomatolog_desktop/widgets/paginated_list_screen.dart';
 
@@ -16,6 +17,8 @@ class _AppointmentListScreenState extends State<AppointmentListScreen> {
   List<Appointment> _appointments = [];
   int _currentPage = 1;
   int _totalCount = 0;
+  String? _currentSearchTerm;
+  Timer? _searchTimer;
 
   @override
   void initState() {
@@ -23,18 +26,23 @@ class _AppointmentListScreenState extends State<AppointmentListScreen> {
     _fetchAppointments();
   }
 
-  Future<void> _fetchAppointments({int page = 1}) async {
-    var searchObject = BaseSearchObject();
-    searchObject.page = page;
-    searchObject.pageSize = 10;
+  Future<void> _fetchAppointments({int page = 1, String? searchTerm}) async {
+    try {
+      var searchObject = AppointmentSearchObject();
+      searchObject.page = page;
+      searchObject.pageSize = 10;
+      searchObject.searchTerm = searchTerm;
 
-    final result =
-        await _appointmentProvider.get(filter: searchObject.toJson());
-    setState(() {
-      _appointments = result.results;
-      _currentPage = page;
-      _totalCount = result.count;
-    });
+      final result = await _appointmentProvider.get(filter: searchObject.toJson());
+      setState(() {
+        _appointments = result.results;
+        _currentPage = page;
+        _totalCount = result.count;
+        _currentSearchTerm = searchTerm;
+      });
+    } catch (e) {
+      print("Error fetching appointments: $e");
+    }
   }
 
   @override
@@ -76,7 +84,7 @@ class _AppointmentListScreenState extends State<AppointmentListScreen> {
       searchCallback: (value) => _searchAppointments(value),
       filterButtonCallback: () => _showFilterModal(context),
       totalCount: _totalCount,
-      onPageChanged: (int newPage) => _fetchAppointments(page: newPage),
+      onPageChanged: (int newPage) => _fetchAppointments(page: newPage, searchTerm: _currentSearchTerm),
       currentPageIndex: _currentPage,
     );
   }
@@ -119,7 +127,17 @@ class _AppointmentListScreenState extends State<AppointmentListScreen> {
   }
 
   void _searchAppointments(String searchTerm) {
-    // Implement search logic
+    if (_searchTimer != null && _searchTimer!.isActive) {
+      _searchTimer!.cancel();
+    }
+
+    _searchTimer = Timer(Duration(milliseconds: 500), () {
+      if (searchTerm.isEmpty) {
+        _fetchAppointments();
+      } else {
+        _fetchAppointments(searchTerm: searchTerm);
+      }
+    });
   }
 
   void _showFilterModal(BuildContext context) {
@@ -137,7 +155,7 @@ class _AppointmentListScreenState extends State<AppointmentListScreen> {
             TextButton(
               onPressed: () async {
                 await _appointmentProvider.delete(appointmentId);
-                _fetchAppointments();
+                _fetchAppointments(page: _currentPage, searchTerm: _currentSearchTerm);
                 Navigator.of(context).pop();
               },
               child: Text('Da'),
