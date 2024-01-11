@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'dart:async';
 import 'package:mojstomatolog_desktop/modals/add-employee.dart';
 import 'package:mojstomatolog_desktop/models/employee.dart';
-import 'package:mojstomatolog_desktop/models/search/base_search.dart';
+import 'package:mojstomatolog_desktop/models/search/employee_search.dart';
 import 'package:mojstomatolog_desktop/providers/employee_provider.dart';
 import 'package:mojstomatolog_desktop/widgets/paginated_list_screen.dart';
 
@@ -15,6 +16,8 @@ class _EmployeeListScreenState extends State<EmployeeListScreen> {
   List<Employee> _employees = [];
   int _currentPage = 1;
   int _totalCount = 0;
+  String? _currentSearchTerm;
+  Timer? _searchTimer;
 
   @override
   void initState() {
@@ -22,17 +25,19 @@ class _EmployeeListScreenState extends State<EmployeeListScreen> {
     _fetchEmployees();
   }
 
-  Future<void> _fetchEmployees({int page = 1}) async {
+  Future<void> _fetchEmployees({int page = 1, String? searchTerm}) async {
     try {
-      var searchObject = BaseSearchObject();
+      var searchObject = EmployeeSearchObject();
       searchObject.page = page;
       searchObject.pageSize = 10;
+      searchObject.searchTerm = searchTerm;
 
       final result = await _employeeProvider.get(filter: searchObject.toJson());
       setState(() {
         _employees = result.results;
         _currentPage = page;
         _totalCount = result.count;
+        _currentSearchTerm = searchTerm;
       });
     } catch (e) {
       print("Error fetching employees: $e");
@@ -75,7 +80,7 @@ class _EmployeeListScreenState extends State<EmployeeListScreen> {
       searchCallback: (value) => _searchEmployees(value),
       filterButtonCallback: () => _showFilterModal(context),
       totalCount: _totalCount,
-      onPageChanged: (int newPage) => _fetchEmployees(page: newPage),
+      onPageChanged: (int newPage) => _fetchEmployees(page: newPage, searchTerm: _currentSearchTerm),
       currentPageIndex: _currentPage,
     );
   }
@@ -96,7 +101,7 @@ class _EmployeeListScreenState extends State<EmployeeListScreen> {
       builder: (BuildContext context) {
         return AddEmployeeModal(
           onEmployeeAdded: (newEmployee) {
-            _fetchEmployees(); // Refresh the list after adding a new employee
+            _fetchEmployees();
           },
         );
       },
@@ -109,7 +114,7 @@ class _EmployeeListScreenState extends State<EmployeeListScreen> {
       builder: (BuildContext context) {
         return AddEmployeeModal(
           onEmployeeAdded: (updatedEmployee) {
-            _fetchEmployees(); // Refresh the list after editing an employee
+            _fetchEmployees();
           },
           initialEmployee: employee,
         );
@@ -118,7 +123,17 @@ class _EmployeeListScreenState extends State<EmployeeListScreen> {
   }
 
   void _searchEmployees(String searchTerm) {
-    // Search logic with the provided search term
+    if (_searchTimer != null && _searchTimer!.isActive) {
+      _searchTimer!.cancel();
+    }
+
+    _searchTimer = Timer(Duration(milliseconds: 500), () {
+      if (searchTerm.isEmpty) {
+        _fetchEmployees();
+      } else {
+        _fetchEmployees(searchTerm: searchTerm);
+      }
+    });
   }
 
   void _showFilterModal(BuildContext context) {
@@ -137,7 +152,7 @@ class _EmployeeListScreenState extends State<EmployeeListScreen> {
             TextButton(
               onPressed: () async {
                 await _employeeProvider.delete(employeeId);
-                _fetchEmployees(); // Refresh the list after deletion
+                _fetchEmployees(page: _currentPage, searchTerm: _currentSearchTerm);
                 Navigator.of(context).pop();
               },
               child: Text('Da'),
