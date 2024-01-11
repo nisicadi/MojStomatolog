@@ -11,7 +11,13 @@ EmployeeSearchObject _$EmployeeSearchObjectFromJson(
     EmployeeSearchObject()
       ..page = json['page'] as int?
       ..pageSize = json['pageSize'] as int?
-      ..searchTerm = json['searchTerm'] as String?;
+      ..searchTerm = json['searchTerm'] as String?
+      ..dateFrom = json['dateFrom'] == null
+          ? null
+          : DateTime.parse(json['dateFrom'] as String)
+      ..dateTo = json['dateTo'] == null
+          ? null
+          : DateTime.parse(json['dateTo'] as String);
 
 Map<String, dynamic> _$EmployeeSearchObjectToJson(
         EmployeeSearchObject instance) =>
@@ -19,4 +25,6 @@ Map<String, dynamic> _$EmployeeSearchObjectToJson(
       'page': instance.page,
       'pageSize': instance.pageSize,
       'searchTerm': instance.searchTerm,
+      'dateFrom': instance.dateFrom?.toIso8601String(),
+      'dateTo': instance.dateTo?.toIso8601String(),
     };

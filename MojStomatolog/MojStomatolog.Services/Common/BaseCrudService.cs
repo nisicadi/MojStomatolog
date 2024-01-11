@@ -35,7 +35,7 @@ namespace MojStomatolog.Services.Common
 
             var entity = await set.FindAsync(id);
 
-            if (entity != null)
+            if (entity is not null)
             {
                 Mapper.Map(update, entity);
                 await Context.SaveChangesAsync();
@@ -49,7 +49,7 @@ namespace MojStomatolog.Services.Common
             var set = Context.Set<TDb>();
             var entity = await set.FindAsync(id);
 
-            if (entity == null) 
+            if (entity is null) 
                 return false;
 
             set.Remove(entity);

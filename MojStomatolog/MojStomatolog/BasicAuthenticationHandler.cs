@@ -33,7 +33,7 @@ namespace MojStomatolog
 
             var authHeader = AuthenticationHeaderValue.Parse(Request.Headers["Authorization"]);
 
-            if (authHeader.Parameter == null)
+            if (authHeader.Parameter is null)
             {
                 return AuthenticateResult.Fail("Invalid Authorization header");
             }
@@ -47,7 +47,7 @@ namespace MojStomatolog
             var loginResult = await _userService.Login(username, password);
             var user = loginResult?.User;
 
-            if (user == null)
+            if (user is null)
             {
                 return AuthenticateResult.Fail("Incorrect username or password");
             }

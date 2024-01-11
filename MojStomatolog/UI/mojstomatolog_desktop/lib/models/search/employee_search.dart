@@ -6,6 +6,8 @@ part 'employee_search.g.dart';
 @JsonSerializable()
 class EmployeeSearchObject extends BaseSearchObject {
   String? searchTerm;
+  DateTime? dateFrom;
+  DateTime? dateTo;
 
   EmployeeSearchObject();
 

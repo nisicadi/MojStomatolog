@@ -24,7 +24,7 @@ namespace MojStomatolog.Services.Services
             {
                 var user = await Context.Users.SingleOrDefaultAsync(x => x.Username == username);
 
-                if (user == null)
+                if (user is null)
                 {
                     return new LoginResponse { Result = LoginResult.UserNotFound };
                 }
