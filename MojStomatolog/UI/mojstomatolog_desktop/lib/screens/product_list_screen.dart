@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'dart:async';
 import 'package:mojstomatolog_desktop/modals/add-product.dart';
 import 'package:mojstomatolog_desktop/models/product.dart';
-import 'package:mojstomatolog_desktop/models/search/base_search.dart';
+import 'package:mojstomatolog_desktop/models/search/product_search.dart';
 import 'package:mojstomatolog_desktop/providers/product_provider.dart';
 import 'package:mojstomatolog_desktop/widgets/paginated_list_screen.dart';
 
@@ -15,6 +16,8 @@ class _ProductListScreenState extends State<ProductListScreen> {
   List<Product> _products = [];
   int _currentPage = 1;
   int _totalCount = 0;
+  String? _currentSearchTerm;
+  Timer? _searchTimer;
 
   @override
   void initState() {
@@ -22,17 +25,23 @@ class _ProductListScreenState extends State<ProductListScreen> {
     _fetchProducts();
   }
 
-  Future<void> _fetchProducts({int page = 1}) async {
-    var searchObject = BaseSearchObject();
-    searchObject.page = page;
-    searchObject.pageSize = 10;
+  Future<void> _fetchProducts({int page = 1, String? searchTerm}) async {
+    try {
+      var searchObject = ProductSearchObject();
+      searchObject.page = page;
+      searchObject.pageSize = 10;
+      searchObject.searchTerm = searchTerm;
 
-    final result = await _productProvider.get(filter: searchObject.toJson());
-    setState(() {
-      _products = result.results;
-      _currentPage = page;
-      _totalCount = result.count;
-    });
+      final result = await _productProvider.get(filter: searchObject.toJson());
+      setState(() {
+        _products = result.results;
+        _currentPage = page;
+        _totalCount = result.count;
+        _currentSearchTerm = searchTerm;
+      });
+    } catch (e) {
+      print("Error fetching products: $e");
+    }
   }
 
   @override
@@ -73,7 +82,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
       searchCallback: (value) => _searchProducts(value),
       filterButtonCallback: () => _showFilterModal(context),
       totalCount: _totalCount,
-      onPageChanged: (int newPage) => _fetchProducts(page: newPage),
+      onPageChanged: (int newPage) => _fetchProducts(page: newPage, searchTerm: _currentSearchTerm),
       currentPageIndex: _currentPage,
     );
   }
@@ -116,7 +125,17 @@ class _ProductListScreenState extends State<ProductListScreen> {
   }
 
   void _searchProducts(String searchTerm) {
-    // Implement search logic
+    if (_searchTimer != null && _searchTimer!.isActive) {
+      _searchTimer!.cancel();
+    }
+
+    _searchTimer = Timer(Duration(milliseconds: 500), () {
+      if (searchTerm.isEmpty) {
+        _fetchProducts();
+      } else {
+        _fetchProducts(searchTerm: searchTerm);
+      }
+    });
   }
 
   void _showFilterModal(BuildContext context) {
@@ -134,7 +153,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
             TextButton(
               onPressed: () async {
                 await _productProvider.delete(productId);
-                _fetchProducts();
+                _fetchProducts(page: _currentPage, searchTerm: _currentSearchTerm);
                 Navigator.of(context).pop();
               },
               child: Text('Da'),
