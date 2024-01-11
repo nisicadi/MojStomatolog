@@ -28,7 +28,5 @@ namespace MojStomatolog.Services.Services
 
             return query;
         }
-
-
     }
 }
