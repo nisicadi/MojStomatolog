@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'dart:async';
 import 'package:mojstomatolog_desktop/modals/add-appointment.dart';
-import 'package:mojstomatolog_desktop/modals/filter-appointments.dart'; // Import the filter modal
+import 'package:mojstomatolog_desktop/modals/filter-appointments.dart';
 import 'package:mojstomatolog_desktop/models/appointment.dart';
 import 'package:mojstomatolog_desktop/models/search/appointment_search.dart';
 import 'package:mojstomatolog_desktop/providers/appointment_provider.dart';

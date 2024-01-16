@@ -131,7 +131,6 @@ class _AddProductModalState extends State<AddProductModal> {
               if (value == null || value.isEmpty) {
                 return '$labelText je obavezno polje';
               }
-              // Check if the entered value is a valid numeric format with up to 2 decimals
               if (double.tryParse(value) == null) {
                 return 'Unesite ispravnu numeričku vrijednost';
               }

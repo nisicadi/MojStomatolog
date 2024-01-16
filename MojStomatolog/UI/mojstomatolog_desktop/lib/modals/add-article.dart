@@ -36,6 +36,10 @@ class _AddArticleModalState extends State<AddArticleModal> {
     if (widget.initialArticle != null) {
       _isEditing = true;
       _loadInitialData(widget.initialArticle!);
+    } else {
+      _selectedDate = DateTime.now();
+      _publishDateController.text =
+          DateFormat('dd.MM.yyyy').format(_selectedDate!);
     }
   }
 
@@ -136,22 +140,7 @@ class _AddArticleModalState extends State<AddArticleModal> {
           controller: _publishDateController,
           decoration: InputDecoration(labelText: 'Datum objave'),
           readOnly: true,
-          onTap: () async {
-            DateTime? pickedDate = await showDatePicker(
-              context: context,
-              initialDate: _selectedDate ?? DateTime.now(),
-              firstDate: DateTime(2000),
-              lastDate: DateTime(2101),
-            );
-
-            if (pickedDate != null) {
-              setState(() {
-                _selectedDate = pickedDate;
-                _publishDateController.text =
-                    DateFormat('dd.MM.yyyy').format(_selectedDate!);
-              });
-            }
-          },
+          enabled: false,
           validator: (value) {
             if (_selectedDate == null) {
               return 'Datum objave je obavezno polje';

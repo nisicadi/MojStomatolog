@@ -15,7 +15,7 @@ class MyMaterialApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Moj stomatolog',
-      theme: ThemeData(primarySwatch: Colors.blue),
+      theme: ThemeData(primarySwatch: Colors.blue, useMaterial3: false),
       home: LoginPage(),
     );
   }
