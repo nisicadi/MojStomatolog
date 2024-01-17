@@ -23,6 +23,14 @@ class UserProvider extends BaseProvider<dynamic> {
         Authorization.username = username;
         Authorization.password = password;
 
+        User.userId = jsonDecode(response.body)['userId'];
+        User.firstName = jsonDecode(response.body)['firstName'];
+        User.lastName = jsonDecode(response.body)['lastName'];
+        User.email = jsonDecode(response.body)['email'];
+        User.number = jsonDecode(response.body)['number'];
+
+        print(User.firstName);
+
         return true;
       } else {
         print("Login failed: ${response?.statusCode}");
@@ -34,16 +42,17 @@ class UserProvider extends BaseProvider<dynamic> {
     }
   }
 
+  @override
+  dynamic fromJson(data) {
+    return data;
+  }
+
   void logOut() {
     Authorization.username = null;
     Authorization.password = null;
   }
 
-  Future<bool> register(
-    String username,
-    String email,
-    String password
-  ) async {
+  Future<bool> register(String username, String email, String password) async {
     var response = await http?.post(Uri.parse("${baseUrl}User/Register"),
         body: jsonEncode(<String, dynamic>{
           "username": username,
