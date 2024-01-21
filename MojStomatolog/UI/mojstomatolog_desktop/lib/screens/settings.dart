@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mojstomatolog_desktop/providers/company_settings_provider.dart';
 import 'package:mojstomatolog_desktop/providers/user_provider.dart';
 import 'package:mojstomatolog_desktop/utils/util.dart';
 import 'package:mojstomatolog_desktop/widgets/master_screen.dart';
@@ -15,6 +16,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
   bool isEditingCompany = false;
 
   final UserProvider _userProvider = UserProvider();
+  final CompanySettingsProvider _companySettingsProvider =
+      CompanySettingsProvider();
 
   TextEditingController nameController = TextEditingController();
   TextEditingController surnameController = TextEditingController();
@@ -31,18 +34,56 @@ class _SettingsScreenState extends State<SettingsScreen> {
   String initialEmail = User.email ?? '';
   String initialPhoneNumber = User.number ?? '';
 
-  String initialWorkHoursFrom = '08:00';
-  String initialWorkHoursTo = '17:00';
+  String initialWorkHoursFrom = '';
+  String initialWorkHoursTo = '';
 
   @override
   void initState() {
     super.initState();
+
     nameController.text = initialName;
     surnameController.text = initialSurname;
     emailController.text = initialEmail;
     phoneNumberController.text = initialPhoneNumber;
-    initialWorkHoursFrom = workHoursFromController.text;
-    initialWorkHoursTo = workHoursToController.text;
+
+    _initializeWorkHours();
+  }
+
+  void _initializeWorkHours() async {
+    try {
+      final companySettings =
+          await _companySettingsProvider.getByName('WorkingHours');
+
+      if (companySettings['settingValue'] != null) {
+        final workHours = companySettings['settingValue'].split('-');
+
+        if (workHours.length == 2) {
+          setState(() {
+            initialWorkHoursFrom = workHours[0];
+            initialWorkHoursTo = workHours[1];
+          });
+        }
+      }
+    } catch (e) {
+      setState(() {
+        initialWorkHoursFrom = '08:00';
+        initialWorkHoursTo = '17:00';
+      });
+    }
+
+    workHoursFromController.text = initialWorkHoursFrom;
+    workHoursToController.text = initialWorkHoursTo;
+  }
+
+  void _updateWorkHours() async {
+    final newWorkHours =
+        '${workHoursFromController.text}-${workHoursToController.text}';
+    await _companySettingsProvider.addOrUpdate('WorkingHours', newWorkHours);
+  }
+
+  bool isTimeFormatValid(String value) {
+    final timePattern = RegExp(r'^\d{2}:\d{2}$');
+    return timePattern.hasMatch(value);
   }
 
   void resetProfileFields() {
@@ -261,6 +302,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               controller: workHoursFromController,
                               readOnly: !isEditingCompany,
                               enableInteractiveSelection: isEditingCompany,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Polje ne smije biti prazno';
+                                }
+                                if (!isTimeFormatValid(value)) {
+                                  return 'Neispravan format vremena (XX:XX)';
+                                }
+                                return null;
+                              },
                               decoration: InputDecoration(
                                 labelText: 'Radno vrijeme - Od',
                                 border: OutlineInputBorder(),
@@ -281,6 +331,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               controller: workHoursToController,
                               readOnly: !isEditingCompany,
                               enableInteractiveSelection: isEditingCompany,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Polje ne smije biti prazno';
+                                }
+                                if (!isTimeFormatValid(value)) {
+                                  return 'Neispravan format vremena (XX:XX)';
+                                }
+                                return null;
+                              },
                               decoration: InputDecoration(
                                 labelText: 'Radno vrijeme - Do',
                                 border: OutlineInputBorder(),
@@ -330,6 +389,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                   initialWorkHoursTo =
                                       workHoursToController.text;
                                 });
+
+                                _updateWorkHours();
                               }
                             },
                             child: Text('Spasi'),
