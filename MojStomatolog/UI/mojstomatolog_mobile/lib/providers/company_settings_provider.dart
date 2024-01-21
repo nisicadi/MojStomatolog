@@ -1,18 +1,9 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:mojstomatolog_desktop/utils/util.dart';
+import 'package:mojstomatolog_mobile/utils/util.dart';
 
 class CompanySettingsProvider {
-  final String _baseUrl = 'https://localhost:7043/CompanySettings';
-
-  Future<void> addOrUpdate(String settingName, String settingValue) async {
-    var url = Uri.parse('$_baseUrl');
-    var headers = await createHeaders();
-    await http.post(url,
-        body: json
-            .encode({"settingName": settingName, "settingValue": settingValue}),
-        headers: headers);
-  }
+  final String _baseUrl = 'https://10.0.2.2:7043/CompanySettings';
 
   Future<Map<String, dynamic>> getByName(String settingName) async {
     var url = Uri.parse('$_baseUrl/?settingName=$settingName');
