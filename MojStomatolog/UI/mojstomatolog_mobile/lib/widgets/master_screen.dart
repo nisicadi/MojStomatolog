@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:mojstomatolog_mobile/screens/appointments_screen.dart';
+import 'package:mojstomatolog_mobile/screens/news_screen.dart';
+import 'package:mojstomatolog_mobile/screens/products_screen.dart';
+import 'package:mojstomatolog_mobile/screens/profile_screen.dart';
 
 class MasterScreenWidget extends StatefulWidget {
-  final Widget? child;
-  int currentIndex;
+  final Widget child;
+  final int currentIndex;
 
-  MasterScreenWidget({Key? key, this.child, required this.currentIndex})
+  MasterScreenWidget(
+      {Key? key, required this.child, required this.currentIndex})
       : super(key: key);
 
   @override
-  State<MasterScreenWidget> createState() => _MasterScreenWidgetState();
+  _MasterScreenWidgetState createState() => _MasterScreenWidgetState();
 }
 
 class _MasterScreenWidgetState extends State<MasterScreenWidget> {
@@ -17,9 +22,8 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Moj Stomatolog'),
-        backgroundColor: Colors.black,
       ),
-      body: widget.child!,
+      body: widget.child,
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         backgroundColor: Colors.black,
@@ -50,10 +54,37 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
   }
 
   void onTabTapped(int index) {
-    setState(() {
-      widget.currentIndex = index;
-    });
+    if (index == widget.currentIndex) {
+      return;
+    }
 
-    // TODO: Implement navigation logic
+    Widget nextPage;
+
+    switch (index) {
+      case 0:
+        nextPage = NewsPage();
+        break;
+      case 1:
+        nextPage = AppointmentsPage();
+        break;
+      case 2:
+        nextPage = ProductsPage();
+        break;
+      case 3:
+        nextPage = ProfilePage();
+        break;
+      default:
+        nextPage = NewsPage();
+    }
+
+    Navigator.of(context).pushReplacement(_noAnimationRoute(nextPage));
+  }
+
+  Route _noAnimationRoute(Widget page) {
+    return PageRouteBuilder(
+      pageBuilder: (context, animation, secondaryAnimation) => page,
+      transitionDuration: Duration.zero, // No animation duration
+      reverseTransitionDuration: Duration.zero, // No reverse animation duration
+    );
   }
 }
