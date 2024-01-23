@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:mojstomatolog_desktop/models/user.dart';
 
 part 'appointment.g.dart';
 
@@ -9,6 +10,8 @@ class Appointment {
   String? procedure;
   bool? isConfirmed;
   String? notes;
+  int? patientId;
+  User? patient;
 
   Appointment();
 

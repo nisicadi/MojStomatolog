@@ -41,7 +41,7 @@ dependencies:
   flutter_svg: ^2.0.9
   json_serializable: ^6.7.1
   json_annotation: ^4.8.1
-  build_runner: ^2.4.7
+  build_runner: ^2.4.8
   intl: ^0.18.0
 
 dev_dependencies:

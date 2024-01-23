@@ -11,6 +11,7 @@ class PageableListScreen extends StatefulWidget {
   final int totalCount;
   final Function(int) onPageChanged;
   final int currentPageIndex;
+  final bool isAddButtonHidden;
 
   const PageableListScreen({
     Key? key,
@@ -23,6 +24,7 @@ class PageableListScreen extends StatefulWidget {
     required this.totalCount,
     required this.onPageChanged,
     required this.currentPageIndex,
+    this.isAddButtonHidden = false,
   }) : super(key: key);
 
   @override
@@ -51,12 +53,10 @@ class _PageableListScreenState extends State<PageableListScreen> {
     List<DataColumn> fixedWidthColumns = widget.columns.map((column) {
       return DataColumn(
         label: ConstrainedBox(
-          constraints:
-              BoxConstraints(maxWidth: 200), // Fixed width for each column
+          constraints: BoxConstraints(maxWidth: 200),
           child: Text(
-            (column.label as Text)
-                .data!, // Correctly extract text from Text widget
-            overflow: TextOverflow.ellipsis, // Handle overflowing text
+            (column.label as Text).data!,
+            overflow: TextOverflow.ellipsis,
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
         ),
@@ -97,10 +97,11 @@ class _PageableListScreenState extends State<PageableListScreen> {
       padding: const EdgeInsets.all(8.0),
       child: Row(
         children: [
-          ElevatedButton(
-            onPressed: widget.addButtonCallback,
-            child: Text('Dodaj'),
-          ),
+          if (!widget.isAddButtonHidden)
+            ElevatedButton(
+              onPressed: widget.addButtonCallback,
+              child: Text('Dodaj'),
+            ),
           Spacer(),
           Expanded(
             child: Padding(

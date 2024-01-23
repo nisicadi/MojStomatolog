@@ -27,6 +27,7 @@ class _AddAppointmentModalState extends State<AddAppointmentModal> {
 
   DateTime? _selectedDate;
   bool _isEditing = false;
+  bool _isConfirmed = false;
 
   @override
   void initState() {
@@ -35,14 +36,18 @@ class _AddAppointmentModalState extends State<AddAppointmentModal> {
     if (widget.initialAppointment != null) {
       _isEditing = true;
       _loadInitialData(widget.initialAppointment!);
+      _isConfirmed = widget.initialAppointment!.isConfirmed ?? false;
     }
   }
 
   void _loadInitialData(Appointment appointment) {
     _selectedDate = appointment.appointmentDateTime;
-    _dateController.text = _selectedDate != null
-        ? DateFormat('dd.MM.yyyy').format(_selectedDate!)
-        : '';
+    if (_selectedDate != null) {
+      _dateController.text =
+          DateFormat('dd.MM.yyyy  HH:mm').format(_selectedDate!);
+    } else {
+      _dateController.text = '';
+    }
     _procedureController.text = appointment.procedure ?? '';
     _notesController.text = appointment.notes ?? '';
   }
@@ -61,6 +66,15 @@ class _AddAppointmentModalState extends State<AddAppointmentModal> {
                 _buildDateField(),
                 _buildTextField(_procedureController, 'Procedura'),
                 _buildTextField(_notesController, 'Komentar', isOptional: true),
+                CheckboxListTile(
+                  title: Text('Potvrđeno'),
+                  value: _isConfirmed,
+                  onChanged: (bool? newValue) {
+                    setState(() {
+                      _isConfirmed = newValue ?? false;
+                    });
+                  },
+                ),
               ],
             ),
           ),
@@ -82,8 +96,9 @@ class _AddAppointmentModalState extends State<AddAppointmentModal> {
               updatedAppointment.appointmentDateTime = _selectedDate;
               updatedAppointment.procedure = _procedureController.text;
               updatedAppointment.notes = _notesController.text;
-              updatedAppointment.isConfirmed =
-                  widget.initialAppointment?.isConfirmed ?? false;
+              updatedAppointment.patientId =
+                  widget.initialAppointment?.patientId;
+              updatedAppointment.isConfirmed = _isConfirmed;
 
               try {
                 final result = _isEditing
