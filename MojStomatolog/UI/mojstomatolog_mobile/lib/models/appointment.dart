@@ -9,6 +9,7 @@ class Appointment {
   String? procedure;
   bool? isConfirmed;
   String? notes;
+  int? patientId;
 
   Appointment();
 

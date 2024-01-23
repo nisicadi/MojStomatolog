@@ -4,6 +4,7 @@ import 'package:mojstomatolog_mobile/models/search/appointment_search.dart';
 import 'package:mojstomatolog_mobile/providers/company_settings_provider.dart';
 import 'package:mojstomatolog_mobile/models/appointment.dart';
 import 'package:mojstomatolog_mobile/providers/appointment_provider.dart';
+import 'package:mojstomatolog_mobile/utils/util.dart';
 import 'package:mojstomatolog_mobile/widgets/master_screen.dart';
 
 class AppointmentsPage extends StatefulWidget {
@@ -112,7 +113,7 @@ class _AppointmentsPageState extends State<AppointmentsPage> {
               ),
               TextFormField(
                 decoration: InputDecoration(
-                  labelText: 'Biljeske',
+                  labelText: 'Bilješke',
                 ),
                 onChanged: (value) {
                   notes = value;
@@ -153,6 +154,7 @@ class _AppointmentsPageState extends State<AppointmentsPage> {
     newAppointment.procedure = procedure;
     newAppointment.notes = notes;
     newAppointment.isConfirmed = false;
+    newAppointment.patientId = User.userId;
 
     try {
       final createdAppointment =
@@ -160,7 +162,6 @@ class _AppointmentsPageState extends State<AppointmentsPage> {
 
       if (createdAppointment != null) {
         print('Appointment created: ${createdAppointment.appointmentId}');
-
         await _fetchReservedAppointments(selectedDate);
       } else {
         print('Failed to create appointment.');
@@ -232,6 +233,23 @@ class _AppointmentsPageState extends State<AppointmentsPage> {
 
   Widget _buildAppointmentItem(
       BuildContext context, String appointmentTime, bool isReserved) {
+    final currentDateTime = DateTime.now();
+    final appointmentDateTime = DateTime(
+      selectedDate.year,
+      selectedDate.month,
+      selectedDate.day,
+      int.parse(appointmentTime.split(':')[0]),
+      int.parse(appointmentTime.split(':')[1]),
+    );
+
+    final isUserAppointment = reservedAppointments.any((appointment) =>
+        appointment.appointmentDateTime == appointmentDateTime &&
+        appointment.patientId == User.userId);
+
+    final isCancelable = currentDateTime.isBefore(appointmentDateTime) &&
+        isReserved &&
+        isUserAppointment; // Check if the appointment can be canceled
+
     return Column(
       children: [
         Divider(height: 1, thickness: 1),
@@ -239,13 +257,26 @@ class _AppointmentsPageState extends State<AppointmentsPage> {
           leading: Icon(Icons.access_time),
           title: Text(appointmentTime),
           trailing: isReserved
-              ? ElevatedButton(
-                  onPressed: null,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.grey,
-                  ),
-                  child: Text("Rezervisano"),
-                )
+              ? isUserAppointment
+                  ? ElevatedButton(
+                      onPressed: isCancelable
+                          ? () {
+                              _showCancellationConfirmationDialog(
+                                  context, appointmentDateTime);
+                            }
+                          : null,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.red,
+                      ),
+                      child: Text("Otkaži"),
+                    )
+                  : ElevatedButton(
+                      onPressed: null,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.grey,
+                      ),
+                      child: Text("Rezervisano"),
+                    )
               : ElevatedButton(
                   onPressed: () {
                     if (!isReserved) {
@@ -257,5 +288,47 @@ class _AppointmentsPageState extends State<AppointmentsPage> {
         ),
       ],
     );
+  }
+
+  void _showCancellationConfirmationDialog(
+      BuildContext context, DateTime appointmentDateTime) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Potvrda otkazivanja'),
+          content: Text('Jeste li sigurni da želite otkazati termin?'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Ne'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                await _handleCancelAppointment(appointmentDateTime);
+                Navigator.of(context).pop();
+              },
+              child: Text('Da'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _handleCancelAppointment(DateTime appointmentDateTime) async {
+    final appointmentToCancel = reservedAppointments.firstWhere((appointment) =>
+        appointment.appointmentDateTime == appointmentDateTime);
+
+    final appointmentId = appointmentToCancel.appointmentId;
+
+    try {
+      await _appointmentProvider.delete(appointmentId!);
+      await _fetchReservedAppointments(selectedDate);
+    } catch (e) {
+      print('Error canceling appointment: $e');
+    }
   }
 }
