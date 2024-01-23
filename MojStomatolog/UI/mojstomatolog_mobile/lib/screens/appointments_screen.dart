@@ -248,7 +248,7 @@ class _AppointmentsPageState extends State<AppointmentsPage> {
 
     final isCancelable = currentDateTime.isBefore(appointmentDateTime) &&
         isReserved &&
-        isUserAppointment; // Check if the appointment can be canceled
+        isUserAppointment;
 
     return Column(
       children: [

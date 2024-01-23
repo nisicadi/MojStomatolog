@@ -4,7 +4,7 @@ import 'package:mojstomatolog_mobile/models/search/article_search.dart';
 import 'package:mojstomatolog_mobile/widgets/master_screen.dart';
 import 'package:mojstomatolog_mobile/providers/article_provider.dart';
 import 'package:mojstomatolog_mobile/models/article.dart';
-import 'package:mojstomatolog_mobile/screens/article_screen.dart'; // Import ArticleScreen
+import 'package:mojstomatolog_mobile/screens/article_screen.dart';
 
 class NewsPage extends StatefulWidget {
   @override
