@@ -94,7 +94,7 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return MasterScreenWidget(
-      currentIndex: 3,
+      currentIndex: 4,
       child: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mojstomatolog_mobile/models/product.dart';
+import 'package:mojstomatolog_mobile/providers/cart_provider.dart';
+import 'package:provider/provider.dart';
 
 class ProductDetailsPage extends StatelessWidget {
   final Product product;
@@ -57,7 +59,12 @@ class ProductDetailsPage extends StatelessWidget {
                 backgroundColor: Theme.of(context).primaryColor,
                 padding: EdgeInsets.symmetric(vertical: 12),
               ),
-              onPressed: () {},
+              onPressed: () {
+                Provider.of<CartProvider>(context, listen: false)
+                    .addToCart(product);
+
+                Navigator.pop(context);
+              },
               child: Text(
                 'Dodaj u korpu',
                 style: TextStyle(fontSize: 16),

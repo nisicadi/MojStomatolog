@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mojstomatolog_mobile/screens/appointments_screen.dart';
+import 'package:mojstomatolog_mobile/screens/cart_screen.dart';
 import 'package:mojstomatolog_mobile/screens/news_screen.dart';
 import 'package:mojstomatolog_mobile/screens/products_screen.dart';
 import 'package:mojstomatolog_mobile/screens/profile_screen.dart';
@@ -45,6 +46,10 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
             label: 'Proizvodi',
           ),
           BottomNavigationBarItem(
+            icon: Icon(Icons.shopping_basket),
+            label: 'Korpa',
+          ),
+          BottomNavigationBarItem(
             icon: Icon(Icons.person),
             label: 'Profil',
           ),
@@ -71,6 +76,9 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
         nextPage = ProductsPage();
         break;
       case 3:
+        nextPage = CartPage();
+        break;
+      case 4:
         nextPage = ProfilePage();
         break;
       default:
