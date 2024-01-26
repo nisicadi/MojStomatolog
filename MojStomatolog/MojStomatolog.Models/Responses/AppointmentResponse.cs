@@ -1,6 +1,4 @@
-﻿using MojStomatolog.Models.Core;
-
-namespace MojStomatolog.Models.Responses
+﻿namespace MojStomatolog.Models.Responses
 {
     public class AppointmentResponse
     {
@@ -11,6 +9,6 @@ namespace MojStomatolog.Models.Responses
         public string Notes { get; set; } = null!;
         public int PatientId { get; set; }
 
-        public UserResponse Patient { get; set;}
+        public UserResponse Patient { get; set; } = null!;
     }
 }

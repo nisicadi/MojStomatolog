@@ -16,6 +16,8 @@ namespace MojStomatolog.Database
         public virtual DbSet<Appointment> Appointments { get; set; } = null!;
         public virtual DbSet<Article> Articles { get; set; } = null!;
         public virtual DbSet<CompanySetting> CompanySettings { get; set; } = null!;
+        public virtual DbSet<OrderItem> OrderItems { get; set; } = null!;
+        public virtual DbSet<Order> Orders { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

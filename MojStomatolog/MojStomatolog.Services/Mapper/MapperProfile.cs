@@ -3,6 +3,8 @@ using MojStomatolog.Models.Core;
 using MojStomatolog.Models.Requests.Appointment;
 using MojStomatolog.Models.Requests.Article;
 using MojStomatolog.Models.Requests.Employee;
+using MojStomatolog.Models.Requests.Order;
+using MojStomatolog.Models.Requests.OrderItem;
 using MojStomatolog.Models.Requests.Product;
 using MojStomatolog.Models.Requests.User;
 using MojStomatolog.Models.Responses;
@@ -50,6 +52,20 @@ namespace MojStomatolog.Services.Mapper
             CreateMap<AddArticleRequest, Article>();
             CreateMap<UpdateArticleRequest, Article>();
             CreateMap<Article, ArticleResponse>();
+
+            #endregion
+
+            #region OrderItem
+
+            CreateMap<AddOrderItemRequest, OrderItem>();
+            CreateMap<OrderItem, OrderItemResponse>();
+
+            #endregion
+
+            #region Order
+
+            CreateMap<AddOrderRequest, Order>();
+            CreateMap<Order, OrderResponse>();
 
             #endregion
         }

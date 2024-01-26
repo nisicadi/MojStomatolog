@@ -8,7 +8,7 @@ namespace MojStomatolog.Controllers
     [Route("[controller]")]
     public class CompanySettingsController : ControllerBase
     {
-        private ICompanySettingService _companySettingService;
+        private readonly ICompanySettingService _companySettingService;
         public CompanySettingsController(ICompanySettingService companySettingService)
         {
             _companySettingService = companySettingService;

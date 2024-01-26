@@ -12,6 +12,6 @@ namespace MojStomatolog.Models.Core
         public int PatientId { get; set; }
 
         [ForeignKey("PatientId")]
-        public User Patient { get; set; }
+        public User Patient { get; set; } = null!;
     }
 }
