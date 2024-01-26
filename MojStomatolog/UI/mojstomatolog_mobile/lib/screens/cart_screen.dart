@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:mojstomatolog_mobile/models/cart_item.dart';
 import 'package:mojstomatolog_mobile/providers/cart_provider.dart';
+import 'package:mojstomatolog_mobile/utils/util.dart';
 import 'package:provider/provider.dart';
 import 'package:mojstomatolog_mobile/widgets/master_screen.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class CartPage extends StatelessWidget {
   @override
@@ -12,6 +16,10 @@ class CartPage extends StatelessWidget {
     double calculateTotal() {
       return cartProvider.cart.items.fold(0,
           (total, item) => total + (item.product.price ?? 0) * item.quantity);
+    }
+
+    bool isCartEmpty() {
+      return cartProvider.cart.items.isEmpty;
     }
 
     return MasterScreenWidget(
@@ -78,13 +86,15 @@ class CartPage extends StatelessWidget {
               children: [
                 IconButton(
                   icon: Icon(Icons.delete_outline),
-                  onPressed: () => cartProvider.clearCart(),
+                  onPressed:
+                      isCartEmpty() ? null : () => cartProvider.clearCart(),
                   tooltip: 'Isprazni korpu',
                 ),
                 ElevatedButton.icon(
-                  onPressed: () {
-                    // Implement
-                  },
+                  onPressed: isCartEmpty()
+                      ? null
+                      : () => _showPaymentOptions(
+                          context, cartProvider, calculateTotal),
                   icon: Icon(Icons.payment),
                   label: Text('Nastavi na plaćanje'),
                 ),
@@ -105,5 +115,74 @@ class CartPage extends StatelessWidget {
       provider.removeFromCart(item.product);
     }
     provider.notifyListeners();
+  }
+
+  void _showPaymentOptions(BuildContext context, CartProvider cartProvider,
+      double Function() calculateTotal) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext bc) {
+        return Container(
+          child: Wrap(
+            children: <Widget>[
+              ListTile(
+                leading: Icon(Icons.credit_card),
+                title: Text('Kreditna kartica'),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  _proceedToCheckout(context, cartProvider, calculateTotal);
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _proceedToCheckout(BuildContext context,
+      CartProvider cartProvider, double Function() calculateTotal) async {
+    final totalAmount = (calculateTotal() * 100).toInt();
+    String stripeSecretKey = Constants.stripeSecretKey;
+
+    try {
+      final url = Uri.parse('https://api.stripe.com/v1/payment_intents');
+      final response = await http.post(
+        url,
+        headers: {
+          'Authorization': 'Bearer $stripeSecretKey',
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: {
+          'amount': totalAmount.toString(),
+          'currency': 'bam',
+          'payment_method_types[]': 'card'
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final paymentIntentData = json.decode(response.body);
+        await Stripe.instance.initPaymentSheet(
+          paymentSheetParameters: SetupPaymentSheetParameters(
+            paymentIntentClientSecret: paymentIntentData['client_secret'],
+            merchantDisplayName: 'Pero Peric',
+          ),
+        );
+
+        await Stripe.instance.presentPaymentSheet();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Plaćanje uspješno!')),
+        );
+        cartProvider.clearCart();
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Plaćanje neuspješno: ${response.body}')),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Greška: $e')),
+      );
+    }
   }
 }

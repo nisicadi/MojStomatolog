@@ -1,15 +1,18 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:localstorage/localstorage.dart';
 import 'package:mojstomatolog_mobile/providers/cart_provider.dart';
 import 'package:mojstomatolog_mobile/screens/login_screen.dart';
+import 'package:mojstomatolog_mobile/utils/util.dart';
 import 'package:provider/provider.dart';
 
 final LocalStorage localStorage = new LocalStorage('localstorage');
 
 void main() {
   HttpOverrides.global = MyHttpOverrides();
+  Stripe.publishableKey = Constants.stripePublishableKey;
+
   runApp(
     ChangeNotifierProvider(
       create: (context) => CartProvider(),

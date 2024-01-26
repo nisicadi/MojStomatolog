@@ -43,6 +43,7 @@ dependencies:
   build_runner: ^2.4.8
   provider: ^6.1.1
   collection: ^1.18.0
+  flutter_stripe: ^10.0.0
 
 dev_dependencies:
   flutter_test:
