@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mojstomatolog_mobile/providers/user_provider.dart';
 import 'package:mojstomatolog_mobile/screens/login_screen.dart';
+import 'package:mojstomatolog_mobile/screens/orders_screen.dart';
 import 'package:mojstomatolog_mobile/utils/util.dart';
 import 'package:mojstomatolog_mobile/widgets/master_screen.dart';
 
@@ -191,7 +192,9 @@ class _ProfilePageState extends State<ProfilePage> {
                       children: [
                         ElevatedButton(
                           onPressed: () {
-                            // Implement
+                            Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => OrdersPage(),
+                            ));
                           },
                           child: Text("Moje narudžbe"),
                         ),
