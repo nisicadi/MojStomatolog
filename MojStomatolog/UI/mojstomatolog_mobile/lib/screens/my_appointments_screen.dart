@@ -83,7 +83,6 @@ class _MyAppointmentsPageState extends State<MyAppointmentsPage> {
                 title: Text(
                     'Termin: ${DateFormat('dd.MM.yyyy HH:mm').format(appointment.appointmentDateTime ?? DateTime.now())}'),
                 subtitle: Text('Procedura: ${appointment.procedure}'),
-                // Add more details as needed
               ),
             );
           },

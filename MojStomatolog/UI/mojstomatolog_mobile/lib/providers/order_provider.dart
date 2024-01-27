@@ -16,8 +16,6 @@ class OrderProvider extends BaseProvider<Order> {
       final response =
           await http!.post(uri, headers: headers, body: jsonRequest);
 
-      print(response.body);
-
       if (isValidResponseCode(response)) {
         return true;
       } else {

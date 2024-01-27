@@ -64,7 +64,6 @@ class UserProvider extends BaseProvider<dynamic> {
           'Content-Type': 'application/json; charset=UTF-8',
         });
 
-    print(response?.statusCode);
     if (response?.statusCode == 200) {
       print("Registration success");
       return true;
