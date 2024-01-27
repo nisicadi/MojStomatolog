@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace MojStomatolog.Models.Core
 {
@@ -14,6 +15,7 @@ namespace MojStomatolog.Models.Core
         public Product Product { get; set; } = null!;
 
         [ForeignKey("OrderId")]
+        [JsonIgnore]
         public Order Order { get; set; } = null!;
     }
 }

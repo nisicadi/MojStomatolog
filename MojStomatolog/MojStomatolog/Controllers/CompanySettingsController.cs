@@ -1,9 +1,11 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MojStomatolog.Models.Core;
 using MojStomatolog.Services.Interfaces;
 
 namespace MojStomatolog.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("[controller]")]
     public class CompanySettingsController : ControllerBase

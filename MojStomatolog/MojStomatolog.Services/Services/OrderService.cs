@@ -47,7 +47,8 @@ namespace MojStomatolog.Services.Services
 
         public override IQueryable<Order> AddInclude(IQueryable<Order> query, OrderSearchObject? search = null)
         {
-            return query.Include(o => o.OrderItems);
+            return query.Include(x => x.OrderItems)
+                        .ThenInclude(x => x.Product);
         }
     }
 }

@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:mojstomatolog_mobile/models/cart_item.dart';
+import 'package:mojstomatolog_mobile/models/order.dart';
+import 'package:mojstomatolog_mobile/models/order_item.dart';
 import 'package:mojstomatolog_mobile/providers/cart_provider.dart';
+import 'package:mojstomatolog_mobile/providers/order_provider.dart';
 import 'package:mojstomatolog_mobile/utils/util.dart';
 import 'package:provider/provider.dart';
 import 'package:mojstomatolog_mobile/widgets/master_screen.dart';
@@ -173,6 +176,9 @@ class CartPage extends StatelessWidget {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Plaćanje uspješno!')),
         );
+
+        await _createOrder(cartProvider, totalAmount / 100);
+
         cartProvider.clearCart();
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -184,5 +190,23 @@ class CartPage extends StatelessWidget {
         SnackBar(content: Text('Greška: $e')),
       );
     }
+  }
+
+  Future<void> _createOrder(
+      CartProvider cartProvider, double totalAmount) async {
+    OrderProvider orderProvider = OrderProvider();
+
+    Order newOrder = Order();
+    newOrder.totalAmount = totalAmount;
+    newOrder.userId = User.userId;
+    newOrder.orderDate = DateTime.now();
+    newOrder.orderItems = cartProvider.cart.items.map((cartItem) {
+      return OrderItem()
+        ..productId = cartItem.product.productId
+        ..quantity = cartItem.quantity
+        ..price = cartItem.product.price;
+    }).toList();
+
+    await orderProvider.createOrder(newOrder);
   }
 }
