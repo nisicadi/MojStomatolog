@@ -9,6 +9,7 @@ class AppointmentSearchObject extends BaseSearchObject {
   DateTime? dateTimeFrom;
   DateTime? dateTimeTo;
   bool? isConfirmed;
+  int? patientId;
 
   AppointmentSearchObject();
 

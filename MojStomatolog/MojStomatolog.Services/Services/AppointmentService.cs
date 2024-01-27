@@ -44,6 +44,11 @@ namespace MojStomatolog.Services.Services
                 query = query.Where(x => x.IsConfirmed == search.IsConfirmed);
             }
 
+            if (search.PatientId is not null)
+            {
+                query = query.Where(x => x.PatientId == search.PatientId);
+            }
+
             return query;
         }
     }

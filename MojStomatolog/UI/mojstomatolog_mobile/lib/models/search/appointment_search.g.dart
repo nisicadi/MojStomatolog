@@ -18,7 +18,8 @@ AppointmentSearchObject _$AppointmentSearchObjectFromJson(
       ..dateTimeTo = json['dateTimeTo'] == null
           ? null
           : DateTime.parse(json['dateTimeTo'] as String)
-      ..isConfirmed = json['isConfirmed'] as bool?;
+      ..isConfirmed = json['isConfirmed'] as bool?
+      ..patientId = json['patientId'] as int?;
 
 Map<String, dynamic> _$AppointmentSearchObjectToJson(
         AppointmentSearchObject instance) =>
@@ -29,4 +30,5 @@ Map<String, dynamic> _$AppointmentSearchObjectToJson(
       'dateTimeFrom': instance.dateTimeFrom?.toIso8601String(),
       'dateTimeTo': instance.dateTimeTo?.toIso8601String(),
       'isConfirmed': instance.isConfirmed,
+      'patientId': instance.patientId,
     };
