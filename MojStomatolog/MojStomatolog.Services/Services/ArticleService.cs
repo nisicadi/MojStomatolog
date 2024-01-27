@@ -39,7 +39,7 @@ namespace MojStomatolog.Services.Services
                 query = query.Where(x => x.PublishDate <= search.DateTo);
             }   
 
-            return query;
+            return query.OrderByDescending(x => x.PublishDate);
         }
     }
 }

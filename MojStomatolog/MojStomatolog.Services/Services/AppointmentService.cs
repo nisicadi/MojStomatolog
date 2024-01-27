@@ -49,7 +49,7 @@ namespace MojStomatolog.Services.Services
                 query = query.Where(x => x.PatientId == search.PatientId);
             }
 
-            return query;
+            return query.OrderByDescending(x => x.AppointmentDateTime);
         }
     }
 }

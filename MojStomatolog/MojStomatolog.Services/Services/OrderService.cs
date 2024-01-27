@@ -42,7 +42,7 @@ namespace MojStomatolog.Services.Services
                 query = query.Where(x => x.UserId == search.UserId);
             }
 
-            return query;
+            return query.OrderByDescending(x => x.OrderDate);
         }
 
         public override IQueryable<Order> AddInclude(IQueryable<Order> query, OrderSearchObject? search = null)
