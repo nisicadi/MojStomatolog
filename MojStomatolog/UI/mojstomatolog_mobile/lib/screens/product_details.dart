@@ -3,8 +3,10 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:mojstomatolog_mobile/models/product.dart';
 import 'package:mojstomatolog_mobile/models/rating.dart';
 import 'package:mojstomatolog_mobile/providers/cart_provider.dart';
+import 'package:mojstomatolog_mobile/providers/product_provider.dart';
 import 'package:mojstomatolog_mobile/providers/rating_provider.dart';
 import 'package:mojstomatolog_mobile/utils/util.dart';
+import 'package:mojstomatolog_mobile/widgets/recommended_product_card.dart';
 import 'package:provider/provider.dart';
 
 class ProductDetailsPage extends StatefulWidget {
@@ -20,66 +22,69 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
   double averageRating = 0.0;
   double userRating = 0.0;
   int? userRatingId;
+  List<Product> recommendedProducts = [];
+  bool isLoadingRecommended = true;
 
   @override
   void initState() {
     super.initState();
     _loadAverageRating();
     _loadUserRating();
+    _loadRecommendedProducts();
   }
 
   void _loadAverageRating() async {
     try {
-      var ratingProvider = RatingProvider();
-      double rating =
-          await ratingProvider.fetchAverageRating(widget.product.productId!);
-      setState(() {
-        averageRating = rating;
-      });
+    var ratingProvider = RatingProvider();
+    double rating =
+        await ratingProvider.fetchAverageRating(widget.product.productId!);
+    setState(() {
+      averageRating = rating;
+    });
     } catch (e) {
       print('Error fetching rating: $e');
-    }
+  }
   }
 
   void _loadUserRating() async {
     try {
-      var ratingProvider = RatingProvider();
-      int userId = User.userId!;
+    var ratingProvider = RatingProvider();
+    int userId = User.userId!;
       var userRatingData = await ratingProvider.fetchUserRating(
           userId, widget.product.productId!);
-      if (userRatingData != null) {
-        setState(() {
-          userRating = userRatingData.ratingValue!.toDouble();
-          userRatingId = userRatingData.ratingId;
-        });
-      }
+    if (userRatingData != null) {
+      setState(() {
+        userRating = userRatingData.ratingValue!.toDouble();
+        userRatingId = userRatingData.ratingId;
+      });
+    }
     } catch (e) {
       print('Error fetching user rating: $e');
-    }
+  }
   }
 
   void _submitRating() async {
     try {
-      var ratingProvider = RatingProvider();
-      int userId = User.userId!;
+    var ratingProvider = RatingProvider();
+    int userId = User.userId!;
 
-      Rating newRating = Rating()
-        ..ratingId = userRatingId
-        ..productId = widget.product.productId
-        ..userId = userId
-        ..ratingValue = userRating.toInt();
+    Rating newRating = Rating()
+      ..ratingId = userRatingId
+      ..productId = widget.product.productId
+      ..userId = userId
+      ..ratingValue = userRating.toInt();
 
-      if (userRatingId == null) {
-        await ratingProvider.insert(newRating.toJson());
-      } else {
-        await ratingProvider.update(newRating.ratingId!, newRating.toJson());
-      }
+    if (userRatingId == null) {
+      await ratingProvider.insert(newRating.toJson());
+    } else {
+      await ratingProvider.update(newRating.ratingId!, newRating.toJson());
+    }
 
-      _loadUserRating();
-      _loadAverageRating();
+    _loadUserRating();
+    _loadAverageRating();
     } catch (e) {
       print('Error submitting rating: $e');
-    }
+  }
   }
 
   Widget _buildRatingStars(double rating) {
@@ -92,6 +97,68 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
         );
       }),
     );
+  }
+
+  Widget _buildRecommendedProductsSection() {
+    if (isLoadingRecommended) {
+      return Center(child: CircularProgressIndicator());
+    }
+
+    if (recommendedProducts.isEmpty) {
+      return Text('Nema preporučenih proizvoda', textAlign: TextAlign.center);
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8.0),
+          child: Text('Preporučeni proizvodi:',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+        ),
+        SizedBox(
+          height: 200,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: recommendedProducts.length,
+            itemBuilder: (context, index) {
+              var product = recommendedProducts[index];
+              return _buildProductCard(product);
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildProductCard(Product product) {
+    return RecommendedProductCard(
+      product: product,
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => ProductDetailsPage(product: product)),
+        );
+      },
+    );
+  }
+
+  void _loadRecommendedProducts() async {
+    try {
+      var productProvider = ProductProvider();
+      var products = await productProvider
+          .getRecommendedProducts(widget.product.productId!);
+      setState(() {
+        recommendedProducts = products;
+        isLoadingRecommended = false;
+      });
+    } catch (e) {
+      print('Error fetching recommended products: $e');
+      setState(() {
+        isLoadingRecommended = false;
+      });
+    }
   }
 
   @override
@@ -191,6 +258,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                 style: TextStyle(fontSize: 16),
               ),
             ),
+            _buildRecommendedProductsSection(),
           ],
         ),
       ),
