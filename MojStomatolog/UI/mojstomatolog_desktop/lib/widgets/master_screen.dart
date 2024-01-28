@@ -124,7 +124,21 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
     }
 
     Navigator.of(context).push(
-      MaterialPageRoute(builder: (context) => screen),
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) => screen,
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          var begin = 0.0;
+          var end = 1.0;
+          var tween = Tween(begin: begin, end: end);
+          var fadeAnimation = animation.drive(tween);
+
+          return FadeTransition(
+            opacity: fadeAnimation,
+            child: child,
+          );
+        },
+        transitionDuration: Duration(milliseconds: 150),
+      ),
     );
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mojstomatolog_desktop/providers/company_settings_provider.dart';
+import 'package:mojstomatolog_desktop/providers/product_provider.dart';
 import 'package:mojstomatolog_desktop/providers/user_provider.dart';
 import 'package:mojstomatolog_desktop/utils/util.dart';
 import 'package:mojstomatolog_desktop/widgets/master_screen.dart';
@@ -15,6 +16,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   bool isEditingProfile = false;
   bool isEditingCompany = false;
 
+  final ProductProvider _productProvider = ProductProvider();
   final UserProvider _userProvider = UserProvider();
   final CompanySettingsProvider _companySettingsProvider =
       CompanySettingsProvider();
@@ -102,6 +104,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
       workHoursToController.text = initialWorkHoursTo;
       companyFormKey.currentState?.reset();
     });
+  }
+
+  void _retrainModel() async {
+    try {
+      await _productProvider.retrainModel();
+    } catch (e) {
+      print('Error retraining model: $e');
+    }
   }
 
   @override
@@ -397,6 +407,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           ),
                         ],
                       ),
+                    SizedBox(height: 32),
+                    ElevatedButton(
+                      onPressed: _retrainModel,
+                      child: Text('Ponovo istreniraj model preporuke'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue,
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                      ),
+                    ),
+                    SizedBox(height: 16),
                   ],
                 ),
               ),
