@@ -36,11 +36,7 @@ abstract class BaseProvider<T> with ChangeNotifier {
     var response = await http!.get(url, headers: headers);
 
     if (isValidResponseCode(response)) {
-      // var data = jsonDecode(response.body);
-      // Future<T>.from(); fromJson(data);
-
       return fromJson(jsonDecode(response.body));
-      // return data.map((x) => fromJson(x)).cast<T>().toList();
     } else {
       throw Exception("Exception... handle this gracefully");
     }

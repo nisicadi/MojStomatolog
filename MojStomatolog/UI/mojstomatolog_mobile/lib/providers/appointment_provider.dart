@@ -1,5 +1,4 @@
 import 'package:mojstomatolog_mobile/models/appointment.dart';
-
 import 'base_provider.dart';
 
 class AppointmentProvider extends BaseProvider<Appointment> {

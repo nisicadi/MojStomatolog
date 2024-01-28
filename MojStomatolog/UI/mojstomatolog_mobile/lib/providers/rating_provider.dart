@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:mojstomatolog_mobile/models/rating.dart';
 import 'base_provider.dart';
 
@@ -9,7 +8,7 @@ class RatingProvider extends BaseProvider<Rating> {
   Future<double> fetchAverageRating(int productId) async {
     final headers = await createHeaders();
     final response = await http!.get(
-        Uri.parse('https://10.0.2.2:7043/Rating/$productId/averageRating'),
+        Uri.parse('${baseUrl}Rating/$productId/averageRating'),
         headers: headers);
 
     print(response.body);
@@ -24,8 +23,7 @@ class RatingProvider extends BaseProvider<Rating> {
   Future<Rating?> fetchUserRating(int userId, int productId) async {
     final headers = await createHeaders();
     final response = await http!.get(
-        Uri.parse(
-            'https://10.0.2.2:7043/Rating/user/$userId/product/$productId'),
+        Uri.parse('${baseUrl}Rating/user/$userId/product/$productId'),
         headers: headers);
 
     if (response.statusCode == 200 && response.body.isNotEmpty) {

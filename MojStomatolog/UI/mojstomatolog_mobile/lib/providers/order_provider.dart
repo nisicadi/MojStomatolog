@@ -7,8 +7,7 @@ class OrderProvider extends BaseProvider<Order> {
 
   Future<bool> createOrder(Order request) async {
     try {
-      const url = 'https://10.0.2.2:7043/Order';
-      final uri = Uri.parse(url);
+      final uri = Uri.parse('${baseUrl}Order');
 
       final headers = await createHeaders();
       final jsonRequest = jsonEncode(request.toJson());
