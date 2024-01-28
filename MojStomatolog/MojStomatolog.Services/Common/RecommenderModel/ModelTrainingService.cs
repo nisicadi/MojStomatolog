@@ -10,18 +10,18 @@ namespace MojStomatolog.Services.Common.RecommenderModel
     {
         private readonly IServiceScopeFactory _scopeFactory;
         private readonly MLContext _mlContext;
-        private ITransformer _model;
+        private ITransformer? _model;
 
         public ModelTrainingService(IServiceScopeFactory scopeFactory)
         {
-            _scopeFactory = scopeFactory;
+            _scopeFactory = scopeFactory ?? throw new ArgumentNullException(nameof(scopeFactory));
             _mlContext = new MLContext();
         }
 
         public void TrainModel()
         {
             using var scope = _scopeFactory.CreateScope();
-            var dbContext = scope.ServiceProvider.GetRequiredService<MojStomatologContext>();
+            var dbContext = scope.ServiceProvider.GetRequiredService<MojStomatologContext>() ?? throw new InvalidOperationException("Database context cannot be null.");
 
             var tmpData = dbContext.Orders
                 .Include(x => x.OrderItems)
@@ -55,15 +55,17 @@ namespace MojStomatolog.Services.Common.RecommenderModel
 
             var trainData = _mlContext.Data.LoadFromEnumerable(data);
 
-            MatrixFactorizationTrainer.Options options = new MatrixFactorizationTrainer.Options();
-            options.MatrixColumnIndexColumnName = nameof(ProductEntry.ProductId);
-            options.MatrixRowIndexColumnName = nameof(ProductEntry.CoPurchaseProductId);
-            options.LabelColumnName = "Label";
-            options.LossFunction = MatrixFactorizationTrainer.LossFunctionType.SquareLossOneClass;
-            options.Alpha = 0.01;
-            options.Lambda = 0.025;
-            options.NumberOfIterations = 100;
-            options.C = 0.00001;
+            var options = new MatrixFactorizationTrainer.Options
+            {
+                MatrixColumnIndexColumnName = nameof(ProductEntry.ProductId),
+                MatrixRowIndexColumnName = nameof(ProductEntry.CoPurchaseProductId),
+                LabelColumnName = "Label",
+                LossFunction = MatrixFactorizationTrainer.LossFunctionType.SquareLossOneClass,
+                Alpha = 0.01,
+                Lambda = 0.025,
+                NumberOfIterations = 100,
+                C = 0.00001
+            };
 
             var est = _mlContext.Recommendation().Trainers.MatrixFactorization(options);
             _model = est.Fit(trainData);
@@ -75,7 +77,8 @@ namespace MojStomatolog.Services.Common.RecommenderModel
             {
                 TrainModel();
             }
-            return _model;
+
+            return _model ?? throw new InvalidOperationException("Model training failed, model is null.");
         }
 
         public void RetrainModel()
