@@ -12,9 +12,10 @@ namespace MojStomatolog.Services.Services
 {
     public class OrderService : BaseService<OrderResponse, Order, OrderSearchObject>, IOrderService
     {
-
-        public OrderService(MojStomatologContext context, IMapper mapper) : base(context, mapper)
+        private readonly MessageSender _messageSender;
+        public OrderService(MojStomatologContext context, IMapper mapper, MessageSender messageSender) : base(context, mapper)
         {
+            _messageSender = messageSender;
         }
 
         public async Task<bool> CreateOrder(AddOrderRequest request)
@@ -26,6 +27,8 @@ namespace MojStomatolog.Services.Services
 
                 Context.Orders.Add(order);
                 await Context.SaveChangesAsync();
+
+                _messageSender.SendMessage("Narudžba uspješno kreirana!");
 
                 return true;
             }
