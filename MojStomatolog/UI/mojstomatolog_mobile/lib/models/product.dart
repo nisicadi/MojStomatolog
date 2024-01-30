@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:mojstomatolog_mobile/models/product_category.dart';
 
 part 'product.g.dart';
 
@@ -7,10 +8,12 @@ class Product {
   int? productId;
   String? name;
   String? description;
-  String? category;
+  int? productCategoryId;
   double? price;
   String? imageUrl;
   bool? active;
+
+  ProductCategory? productCategory;
 
   Product();
 

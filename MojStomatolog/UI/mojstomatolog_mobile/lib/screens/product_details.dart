@@ -35,56 +35,56 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
 
   void _loadAverageRating() async {
     try {
-    var ratingProvider = RatingProvider();
-    double rating =
-        await ratingProvider.fetchAverageRating(widget.product.productId!);
-    setState(() {
-      averageRating = rating;
-    });
+      var ratingProvider = RatingProvider();
+      double rating =
+          await ratingProvider.fetchAverageRating(widget.product.productId!);
+      setState(() {
+        averageRating = rating;
+      });
     } catch (e) {
       print('Error fetching rating: $e');
-  }
+    }
   }
 
   void _loadUserRating() async {
     try {
-    var ratingProvider = RatingProvider();
-    int userId = User.userId!;
+      var ratingProvider = RatingProvider();
+      int userId = User.userId!;
       var userRatingData = await ratingProvider.fetchUserRating(
           userId, widget.product.productId!);
-    if (userRatingData != null) {
-      setState(() {
-        userRating = userRatingData.ratingValue!.toDouble();
-        userRatingId = userRatingData.ratingId;
-      });
-    }
+      if (userRatingData != null) {
+        setState(() {
+          userRating = userRatingData.ratingValue!.toDouble();
+          userRatingId = userRatingData.ratingId;
+        });
+      }
     } catch (e) {
       print('Error fetching user rating: $e');
-  }
+    }
   }
 
   void _submitRating() async {
     try {
-    var ratingProvider = RatingProvider();
-    int userId = User.userId!;
+      var ratingProvider = RatingProvider();
+      int userId = User.userId!;
 
-    Rating newRating = Rating()
-      ..ratingId = userRatingId
-      ..productId = widget.product.productId
-      ..userId = userId
-      ..ratingValue = userRating.toInt();
+      Rating newRating = Rating()
+        ..ratingId = userRatingId
+        ..productId = widget.product.productId
+        ..userId = userId
+        ..ratingValue = userRating.toInt();
 
-    if (userRatingId == null) {
-      await ratingProvider.insert(newRating.toJson());
-    } else {
-      await ratingProvider.update(newRating.ratingId!, newRating.toJson());
-    }
+      if (userRatingId == null) {
+        await ratingProvider.insert(newRating.toJson());
+      } else {
+        await ratingProvider.update(newRating.ratingId!, newRating.toJson());
+      }
 
-    _loadUserRating();
-    _loadAverageRating();
+      _loadUserRating();
+      _loadAverageRating();
     } catch (e) {
       print('Error submitting rating: $e');
-  }
+    }
   }
 
   Widget _buildRatingStars(double rating) {
@@ -198,7 +198,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
             Text(widget.product.description ?? 'Nema opisa'),
             SizedBox(height: 8),
             Text(
-              'Kategorija: ${widget.product.category ?? 'N/A'}',
+              'Kategorija: ${widget.product.productCategory!.name ?? 'N/A'}',
               style: TextStyle(fontStyle: FontStyle.italic),
             ),
             SizedBox(height: 8),
