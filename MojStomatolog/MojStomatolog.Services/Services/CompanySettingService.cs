@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using MojStomatolog.Database;
 using MojStomatolog.Models.Core;
 using MojStomatolog.Services.Interfaces;
@@ -8,13 +7,11 @@ namespace MojStomatolog.Services.Services
 {
     public class CompanySettingService : ICompanySettingService
     {
-        private MojStomatologContext _context;
-        private IMapper _mapper { get; }
+        private readonly MojStomatologContext _context;
 
-        public CompanySettingService(MojStomatologContext context, IMapper mapper)
+        public CompanySettingService(MojStomatologContext context)
         {
             _context = context;
-            _mapper = mapper;
         }
         public async Task<CompanySetting> AddOrUpdate(CompanySetting request)
         {
