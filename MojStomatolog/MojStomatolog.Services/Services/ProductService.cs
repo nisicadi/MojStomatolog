@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.ML;
 using MojStomatolog.Database;
 using MojStomatolog.Models.Core;
@@ -79,6 +80,11 @@ namespace MojStomatolog.Services.Services
             }
 
             return query;
+        }
+
+        public override IQueryable<Product> AddInclude(IQueryable<Product> query, ProductSearchObject? search = null)
+        {
+            return query.Include(x => x.ProductCategory);
         }
     }
 }

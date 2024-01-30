@@ -53,6 +53,9 @@ namespace MojStomatolog.Services.Common.RecommenderModel
                 }
             }
 
+            if (!data.Any())
+                return;
+
             var trainData = _mlContext.Data.LoadFromEnumerable(data);
 
             var options = new MatrixFactorizationTrainer.Options
