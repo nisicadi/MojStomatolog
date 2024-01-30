@@ -140,7 +140,14 @@ class _ArticleListScreenState extends State<ArticleListScreen> {
         cells: [
           DataCell(Text(article.articleId.toString())),
           DataCell(Text(article.title ?? '')),
-          DataCell(Text(article.summary ?? '')),
+          DataCell(ConstrainedBox(
+            constraints: BoxConstraints(maxWidth: 200),
+            child: Text(
+              article.summary ?? '',
+              overflow: TextOverflow.ellipsis,
+              softWrap: false,
+            ),
+          )),
           DataCell(Text(DateFormat('dd.MM.yyyy')
               .format(article.publishDate ?? DateTime.now()))),
           DataCell(_buildIconButton(Icons.edit, 'Uredi', () {
