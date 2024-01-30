@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using MojStomatolog;
 using MojStomatolog.Database;
-using MojStomatolog.Services.Common;
 using MojStomatolog.Services.Common.RecommenderModel;
 using MojStomatolog.Services.Interfaces;
 using MojStomatolog.Services.Services;
@@ -13,11 +12,6 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddSingleton<ModelTrainingService>();
-builder.Services.AddScoped<MessageSender>(serviceProvider =>
-{
-    var configuration = serviceProvider.GetRequiredService<IConfiguration>();
-    return new MessageSender(configuration);
-});
 
 builder.Services.AddTransient<IUserService, UserService>();
 builder.Services.AddTransient<IEmployeeService, EmployeeService>();

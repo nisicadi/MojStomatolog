@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using MojStomatolog.Database;
+using MojStomatolog.Models;
 using MojStomatolog.Models.Core;
 using MojStomatolog.Models.Requests.Order;
 using MojStomatolog.Models.Responses;
@@ -12,10 +13,8 @@ namespace MojStomatolog.Services.Services
 {
     public class OrderService : BaseService<OrderResponse, Order, OrderSearchObject>, IOrderService
     {
-        private readonly MessageSender _messageSender;
-        public OrderService(MojStomatologContext context, IMapper mapper, MessageSender messageSender) : base(context, mapper)
+        public OrderService(MojStomatologContext context, IMapper mapper) : base(context, mapper)
         {
-            _messageSender = messageSender;
         }
 
         public async Task<bool> CreateOrder(AddOrderRequest request)
@@ -28,7 +27,18 @@ namespace MojStomatolog.Services.Services
                 Context.Orders.Add(order);
                 await Context.SaveChangesAsync();
 
-                _messageSender.SendMessage("Narudžba uspješno kreirana!");
+                var user = await Context.Users.FindAsync(request.UserId);
+                if (user != null && !string.IsNullOrEmpty(user.Email))
+                {
+                    var sendEmailRequest = new SendEmailRequest
+                    {
+                        Email = user.Email,
+                        Subject = "Narudžba kreirana",
+                        Message = "Vaša narudžba je uspješno kreirana."
+                    };
+
+                    MessageSender.SendMessage(sendEmailRequest);
+                }
 
                 return true;
             }
