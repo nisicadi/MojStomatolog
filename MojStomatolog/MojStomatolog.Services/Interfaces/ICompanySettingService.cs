@@ -6,5 +6,6 @@ namespace MojStomatolog.Services.Interfaces
     {
         Task<CompanySetting> AddOrUpdate(CompanySetting request);
         Task<CompanySetting> GetBySettingName(string name);
+        Task<byte[]> GetPdfReportBytes();
     }
 }

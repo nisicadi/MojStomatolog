@@ -23,9 +23,9 @@ namespace MojStomatolog.Controllers
             {
                 return Ok(await _companySettingService.GetBySettingName(settingName));
             }
-            catch (Exception e)
+            catch
             {
-                return BadRequest(e);
+                return BadRequest("An error occurred while processing your request.");
             }
         }
 
@@ -36,9 +36,24 @@ namespace MojStomatolog.Controllers
             {
                 return Ok(await _companySettingService.AddOrUpdate(request));
             }
-            catch (Exception e)
+            catch
             {
-                return BadRequest(e);
+                return BadRequest("An error occurred while processing your request.");
+            }
+        }
+
+        [AllowAnonymous]
+        [HttpGet("GeneratePDF")]
+        public async Task<ActionResult> GetPdfReport()
+        {
+            try
+            {
+                var pdfBytes = await _companySettingService.GetPdfReportBytes();
+                return File(pdfBytes, "application/pdf", "Izvjestaj.pdf");
+            }
+            catch
+            {
+                return BadRequest("An error occurred while generating the PDF report.");
             }
         }
     }
