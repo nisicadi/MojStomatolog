@@ -1,118 +1,110 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:mojstomatolog_desktop/models/order.dart';
 import 'package:mojstomatolog_desktop/providers/company_settings_provider.dart';
+import 'package:mojstomatolog_desktop/providers/order_provider.dart';
 import 'package:mojstomatolog_desktop/providers/product_provider.dart';
 import 'package:mojstomatolog_desktop/providers/user_provider.dart';
-import 'package:mojstomatolog_desktop/providers/order_provider.dart';
 import 'package:mojstomatolog_desktop/utils/util.dart';
 import 'package:mojstomatolog_desktop/widgets/master_screen.dart';
-import 'package:mojstomatolog_desktop/models/order.dart';
-import 'package:intl/intl.dart';
 
 class SettingsScreen extends StatefulWidget {
-  const SettingsScreen({Key? key});
+  const SettingsScreen({Key? key}) : super(key: key);
 
   @override
   _SettingsScreenState createState() => _SettingsScreenState();
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  bool isEditingProfile = false;
-  bool isEditingCompany = false;
-
-  final ProductProvider _productProvider = ProductProvider();
-  final UserProvider _userProvider = UserProvider();
-  final CompanySettingsProvider _companySettingsProvider =
-      CompanySettingsProvider();
-  final OrderProvider _orderProvider = OrderProvider();
+  bool isEditingProfile = false, isEditingCompany = false;
+  final _productProvider = ProductProvider();
+  final _userProvider = UserProvider();
+  final _companySettingsProvider = CompanySettingsProvider();
+  final _orderProvider = OrderProvider();
   List<Order> _orders = [];
 
-  TextEditingController nameController = TextEditingController();
-  TextEditingController surnameController = TextEditingController();
-  TextEditingController emailController = TextEditingController();
-  TextEditingController phoneNumberController = TextEditingController();
-  TextEditingController workHoursFromController = TextEditingController();
-  TextEditingController workHoursToController = TextEditingController();
+  final _nameController = TextEditingController();
+  final _surnameController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _phoneNumberController = TextEditingController();
+  final _workHoursFromController = TextEditingController();
+  final _workHoursToController = TextEditingController();
 
-  GlobalKey<FormState> profileFormKey = GlobalKey<FormState>();
-  GlobalKey<FormState> companyFormKey = GlobalKey<FormState>();
+  final _profileFormKey = GlobalKey<FormState>();
+  final _companyFormKey = GlobalKey<FormState>();
 
-  String initialName = User.firstName ?? '';
-  String initialSurname = User.lastName ?? '';
-  String initialEmail = User.email ?? '';
-  String initialPhoneNumber = User.number ?? '';
-
-  String initialWorkHoursFrom = '';
-  String initialWorkHoursTo = '';
+  String _initialName = User.firstName ?? '';
+  String _initialSurname = User.lastName ?? '';
+  String _initialEmail = User.email ?? '';
+  String _initialPhoneNumber = User.number ?? '';
+  String _initialWorkHoursFrom = '';
+  String _initialWorkHoursTo = '';
 
   @override
   void initState() {
     super.initState();
+    _initializeFields();
+  }
 
-    nameController.text = initialName;
-    surnameController.text = initialSurname;
-    emailController.text = initialEmail;
-    phoneNumberController.text = initialPhoneNumber;
-
+  void _initializeFields() {
+    _nameController.text = _initialName;
+    _surnameController.text = _initialSurname;
+    _emailController.text = _initialEmail;
+    _phoneNumberController.text = _initialPhoneNumber;
     _initializeWorkHours();
     _loadOrders();
   }
 
-  void _initializeWorkHours() async {
+  Future<void> _initializeWorkHours() async {
     try {
       final companySettings =
           await _companySettingsProvider.getByName('WorkingHours');
-
       if (companySettings['settingValue'] != null) {
         final workHours = companySettings['settingValue'].split('-');
-
         if (workHours.length == 2) {
           setState(() {
-            initialWorkHoursFrom = workHours[0];
-            initialWorkHoursTo = workHours[1];
+            _initialWorkHoursFrom = workHours[0];
+            _initialWorkHoursTo = workHours[1];
           });
         }
       }
     } catch (e) {
-      setState(() {
-        initialWorkHoursFrom = '08:00';
-        initialWorkHoursTo = '17:00';
-      });
+      print("Error initializing work hours: $e");
     }
-
-    workHoursFromController.text = initialWorkHoursFrom;
-    workHoursToController.text = initialWorkHoursTo;
+    _workHoursFromController.text = _initialWorkHoursFrom;
+    _workHoursToController.text = _initialWorkHoursTo;
   }
 
-  void _updateWorkHours() async {
+  Future<void> _updateWorkHours() async {
     final newWorkHours =
-        '${workHoursFromController.text}-${workHoursToController.text}';
+        '${_workHoursFromController.text}-${_workHoursToController.text}';
     await _companySettingsProvider.addOrUpdate('WorkingHours', newWorkHours);
   }
 
-  bool isTimeFormatValid(String value) {
+  bool _isTimeFormatValid(String value) {
     final timePattern = RegExp(r'^\d{2}:\d{2}$');
     return timePattern.hasMatch(value);
   }
 
-  void resetProfileFields() {
+  void _resetProfileFields() {
     setState(() {
-      nameController.text = initialName;
-      surnameController.text = initialSurname;
-      emailController.text = initialEmail;
-      phoneNumberController.text = initialPhoneNumber;
-      profileFormKey.currentState?.reset();
+      _nameController.text = _initialName;
+      _surnameController.text = _initialSurname;
+      _emailController.text = _initialEmail;
+      _phoneNumberController.text = _initialPhoneNumber;
+      _profileFormKey.currentState?.reset();
     });
   }
 
-  void resetCompanyFields() {
+  void _resetCompanyFields() {
     setState(() {
-      workHoursFromController.text = initialWorkHoursFrom;
-      workHoursToController.text = initialWorkHoursTo;
-      companyFormKey.currentState?.reset();
+      _workHoursFromController.text = _initialWorkHoursFrom;
+      _workHoursToController.text = _initialWorkHoursTo;
+      _companyFormKey.currentState?.reset();
     });
   }
 
-  void _retrainModel() async {
+  Future<void> _retrainModel() async {
     try {
       await _productProvider.retrainModel();
     } catch (e) {
@@ -123,11 +115,135 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Future<void> _loadOrders() async {
     try {
       final orders = await _orderProvider.get();
-      setState(() {
-        _orders = orders.results;
-      });
+      setState(() => _orders = orders.results);
     } catch (e) {
       print('Error loading orders: $e');
+    }
+  }
+
+  Widget _buildProfileSettingsForm() {
+    return Form(
+      key: _profileFormKey,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildTextField(_nameController, 'Ime', isEditing: isEditingProfile),
+          _buildTextField(_surnameController, 'Prezime',
+              isEditing: isEditingProfile),
+          _buildTextField(_emailController, 'Email',
+              isEditing: isEditingProfile, isEmail: true),
+          _buildTextField(_phoneNumberController, 'Broj telefona',
+              isEditing: isEditingProfile, isNumber: true),
+          _buildEditingActions(isEditingProfile, _toggleProfileEditing,
+              _resetProfileFields, _saveProfile),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCompanySettingsForm() {
+    return Form(
+      key: _companyFormKey,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildTextField(_workHoursFromController, 'Radno vrijeme - Od',
+              isEditing: isEditingCompany, isTime: true),
+          _buildTextField(_workHoursToController, 'Radno vrijeme - Do',
+              isEditing: isEditingCompany, isTime: true),
+          _buildEditingActions(isEditingCompany, _toggleCompanyEditing,
+              _resetCompanyFields, _updateWorkHours),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTextField(TextEditingController controller, String label,
+      {bool isEditing = false,
+      bool isEmail = false,
+      bool isNumber = false,
+      bool isTime = false}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: TextFormField(
+        controller: controller,
+        readOnly: !isEditing,
+        decoration:
+            InputDecoration(labelText: label, border: OutlineInputBorder()),
+        keyboardType: isEmail
+            ? TextInputType.emailAddress
+            : isNumber
+                ? TextInputType.number
+                : TextInputType.text,
+        validator: (value) => _validateField(value,
+            isEmail: isEmail, isNumber: isNumber, isTime: isTime),
+        onTap: () => !isEditing
+            ? FocusScope.of(context).requestFocus(FocusNode())
+            : null,
+      ),
+    );
+  }
+
+  String? _validateField(String? value,
+      {bool isEmail = false, bool isNumber = false, bool isTime = false}) {
+    if (value == null || value.isEmpty) return 'Polje ne smije biti prazno';
+    if (isEmail) {
+      final emailRegex =
+          RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
+      if (!emailRegex.hasMatch(value)) return 'Neispravan email';
+    }
+    if (isNumber && (!value.contains(RegExp(r'^[0-9]+$')) || value.length < 6))
+      return 'Unesite valjan broj';
+    if (isTime && !_isTimeFormatValid(value))
+      return 'Neispravan format vremena (XX:XX)';
+    return null;
+  }
+
+  Widget _buildEditingActions(bool isEditing, VoidCallback toggleEdit,
+      VoidCallback resetFields, VoidCallback saveChanges) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 16.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          if (!isEditing)
+            ElevatedButton(onPressed: toggleEdit, child: Text('Uredi')),
+          if (isEditing) ...[
+            ElevatedButton(onPressed: resetFields, child: Text('Odustani')),
+            SizedBox(width: 8),
+            ElevatedButton(onPressed: saveChanges, child: Text('Spasi')),
+          ],
+        ],
+      ),
+    );
+  }
+
+  void _toggleProfileEditing() =>
+      setState(() => isEditingProfile = !isEditingProfile);
+  void _toggleCompanyEditing() =>
+      setState(() => isEditingCompany = !isEditingCompany);
+
+  void _saveProfile() {
+    if (_profileFormKey.currentState?.validate() ?? false) {
+      setState(() => isEditingProfile = false);
+      _initialName = _nameController.text;
+      _initialSurname = _surnameController.text;
+      _initialEmail = _emailController.text;
+      _initialPhoneNumber = _phoneNumberController.text;
+
+      var user = {
+        "firstName": _nameController.text,
+        "lastName": _surnameController.text,
+        "email": _emailController.text,
+        "number": _phoneNumberController.text,
+      };
+
+      User.firstName = _nameController.text;
+      User.lastName = _surnameController.text;
+      User.email = _emailController.text;
+      User.number = _phoneNumberController.text;
+
+      _userProvider.update(User.userId!, user);
     }
   }
 
@@ -135,361 +251,82 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget build(BuildContext context) {
     return MasterScreenWidget(
       currentPage: 'Postavke',
-      child: Container(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              Text('Postavke profila', style: TextStyle(fontSize: 20)),
-              SizedBox(height: 16),
-              Form(
-                key: profileFormKey,
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.all(4.0),
-                            child: TextFormField(
-                              controller: nameController,
-                              readOnly: !isEditingProfile,
-                              enableInteractiveSelection: isEditingProfile,
-                              decoration: InputDecoration(
-                                labelText: 'Ime',
-                                border: OutlineInputBorder(),
-                              ),
-                              onTap: () {
-                                if (!isEditingProfile) {
-                                  FocusScope.of(context)
-                                      .requestFocus(FocusNode());
-                                }
-                              },
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.all(4.0),
-                            child: TextFormField(
-                              controller: surnameController,
-                              readOnly: !isEditingProfile,
-                              enableInteractiveSelection: isEditingProfile,
-                              decoration: InputDecoration(
-                                labelText: 'Prezime',
-                                border: OutlineInputBorder(),
-                              ),
-                              onTap: () {
-                                if (!isEditingProfile) {
-                                  FocusScope.of(context)
-                                      .requestFocus(FocusNode());
-                                }
-                              },
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.all(4.0),
-                            child: TextFormField(
-                              controller: emailController,
-                              readOnly: !isEditingProfile,
-                              enableInteractiveSelection: isEditingProfile,
-                              keyboardType: TextInputType.emailAddress,
-                              validator: (value) {
-                                if (value?.isEmpty ?? true)
-                                  return 'Polje ne smije biti prazno';
-                                final emailRegex = RegExp(
-                                  r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
-                                );
-                                if (!emailRegex.hasMatch(value!))
-                                  return 'Neispravan email';
-                                return null;
-                              },
-                              decoration: InputDecoration(
-                                labelText: 'Email',
-                                border: OutlineInputBorder(),
-                              ),
-                              onTap: () {
-                                if (!isEditingProfile) {
-                                  FocusScope.of(context)
-                                      .requestFocus(FocusNode());
-                                }
-                              },
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.all(4.0),
-                            child: TextFormField(
-                              controller: phoneNumberController,
-                              readOnly: !isEditingProfile,
-                              enableInteractiveSelection: isEditingProfile,
-                              keyboardType: TextInputType.number,
-                              validator: (value) {
-                                if (value?.isEmpty ?? true)
-                                  return 'Polje ne smije biti prazno';
-                                if (value!.length < 6)
-                                  return 'Unesite barem 6 brojeva';
-                                if (!value.contains(RegExp(r'^[0-9]*$')))
-                                  return 'Dozvoljen je samo numerički unos';
-                                return null;
-                              },
-                              decoration: InputDecoration(
-                                labelText: 'Broj telefona',
-                                border: OutlineInputBorder(),
-                              ),
-                              onTap: () {
-                                if (!isEditingProfile) {
-                                  FocusScope.of(context)
-                                      .requestFocus(FocusNode());
-                                }
-                              },
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 16),
-                    if (!isEditingProfile)
-                      ElevatedButton(
-                        onPressed: () {
-                          setState(() {
-                            isEditingProfile = true;
-                          });
-                        },
-                        child: Text('Uredi'),
-                      ),
-                    if (isEditingProfile)
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          ElevatedButton(
-                            onPressed: () {
-                              setState(() {
-                                isEditingProfile = false;
-                                resetProfileFields();
-                              });
-                            },
-                            child: Text('Odustani'),
-                          ),
-                          ElevatedButton(
-                            onPressed: () {
-                              if (profileFormKey.currentState?.validate() ??
-                                  false) {
-                                setState(() {
-                                  isEditingProfile = false;
-                                  initialName = nameController.text;
-                                  initialSurname = surnameController.text;
-                                  initialEmail = emailController.text;
-                                  initialPhoneNumber =
-                                      phoneNumberController.text;
-                                });
-
-                                dynamic user = {
-                                  "firstName": nameController.text,
-                                  "lastName": surnameController.text,
-                                  "email": emailController.text,
-                                  "number": phoneNumberController.text
-                                };
-
-                                User.firstName = nameController.text;
-                                User.lastName = surnameController.text;
-                                User.email = emailController.text;
-                                User.number = phoneNumberController.text;
-
-                                _userProvider.update(User.userId!, user);
-                              }
-                            },
-                            child: Text('Spasi'),
-                          ),
-                        ],
-                      ),
-                  ],
-                ),
-              ),
-              SizedBox(height: 32),
-              Text('Postavke kompanije', style: TextStyle(fontSize: 20)),
-              SizedBox(height: 16),
-              Form(
-                key: companyFormKey,
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.all(4.0),
-                            child: TextFormField(
-                              controller: workHoursFromController,
-                              readOnly: !isEditingCompany,
-                              enableInteractiveSelection: isEditingCompany,
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Polje ne smije biti prazno';
-                                }
-                                if (!isTimeFormatValid(value)) {
-                                  return 'Neispravan format vremena (XX:XX)';
-                                }
-                                return null;
-                              },
-                              decoration: InputDecoration(
-                                labelText: 'Radno vrijeme - Od',
-                                border: OutlineInputBorder(),
-                              ),
-                              onTap: () {
-                                if (!isEditingCompany) {
-                                  FocusScope.of(context)
-                                      .requestFocus(FocusNode());
-                                }
-                              },
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.all(4.0),
-                            child: TextFormField(
-                              controller: workHoursToController,
-                              readOnly: !isEditingCompany,
-                              enableInteractiveSelection: isEditingCompany,
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Polje ne smije biti prazno';
-                                }
-                                if (!isTimeFormatValid(value)) {
-                                  return 'Neispravan format vremena (XX:XX)';
-                                }
-                                return null;
-                              },
-                              decoration: InputDecoration(
-                                labelText: 'Radno vrijeme - Do',
-                                border: OutlineInputBorder(),
-                              ),
-                              onTap: () {
-                                if (!isEditingCompany) {
-                                  FocusScope.of(context)
-                                      .requestFocus(FocusNode());
-                                }
-                              },
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 16),
-                    if (!isEditingCompany)
-                      ElevatedButton(
-                        onPressed: () {
-                          setState(() {
-                            isEditingCompany = true;
-                          });
-                        },
-                        child: Text('Uredi'),
-                      ),
-                    if (isEditingCompany)
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          ElevatedButton(
-                            onPressed: () {
-                              setState(() {
-                                isEditingCompany = false;
-                                resetCompanyFields();
-                              });
-                            },
-                            child: Text('Odustani'),
-                          ),
-                          ElevatedButton(
-                            onPressed: () {
-                              if (companyFormKey.currentState?.validate() ??
-                                  false) {
-                                setState(() {
-                                  isEditingCompany = false;
-                                  initialWorkHoursFrom =
-                                      workHoursFromController.text;
-                                  initialWorkHoursTo =
-                                      workHoursToController.text;
-                                });
-
-                                _updateWorkHours();
-                              }
-                            },
-                            child: Text('Spasi'),
-                          ),
-                        ],
-                      ),
-                    SizedBox(height: 32),
-                    ElevatedButton(
-                      onPressed: _retrainModel,
-                      child: Text('Ponovo istreniraj model preporuke'),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue,
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-                      ),
-                    ),
-                    SizedBox(height: 16),
-                    ElevatedButton(
-                      onPressed: () {
-                        _loadOrders();
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              title: Text('Narudžbe'),
-                              content: Container(
-                                width: double.maxFinite,
-                                height: 300,
-                                child: ListView.builder(
-                                  itemCount: _orders.length,
-                                  itemBuilder:
-                                      (BuildContext context, int index) {
-                                    final order = _orders[index];
-                                    return ListTile(
-                                      title: Text('Narudžba #${order.id}'),
-                                      subtitle: Text(
-                                          'Datum: ${DateFormat('dd.MM.yyyy').format(order.orderDate ?? DateTime.now())}'),
-                                      onTap: () {
-                                        _showOrderDetails(order);
-                                      },
-                                    );
-                                  },
-                                ),
-                              ),
-                              actions: [
-                                ElevatedButton(
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                  },
-                                  child: Text('Zatvori'),
-                                ),
-                              ],
-                            );
-                          },
-                        );
-                      },
-                      child: Text('Pregledaj narudžbe'),
-                    ),
-                    SizedBox(height: 16),
-                    ElevatedButton(
-                      onPressed: () {
-                        _companySettingsProvider.getPdfReport();
-                      },
-                      child: Text('Napravi izvještaj'),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Postavke profila',
+                style: Theme.of(context).textTheme.titleLarge),
+            _buildProfileSettingsForm(),
+            Divider(height: 32, thickness: 2),
+            Text('Postavke kompanije',
+                style: Theme.of(context).textTheme.titleLarge),
+            _buildCompanySettingsForm(),
+            Divider(height: 32, thickness: 2),
+            Text('Dodatne opcije',
+                style: Theme.of(context).textTheme.headline6),
+            SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: _retrainModel,
+              child: Text('Ponovo istreniraj model preporuke'),
+            ),
+            SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: _showOrdersDialog,
+              child: Text('Pregledaj narudžbe'),
+            ),
+            SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: _generatePdfReport,
+              child: Text('Napravi izvještaj'),
+            ),
+          ],
         ),
       ),
+    );
+  }
+
+  Future<void> _generatePdfReport() async {
+    try {
+      await _companySettingsProvider.getPdfReport();
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Izvještaj je uspješno generisan.')));
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Greška pri generisanju izvještaja: $e')));
+    }
+  }
+
+  void _showOrdersDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Narudžbe'),
+          content: Container(
+            width: double.maxFinite,
+            child: ListView.builder(
+              itemCount: _orders.length,
+              itemBuilder: (BuildContext context, int index) {
+                final order = _orders[index];
+                return ListTile(
+                  title: Text('Narudžba #${order.id}'),
+                  subtitle: Text(
+                      'Datum: ${DateFormat('dd.MM.yyyy').format(order.orderDate ?? DateTime.now())}'),
+                  onTap: () => _showOrderDetails(order),
+                );
+              },
+            ),
+          ),
+          actions: [
+            ElevatedButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text('Zatvori'),
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -501,7 +338,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
           title: Text('Detalji narudžbe #${order.id}'),
           content: Container(
             width: double.maxFinite,
-            height: 300,
             child: ListView.builder(
               itemCount: order.orderItems?.length ?? 0,
               itemBuilder: (BuildContext context, int index) {
@@ -516,9 +352,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
           actions: [
             ElevatedButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
+              onPressed: () => Navigator.pop(context),
               child: Text('Zatvori'),
             ),
           ],
