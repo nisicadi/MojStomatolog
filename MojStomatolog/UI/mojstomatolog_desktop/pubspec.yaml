@@ -43,6 +43,7 @@ dependencies:
   json_annotation: ^4.8.1
   build_runner: ^2.4.8
   intl: ^0.18.0
+  open_file: ^3.3.2
 
 dev_dependencies:
   flutter_test:

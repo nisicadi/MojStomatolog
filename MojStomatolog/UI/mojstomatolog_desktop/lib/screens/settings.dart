@@ -448,7 +448,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 height: 300,
                                 child: ListView.builder(
                                   itemCount: _orders.length,
-                                  itemBuilder: (BuildContext context, int index) {
+                                  itemBuilder:
+                                      (BuildContext context, int index) {
                                     final order = _orders[index];
                                     return ListTile(
                                       title: Text('Narudžba #${order.id}'),
@@ -474,6 +475,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         );
                       },
                       child: Text('Pregledaj narudžbe'),
+                    ),
+                    SizedBox(height: 16),
+                    ElevatedButton(
+                      onPressed: () {
+                        _companySettingsProvider.getPdfReport();
+                      },
+                      child: Text('Napravi izvještaj'),
                     ),
                   ],
                 ),
