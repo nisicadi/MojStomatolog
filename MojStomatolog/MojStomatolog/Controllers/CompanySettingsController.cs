@@ -42,7 +42,6 @@ namespace MojStomatolog.Controllers
             }
         }
 
-        [AllowAnonymous]
         [HttpGet("GeneratePDF")]
         public async Task<ActionResult> GetPdfReport()
         {
