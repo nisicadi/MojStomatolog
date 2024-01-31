@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:mojstomatolog_desktop/providers/company_settings_provider.dart';
 import 'package:mojstomatolog_desktop/providers/product_provider.dart';
 import 'package:mojstomatolog_desktop/providers/user_provider.dart';
+import 'package:mojstomatolog_desktop/providers/order_provider.dart';
 import 'package:mojstomatolog_desktop/utils/util.dart';
 import 'package:mojstomatolog_desktop/widgets/master_screen.dart';
+import 'package:mojstomatolog_desktop/models/order.dart';
+import 'package:intl/intl.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({Key? key});
@@ -20,6 +23,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
   final UserProvider _userProvider = UserProvider();
   final CompanySettingsProvider _companySettingsProvider =
       CompanySettingsProvider();
+  final OrderProvider _orderProvider = OrderProvider();
+  List<Order> _orders = [];
 
   TextEditingController nameController = TextEditingController();
   TextEditingController surnameController = TextEditingController();
@@ -49,6 +54,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     phoneNumberController.text = initialPhoneNumber;
 
     _initializeWorkHours();
+    _loadOrders();
   }
 
   void _initializeWorkHours() async {
@@ -111,6 +117,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
       await _productProvider.retrainModel();
     } catch (e) {
       print('Error retraining model: $e');
+    }
+  }
+
+  Future<void> _loadOrders() async {
+    try {
+      final orders = await _orderProvider.get();
+      setState(() {
+        _orders = orders.results;
+      });
+    } catch (e) {
+      print('Error loading orders: $e');
     }
   }
 
@@ -418,6 +435,46 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       ),
                     ),
                     SizedBox(height: 16),
+                    ElevatedButton(
+                      onPressed: () {
+                        _loadOrders();
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: Text('Narudžbe'),
+                              content: Container(
+                                width: double.maxFinite,
+                                height: 300,
+                                child: ListView.builder(
+                                  itemCount: _orders.length,
+                                  itemBuilder: (BuildContext context, int index) {
+                                    final order = _orders[index];
+                                    return ListTile(
+                                      title: Text('Narudžba #${order.id}'),
+                                      subtitle: Text(
+                                          'Datum: ${DateFormat('dd.MM.yyyy').format(order.orderDate ?? DateTime.now())}'),
+                                      onTap: () {
+                                        _showOrderDetails(order);
+                                      },
+                                    );
+                                  },
+                                ),
+                              ),
+                              actions: [
+                                ElevatedButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: Text('Zatvori'),
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      },
+                      child: Text('Pregledaj narudžbe'),
+                    ),
                   ],
                 ),
               ),
@@ -425,6 +482,40 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
         ),
       ),
+    );
+  }
+
+  void _showOrderDetails(Order order) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Detalji narudžbe #${order.id}'),
+          content: Container(
+            width: double.maxFinite,
+            height: 300,
+            child: ListView.builder(
+              itemCount: order.orderItems?.length ?? 0,
+              itemBuilder: (BuildContext context, int index) {
+                final orderItem = order.orderItems![index];
+                return ListTile(
+                  title: Text(orderItem.product?.name ?? 'Proizvod'),
+                  subtitle: Text('Količina: ${orderItem.quantity}'),
+                  trailing: Text('Cijena: ${orderItem.price} KM'),
+                );
+              },
+            ),
+          ),
+          actions: [
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text('Zatvori'),
+            ),
+          ],
+        );
+      },
     );
   }
 }
