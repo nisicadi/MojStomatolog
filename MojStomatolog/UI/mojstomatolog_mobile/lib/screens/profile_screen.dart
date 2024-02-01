@@ -17,6 +17,9 @@ class _ProfilePageState extends State<ProfilePage> {
   TextEditingController lastNameController = TextEditingController();
   TextEditingController contactNumberController = TextEditingController();
   TextEditingController emailController = TextEditingController();
+  TextEditingController currentPasswordController = TextEditingController();
+  TextEditingController newPasswordController = TextEditingController();
+  TextEditingController confirmPasswordController = TextEditingController();
   final UserProvider _userProvider = UserProvider();
   dynamic user = {};
 
@@ -93,6 +96,119 @@ class _ProfilePageState extends State<ProfilePage> {
     return true;
   }
 
+  void _showChangePasswordDialog() async {
+    TextEditingController currentPasswordController = TextEditingController();
+    TextEditingController newPasswordController = TextEditingController();
+    TextEditingController confirmPasswordController = TextEditingController();
+
+    String currentPasswordError = '';
+    String newPasswordError = '';
+    String confirmPasswordError = '';
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: Text('Promijeni šifru'),
+              content: SingleChildScrollView(
+                child: ListBody(
+                  children: <Widget>[
+                    TextField(
+                      controller: currentPasswordController,
+                      obscureText: true,
+                      decoration: InputDecoration(
+                        labelText: 'Trenutna šifra',
+                        errorText: currentPasswordError.isEmpty
+                            ? null
+                            : currentPasswordError,
+                        errorStyle: TextStyle(color: Colors.red),
+                      ),
+                    ),
+                    SizedBox(height: 8),
+                    TextField(
+                      controller: newPasswordController,
+                      obscureText: true,
+                      decoration: InputDecoration(
+                        labelText: 'Nova šifra',
+                        errorText:
+                            newPasswordError.isEmpty ? null : newPasswordError,
+                        errorStyle: TextStyle(color: Colors.red),
+                      ),
+                    ),
+                    SizedBox(height: 8),
+                    TextField(
+                      controller: confirmPasswordController,
+                      obscureText: true,
+                      decoration: InputDecoration(
+                        labelText: 'Potvrdi šifru',
+                        errorText: confirmPasswordError.isEmpty
+                            ? null
+                            : confirmPasswordError,
+                        errorStyle: TextStyle(color: Colors.red),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              actions: <Widget>[
+                TextButton(
+                  child: Text('Odustani'),
+                  onPressed: () => Navigator.of(context).pop(),
+                ),
+                TextButton(
+                  child: Text('Promijeni'),
+                  onPressed: () {
+                    setState(() {
+                      currentPasswordError = '';
+                      newPasswordError = '';
+                      confirmPasswordError = '';
+
+                      if (currentPasswordController.text.isEmpty) {
+                        currentPasswordError = 'Unesite trenutnu šifru';
+                      }
+
+                      if (newPasswordController.text.isEmpty) {
+                        newPasswordError = 'Unesite novu šifru';
+                      }
+
+                      if (confirmPasswordController.text !=
+                          newPasswordController.text) {
+                        confirmPasswordError = 'Šifre se ne podudaraju';
+                      }
+                    });
+
+                    if (currentPasswordError.isEmpty &&
+                        newPasswordError.isEmpty &&
+                        confirmPasswordError.isEmpty) {
+                      _userProvider
+                          .changePassword(
+                              User.userId!,
+                              currentPasswordController.text,
+                              newPasswordController.text,
+                              confirmPasswordController.text)
+                          .then((success) {
+                        if (success) {
+                          Navigator.of(context).pop();
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                              content: Text('Šifra uspješno promijenjena')));
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                              content: Text('Greška pri promjeni šifre')));
+                        }
+                      });
+                    }
+                  },
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return MasterScreenWidget(
@@ -144,7 +260,6 @@ class _ProfilePageState extends State<ProfilePage> {
                           errorText: isContactNumberValid
                               ? null
                               : contactNumberErrorMessage,
-                          errorStyle: TextStyle(color: Colors.red),
                         ),
                       ),
                     SizedBox(height: 16.0),
@@ -159,7 +274,6 @@ class _ProfilePageState extends State<ProfilePage> {
                         decoration: InputDecoration(
                           border: OutlineInputBorder(),
                           errorText: isEmailValid ? null : emailErrorMessage,
-                          errorStyle: TextStyle(color: Colors.red),
                         ),
                       ),
                     SizedBox(height: 16.0),
@@ -186,6 +300,11 @@ class _ProfilePageState extends State<ProfilePage> {
                             ],
                           ),
                       ],
+                    ),
+                    SizedBox(height: 16.0),
+                    ElevatedButton(
+                      onPressed: _showChangePasswordDialog,
+                      child: Text("Promijeni šifru"),
                     ),
                     SizedBox(height: 16.0),
                     Row(
