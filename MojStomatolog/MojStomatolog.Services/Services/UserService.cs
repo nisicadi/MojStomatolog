@@ -46,6 +46,26 @@ namespace MojStomatolog.Services.Services
             }
         }
 
+        public async Task<bool> ChangePassword(int userId, ChangePasswordRequest request)
+        {
+            var isSuccessful = false;
+            
+            var user = await Context.Users.SingleOrDefaultAsync(x => x.UserId == userId);
+            if (user is not null)
+            {
+                if (user.PasswordHash == GenerateHash(user.PasswordSalt, request.CurrentPassword)
+                    && request.NewPassword == request.ConfirmPassword)
+                {
+                    user.PasswordHash = GenerateHash(user.PasswordSalt, request.NewPassword);
+                    await Context.SaveChangesAsync();
+
+                    isSuccessful = true;
+                }
+            }
+
+            return isSuccessful;
+        }
+
 
         #region Helpers
 

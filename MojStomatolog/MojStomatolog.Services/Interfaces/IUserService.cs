@@ -7,5 +7,6 @@ namespace MojStomatolog.Services.Interfaces
     public interface IUserService : IBaseCrudService<UserResponse, BaseSearchObject, AddUserRequest, UpdateUserRequest>
     {
         public Task<LoginResponse> Login(string username, string password);
+        public Task<bool> ChangePassword(int userId, ChangePasswordRequest request);
     }
 }
