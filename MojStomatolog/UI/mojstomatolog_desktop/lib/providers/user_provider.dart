@@ -72,4 +72,30 @@ class UserProvider extends BaseProvider<dynamic> {
       return false;
     }
   }
+
+  Future<bool> changePassword(int userId, String currentPassword, String newPassword, String confirmPassword) async {
+    Map<String, String> headers = await createHeaders();
+    
+    try {
+      var response = await http?.post(
+        Uri.parse("${baseUrl}User/$userId/ChangePassword"),
+        body: jsonEncode({
+          "currentPassword": currentPassword,
+          "newPassword": newPassword,
+          "confirmPassword": confirmPassword,
+        }),
+        headers: headers,
+      );
+
+      if (response?.statusCode == 200) {
+        return true;
+      } else {
+        print("Change password failed: ${response?.statusCode}");
+        return false;
+      }
+    } catch (e) {
+      print("Error during password change: $e");
+      return false;
+    }
+  }
 }
