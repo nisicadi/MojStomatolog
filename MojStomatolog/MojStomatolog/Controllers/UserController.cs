@@ -49,7 +49,7 @@ namespace MojStomatolog.Controllers
                 if (isSuccessful)
                     return Ok();
 
-                return BadRequest("An error occurred while processing your request.")
+                return BadRequest("An error occurred while processing your request.");
             }
             catch
             {
