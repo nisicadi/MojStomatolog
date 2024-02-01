@@ -39,7 +39,7 @@ namespace MojStomatolog.Controllers
             return base.Insert(insert);
         }
 
-        [HttpPost("/{userId:int}/ChangePassword")]
+        [HttpPost("{userId:int}/ChangePassword")]
         public async Task<ActionResult> ChangePassword(int userId, [FromBody] ChangePasswordRequest request)
         {
             try

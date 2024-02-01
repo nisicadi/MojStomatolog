@@ -29,9 +29,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
   final _phoneNumberController = TextEditingController();
   final _workHoursFromController = TextEditingController();
   final _workHoursToController = TextEditingController();
+  final _currentPasswordController = TextEditingController();
+  final _newPasswordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
 
   final _profileFormKey = GlobalKey<FormState>();
   final _companyFormKey = GlobalKey<FormState>();
+  final _changePasswordFormKey = GlobalKey<FormState>();
 
   String _initialName = User.firstName ?? '';
   String _initialSurname = User.lastName ?? '';
@@ -76,9 +80,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   Future<void> _updateWorkHours() async {
-    final newWorkHours =
-        '${_workHoursFromController.text}-${_workHoursToController.text}';
-    await _companySettingsProvider.addOrUpdate('WorkingHours', newWorkHours);
+    if (_companyFormKey.currentState?.validate() ?? false) {
+      final newWorkHours =
+          '${_workHoursFromController.text}-${_workHoursToController.text}';
+      await _companySettingsProvider.addOrUpdate('WorkingHours', newWorkHours);
+      setState(() {
+        isEditingCompany = false;
+      });
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Radno vrijeme ažurirano.')));
+    }
   }
 
   bool _isTimeFormatValid(String value) {
@@ -93,6 +104,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       _emailController.text = _initialEmail;
       _phoneNumberController.text = _initialPhoneNumber;
       _profileFormKey.currentState?.reset();
+      _toggleProfileEditing();
     });
   }
 
@@ -101,6 +113,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       _workHoursFromController.text = _initialWorkHoursFrom;
       _workHoursToController.text = _initialWorkHoursTo;
       _companyFormKey.currentState?.reset();
+      _toggleCompanyEditing();
     });
   }
 
@@ -187,15 +200,33 @@ class _SettingsScreenState extends State<SettingsScreen> {
   String? _validateField(String? value,
       {bool isEmail = false, bool isNumber = false, bool isTime = false}) {
     if (value == null || value.isEmpty) return 'Polje ne smije biti prazno';
+
     if (isEmail) {
       final emailRegex =
           RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
       if (!emailRegex.hasMatch(value)) return 'Neispravan email';
     }
+
     if (isNumber && (!value.contains(RegExp(r'^[0-9]+$')) || value.length < 6))
       return 'Unesite valjan broj';
-    if (isTime && !_isTimeFormatValid(value))
-      return 'Neispravan format vremena (XX:XX)';
+
+    if (isTime) {
+      final timePattern = RegExp(r'^\d{2}:\d{2}$');
+      if (!timePattern.hasMatch(value))
+        return 'Neispravan format vremena (XX:XX)';
+      final parts = value.split(':');
+      final hour = int.tryParse(parts[0]);
+      final minute = int.tryParse(parts[1]);
+      if (hour == null ||
+          minute == null ||
+          hour < 0 ||
+          hour > 23 ||
+          minute < 0 ||
+          minute > 59) {
+        return 'Vrijeme je van valjanog opsega (00:00 do 23:59)';
+      }
+    }
+
     return null;
   }
 
@@ -244,6 +275,93 @@ class _SettingsScreenState extends State<SettingsScreen> {
       User.number = _phoneNumberController.text;
 
       _userProvider.update(User.userId!, user);
+      _toggleProfileEditing();
+    }
+  }
+
+  void _showChangePasswordDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Promijeni lozinku'),
+          content: Form(
+            key: _changePasswordFormKey,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  TextFormField(
+                    controller: _currentPasswordController,
+                    decoration: InputDecoration(labelText: 'Trenutna lozinka'),
+                    obscureText: true,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Polje ne smije biti prazno';
+                      }
+                      return null;
+                    },
+                  ),
+                  TextFormField(
+                    controller: _newPasswordController,
+                    decoration: InputDecoration(labelText: 'Nova lozinka'),
+                    obscureText: true,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Polje ne smije biti prazno';
+                      }
+                      return null;
+                    },
+                  ),
+                  TextFormField(
+                    controller: _confirmPasswordController,
+                    decoration:
+                        InputDecoration(labelText: 'Potvrdi novu lozinku'),
+                    obscureText: true,
+                    validator: (value) {
+                      if (value != _newPasswordController.text) {
+                        return 'Lozinke se ne poklapaju';
+                      }
+                      return null;
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ),
+          actions: <Widget>[
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Odustani'),
+            ),
+            ElevatedButton(
+              onPressed: _changePassword,
+              child: Text('Promijeni'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _changePassword() async {
+    if (_changePasswordFormKey.currentState?.validate() ?? false) {
+      final success = await _userProvider.changePassword(
+        User.userId!,
+        _currentPasswordController.text,
+        _newPasswordController.text,
+        _confirmPasswordController.text,
+      );
+      if (success) {
+        Navigator.of(context).pop();
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Lozinka je uspješno promijenjena.')));
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Greška pri promjeni lozinke.')));
+      }
     }
   }
 
@@ -280,6 +398,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ElevatedButton(
               onPressed: _generatePdfReport,
               child: Text('Napravi izvještaj'),
+            ),
+            SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: _showChangePasswordDialog,
+              child: Text('Promijeni lozinku'),
             ),
           ],
         ),
