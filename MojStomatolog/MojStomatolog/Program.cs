@@ -80,6 +80,12 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+using (var scope = app.Services.CreateAsyncScope())
+{
+    var dataContext = scope.ServiceProvider.GetRequiredService<MojStomatologContext>();
+    dataContext.Database.EnsureCreated();
+}
+
 // Train Recommender model
 var modelTrainingService = app.Services.GetRequiredService<ModelTrainingService>();
 modelTrainingService.TrainModel();

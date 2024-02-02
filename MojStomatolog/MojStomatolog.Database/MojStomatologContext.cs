@@ -3,7 +3,7 @@ using MojStomatolog.Models.Core;
 
 namespace MojStomatolog.Database
 {
-    public class MojStomatologContext : DbContext
+    public partial class MojStomatologContext : DbContext
     {
 
         public MojStomatologContext(DbContextOptions<MojStomatologContext> options) : base(options)
@@ -29,6 +29,10 @@ namespace MojStomatolog.Database
             {
                 foreignKey.DeleteBehavior = DeleteBehavior.NoAction;
             }
+
+            OnModelCreatingPartial(modelBuilder);
         }
+
+        partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
     }
 }
