@@ -43,10 +43,17 @@ namespace MailingService
         {
             var email = Environment.GetEnvironmentVariable("OUTLOOK_MAIL") ?? "mojstomatolog@outlook.com";
             var password = Environment.GetEnvironmentVariable("OUTLOOK_PASS") ?? "2ogncWS@JD@*RM";
-            var hostName = Environment.GetEnvironmentVariable("HOSTNAME") ?? "localhost";
-            var emailSender = new EmailSender(email, password);
 
-            using var bus = RabbitHutch.CreateBus($"host={hostName}");
+            // RabbitMQ configuration
+            var hostNameMq = Environment.GetEnvironmentVariable("RABBITMQ_HOST") ?? "localhost";
+            var usernameMq = Environment.GetEnvironmentVariable("RABBITMQ_USERNAME") ?? "user";
+            var passwordMq = Environment.GetEnvironmentVariable("RABBITMQ_PASSWORD") ?? "mypass";
+            var virtualHostMq = Environment.GetEnvironmentVariable("RABBITMQ_VIRTUALHOST") ?? "/";
+
+            var emailSender = new EmailSender(email, password);
+            var rabbitMqConnectionString = $"host={hostNameMq};username={usernameMq};password={passwordMq};virtualHost={virtualHostMq}";
+
+            using var bus = RabbitHutch.CreateBus(rabbitMqConnectionString);
             bus.PubSub.Subscribe<SendEmailRequest>("order_processed", request => HandleTextMessage(request, emailSender));
             Console.WriteLine("Listening for messages. Hit <return> to quit.");
             Console.ReadLine();

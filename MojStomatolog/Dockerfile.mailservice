@@ -1,0 +1,18 @@
+FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
+WORKDIR /src
+EXPOSE 80
+EXPOSE 443
+COPY ["MailingService/MailingService.csproj", "./"]
+COPY ["MojStomatolog.Models/MojStomatolog.Models.csproj", "../MojStomatolog.Models/"]
+RUN dotnet restore "MailingService.csproj"
+COPY . .
+WORKDIR "/src/MailingService"
+RUN dotnet build "MailingService.csproj" -c Release -o /app/build
+
+FROM build AS publish
+RUN dotnet publish "MailingService.csproj" -c Release -o /app/publish
+
+FROM mcr.microsoft.com/dotnet/runtime:6.0 AS final
+WORKDIR /app
+COPY --from=publish /app/publish .
+ENTRYPOINT ["dotnet", "MailingService.dll"]
