@@ -5,7 +5,8 @@ import 'package:mojstomatolog_desktop/utils/util.dart';
 import 'package:open_file/open_file.dart';
 
 class CompanySettingsProvider {
-  final String _baseUrl = 'https://localhost:7043/CompanySettings';
+  final String _baseUrl = const String.fromEnvironment("baseUrl",
+      defaultValue: "http://localhost:7043/");
 
   Future<void> addOrUpdate(String settingName, String settingValue) async {
     var url = Uri.parse('$_baseUrl');
@@ -17,7 +18,7 @@ class CompanySettingsProvider {
   }
 
   Future<Map<String, dynamic>> getByName(String settingName) async {
-    var url = Uri.parse('$_baseUrl/?settingName=$settingName');
+    var url = Uri.parse('${_baseUrl}CompanySettings/?settingName=$settingName');
     var headers = await createHeaders();
 
     var response = await http.get(url, headers: headers);
@@ -31,7 +32,7 @@ class CompanySettingsProvider {
 
   Future<void> getPdfReport() async {
     try {
-      var url = Uri.parse('$_baseUrl/GeneratePDF');
+      var url = Uri.parse('${_baseUrl}CompanySettingsl/GeneratePDF');
       var headers = await createHeaders();
 
       var response = await http.get(url, headers: headers);

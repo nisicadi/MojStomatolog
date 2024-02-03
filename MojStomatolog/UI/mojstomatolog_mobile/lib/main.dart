@@ -4,14 +4,15 @@ import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:localstorage/localstorage.dart';
 import 'package:mojstomatolog_mobile/providers/cart_provider.dart';
 import 'package:mojstomatolog_mobile/screens/login_screen.dart';
-import 'package:mojstomatolog_mobile/utils/util.dart';
 import 'package:provider/provider.dart';
 
 final LocalStorage localStorage = new LocalStorage('localstorage');
 
 void main() {
   HttpOverrides.global = MyHttpOverrides();
-  Stripe.publishableKey = Constants.stripePublishableKey;
+  Stripe.publishableKey = const String.fromEnvironment("stripePublishableKey",
+      defaultValue:
+          "pk_test_51OcsSjKDEaPbMijSiXrYx8HDkUNgZGLbnOeHEQesnksSzGdDETP4gHtbjOINGDid2qVHihfSCXGQYPi466DTrPrn00FyG54N1p");
 
   runApp(
     ChangeNotifierProvider(

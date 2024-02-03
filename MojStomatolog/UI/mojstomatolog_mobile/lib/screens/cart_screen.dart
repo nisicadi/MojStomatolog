@@ -146,10 +146,15 @@ class CartPage extends StatelessWidget {
   Future<void> _proceedToCheckout(BuildContext context,
       CartProvider cartProvider, double Function() calculateTotal) async {
     final totalAmount = (calculateTotal() * 100).toInt();
-    String stripeSecretKey = Constants.stripeSecretKey;
+    var stripeSecretKey = const String.fromEnvironment("stripeSecretKey",
+        defaultValue:
+            "sk_test_51OcsSjKDEaPbMijStS3aVvYOCMvJx3xvW6fpMLLBQ9nB6IcYMzMc41sCDoF4JNQR5480hCbL3qbKeR2jaZjDynLy00YNvGVPeH");
 
     try {
-      final url = Uri.parse('https://api.stripe.com/v1/payment_intents');
+      var paymentIntentUrl = const String.fromEnvironment("paymentIntentUrl",
+          defaultValue: "https://api.stripe.com/v1/payment_intents");
+
+      final url = Uri.parse(paymentIntentUrl);
       final response = await http.post(
         url,
         headers: {

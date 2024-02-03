@@ -3,10 +3,11 @@ import 'package:http/http.dart' as http;
 import 'package:mojstomatolog_mobile/utils/util.dart';
 
 class CompanySettingsProvider {
-  final String _baseUrl = 'https://10.0.2.2:7043/CompanySettings';
+  final String _baseUrl = const String.fromEnvironment("baseUrl",
+      defaultValue: "http://10.0.2.2:7043/");
 
   Future<Map<String, dynamic>> getByName(String settingName) async {
-    var url = Uri.parse('$_baseUrl/?settingName=$settingName');
+    var url = Uri.parse('${_baseUrl}CompanySettings/?settingName=$settingName');
     var headers = await createHeaders();
 
     var response = await http.get(url, headers: headers);
