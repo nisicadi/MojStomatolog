@@ -9,7 +9,7 @@ class CompanySettingsProvider {
       defaultValue: "http://localhost:7043/");
 
   Future<void> addOrUpdate(String settingName, String settingValue) async {
-    var url = Uri.parse('$_baseUrl');
+    var url = Uri.parse('${_baseUrl}CompanySettings');
     var headers = await createHeaders();
     await http.post(url,
         body: json
@@ -32,7 +32,7 @@ class CompanySettingsProvider {
 
   Future<void> getPdfReport() async {
     try {
-      var url = Uri.parse('${_baseUrl}CompanySettingsl/GeneratePDF');
+      var url = Uri.parse('${_baseUrl}CompanySettings/GeneratePDF');
       var headers = await createHeaders();
 
       var response = await http.get(url, headers: headers);
