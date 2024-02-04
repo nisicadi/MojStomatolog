@@ -28,9 +28,11 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
   @override
   void initState() {
     super.initState();
-    _loadAverageRating();
-    _loadUserRating();
-    _loadRecommendedProducts();
+    if (widget.product.productId != null) {
+      _loadAverageRating();
+      _loadUserRating();
+      _loadRecommendedProducts();
+    }
   }
 
   void _loadAverageRating() async {
@@ -38,9 +40,11 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
       var ratingProvider = RatingProvider();
       double rating =
           await ratingProvider.fetchAverageRating(widget.product.productId!);
-      setState(() {
-        averageRating = rating;
-      });
+      if (mounted) {
+        setState(() {
+          averageRating = rating;
+        });
+      }
     } catch (e) {
       print('Error fetching rating: $e');
     }
@@ -52,7 +56,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
       int userId = User.userId!;
       var userRatingData = await ratingProvider.fetchUserRating(
           userId, widget.product.productId!);
-      if (userRatingData != null) {
+      if (userRatingData != null && mounted) {
         setState(() {
           userRating = userRatingData.ratingValue!.toDouble();
           userRatingId = userRatingData.ratingId;
@@ -67,19 +71,16 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
     try {
       var ratingProvider = RatingProvider();
       int userId = User.userId!;
-
       Rating newRating = Rating()
         ..ratingId = userRatingId
         ..productId = widget.product.productId
         ..userId = userId
         ..ratingValue = userRating.toInt();
-
       if (userRatingId == null) {
         await ratingProvider.insert(newRating.toJson());
       } else {
         await ratingProvider.update(newRating.ratingId!, newRating.toJson());
       }
-
       _loadUserRating();
       _loadAverageRating();
     } catch (e) {
@@ -149,15 +150,19 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
       var productProvider = ProductProvider();
       var products = await productProvider
           .getRecommendedProducts(widget.product.productId!);
-      setState(() {
-        recommendedProducts = products;
-        isLoadingRecommended = false;
-      });
+      if (mounted) {
+        setState(() {
+          recommendedProducts = products;
+          isLoadingRecommended = false;
+        });
+      }
     } catch (e) {
       print('Error fetching recommended products: $e');
-      setState(() {
-        isLoadingRecommended = false;
-      });
+      if (mounted) {
+        setState(() {
+          isLoadingRecommended = false;
+        });
+      }
     }
   }
 
@@ -175,7 +180,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
             AspectRatio(
               aspectRatio: 4 / 3,
               child: Image.network(
-                widget.product.imageUrl ?? '',
+                widget.product.imageUrl ?? 'assets/images/no_image.jpg',
                 fit: BoxFit.contain,
                 loadingBuilder: (context, child, loadingProgress) {
                   if (loadingProgress == null) return child;
@@ -198,7 +203,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
             Text(widget.product.description ?? 'Nema opisa'),
             SizedBox(height: 8),
             Text(
-              'Kategorija: ${widget.product.productCategory!.name ?? 'N/A'}',
+              'Kategorija: ${widget.product.productCategory?.name ?? 'N/A'}',
               style: TextStyle(fontStyle: FontStyle.italic),
             ),
             SizedBox(height: 8),

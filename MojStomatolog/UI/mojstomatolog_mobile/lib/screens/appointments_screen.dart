@@ -242,6 +242,8 @@ class _AppointmentsPageState extends State<AppointmentsPage> {
       int.parse(appointmentTime.split(':')[1]),
     );
 
+    final isPastTime = appointmentDateTime.isBefore(currentDateTime);
+
     final isUserAppointment = reservedAppointments.any((appointment) =>
         appointment.appointmentDateTime == appointmentDateTime &&
         appointment.patientId == User.userId);
@@ -277,14 +279,14 @@ class _AppointmentsPageState extends State<AppointmentsPage> {
                       ),
                       child: Text("Rezervisano"),
                     )
-              : ElevatedButton(
-                  onPressed: () {
-                    if (!isReserved) {
-                      _showReservationModal(context, appointmentTime);
-                    }
-                  },
-                  child: Text("Rezervisi"),
-                ),
+              : !isPastTime
+                  ? ElevatedButton(
+                      onPressed: () =>
+                          _showReservationModal(context, appointmentTime),
+                      child: Text("Rezervisi"),
+                    )
+                  : Text("Vrijeme prošlo",
+                      style: TextStyle(color: Colors.grey)),
         ),
       ],
     );
