@@ -1,45 +1,11 @@
-﻿using System.Net;
-using System.Net.Mail;
-using EasyNetQ;
+﻿using EasyNetQ;
 using MojStomatolog.Models;
 
 namespace MailingService
 {
-    public class EmailSender
-    {
-        private readonly string _outlookMail;
-        private readonly string _outlookPass;
-
-        public EmailSender(string email, string password)
-        {
-            _outlookMail = email;
-            _outlookPass = password;
-        }
-
-        public Task SendEmailAsync(string email, string subject, string message)
-        {
-            var client = new SmtpClient("smtp.office365.com", 587)
-            {
-                EnableSsl = true,
-                UseDefaultCredentials = false,
-                Credentials = new NetworkCredential(_outlookMail, _outlookPass)
-            };
-
-            var mailMessage = new MailMessage
-            {
-                From = new MailAddress(_outlookMail),
-                To = { email },
-                Subject = subject,
-                Body = message
-            };
-
-            return client.SendMailAsync(mailMessage);
-        }
-    }
-
     class Program
     {
-        static void Main()
+        static async Task Main()
         {
             var email = Environment.GetEnvironmentVariable("OUTLOOK_MAIL") ?? "mojstomatolog@outlook.com";
             var password = Environment.GetEnvironmentVariable("OUTLOOK_PASS") ?? "2ogncWS@JD@*RM";
@@ -53,13 +19,17 @@ namespace MailingService
             var emailSender = new EmailSender(email, password);
             var rabbitMqConnectionString = $"host={hostNameMq};username={usernameMq};password={passwordMq};virtualHost={virtualHostMq}";
 
-            using var bus = RabbitHutch.CreateBus(rabbitMqConnectionString);
-            bus.PubSub.Subscribe<SendEmailRequest>("order_processed", request => HandleTextMessage(request, emailSender));
-            Console.WriteLine("Listening for messages. Hit <return> to quit.");
-            Console.ReadLine();
+            await WaitForRabbitMq(rabbitMqConnectionString);
+
+            using (var bus = RabbitHutch.CreateBus(rabbitMqConnectionString))
+            {
+                await bus.PubSub.SubscribeAsync<SendEmailRequest>("order_processed", request => HandleMessage(request, emailSender));
+                Console.WriteLine("Listening for messages...");
+                await Task.Delay(Timeout.Infinite);
+            }
         }
 
-        static async void HandleTextMessage(SendEmailRequest request, EmailSender emailSender)
+        static async void HandleMessage(SendEmailRequest request, EmailSender emailSender)
         {
             Console.WriteLine($"Received: {request.Subject}, {request.Message}");
 
@@ -72,6 +42,28 @@ namespace MailingService
             {
                 Console.WriteLine($"Error sending email: {ex.Message}");
             }
+        }
+
+        private static async Task WaitForRabbitMq(string connectionString)
+        {
+            while (true)
+            {
+                try
+                {
+                    using (var bus = RabbitHutch.CreateBus(connectionString))
+                    {
+                        var queue = await bus.Advanced.QueueDeclareAsync("dummy_queue");
+                        bus.Advanced.QueueDelete("dummy_queue");
+                        break;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Failed to connect to RabbitMQ: {ex.Message}. Retrying in 2 seconds...");
+                    await Task.Delay(2000);
+                }
+            }
+            Console.WriteLine("Connected to RabbitMQ.");
         }
     }
 }

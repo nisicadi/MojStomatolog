@@ -37,7 +37,8 @@ namespace MojStomatolog.Services.Services
                         Message = "Vaša narudžba je uspješno kreirana."
                     };
 
-                    MessageSender.SendMessage(sendEmailRequest);
+                    var messageSender = new MessageSender();
+                    messageSender.SendMessage(sendEmailRequest);
                 }
 
                 return true;
