@@ -13,7 +13,11 @@ Appointment _$AppointmentFromJson(Map<String, dynamic> json) => Appointment()
       : DateTime.parse(json['appointmentDateTime'] as String)
   ..procedure = json['procedure'] as String?
   ..isConfirmed = json['isConfirmed'] as bool?
-  ..notes = json['notes'] as String?;
+  ..notes = json['notes'] as String?
+  ..patientId = json['patientId'] as int?
+  ..patient = json['patient'] == null
+      ? null
+      : User.fromJson(json['patient'] as Map<String, dynamic>);
 
 Map<String, dynamic> _$AppointmentToJson(Appointment instance) =>
     <String, dynamic>{
@@ -22,4 +26,6 @@ Map<String, dynamic> _$AppointmentToJson(Appointment instance) =>
       'procedure': instance.procedure,
       'isConfirmed': instance.isConfirmed,
       'notes': instance.notes,
+      'patientId': instance.patientId,
+      'patient': instance.patient,
     };

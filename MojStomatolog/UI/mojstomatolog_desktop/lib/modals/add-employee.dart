@@ -125,8 +125,14 @@ class _AddEmployeeModalState extends State<AddEmployeeModal> {
           controller: controller,
           decoration: InputDecoration(labelText: labelText),
           validator: (value) {
-            if (value == null || value.isEmpty) {
-              return '$labelText je obavezno polje';
+            if (labelText == 'Spol') {
+              if (value != 'M' && value != 'Ž') {
+                return 'Spol mora biti "M" ili "Ž"';
+              }
+            } else {
+              if (value == null || value.isEmpty) {
+                return '$labelText je obavezno polje';
+              }
             }
             return null;
           },

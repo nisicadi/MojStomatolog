@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using MojStomatolog.Database;
 using MojStomatolog.Models.Core;
 using MojStomatolog.Models.Requests.Appointment;
@@ -44,7 +45,17 @@ namespace MojStomatolog.Services.Services
                 query = query.Where(x => x.IsConfirmed == search.IsConfirmed);
             }
 
-            return query;
+            if (search.PatientId is not null)
+            {
+                query = query.Where(x => x.PatientId == search.PatientId);
+            }
+
+            return query.OrderByDescending(x => x.AppointmentDateTime);
+        }
+
+        public override IQueryable<Appointment> AddInclude(IQueryable<Appointment> query, AppointmentSearchObject? search = null)
+        {
+            return query.Include(x => x.Patient);
         }
     }
 }

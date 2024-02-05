@@ -1,9 +1,12 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.ML;
 using MojStomatolog.Database;
 using MojStomatolog.Models.Core;
 using MojStomatolog.Models.Requests.Product;
 using MojStomatolog.Models.Responses;
 using MojStomatolog.Services.Common;
+using MojStomatolog.Services.Common.RecommenderModel;
 using MojStomatolog.Services.Common.SearchObjects;
 using MojStomatolog.Services.Interfaces;
 
@@ -11,8 +14,40 @@ namespace MojStomatolog.Services.Services
 {
     public class ProductService : BaseCrudService<ProductResponse, Product, ProductSearchObject, AddProductRequest, UpdateProductRequest>, IProductService
     {
-        public ProductService(MojStomatologContext context, IMapper mapper) : base(context, mapper)
+        private readonly MLContext _mlContext;
+        private readonly ModelTrainingService _modelTrainingService;
+
+        public ProductService(MojStomatologContext context, IMapper mapper, ModelTrainingService modelTrainingService) : base(context, mapper)
         {
+            _mlContext = new MLContext();
+            _modelTrainingService = modelTrainingService;
+        }
+
+        public List<ProductResponse> GetRecommendedProducts(int productId)
+        {
+            var products = Context.Products.Where(x => x.ProductId != productId);
+            var predictionResult = new List<Tuple<Product, float>>();
+            var model = _modelTrainingService.GetTrainedModel();
+
+            foreach (var product in products)
+            {
+                var predictionEngine = _mlContext.Model.CreatePredictionEngine<ProductEntry, CoPurchasePrediction>(model);
+                var prediction = predictionEngine.Predict(
+                    new ProductEntry
+                    {
+                        ProductId = (uint)productId,
+                        CoPurchaseProductId = (uint)product.ProductId
+                    });
+
+                predictionResult.Add(new Tuple<Product, float>(product, prediction.Score));
+            }
+
+            var finalResult = predictionResult.OrderByDescending(x => x.Item2)
+                .Select(x => x.Item1)
+                .Take(3)
+                .ToList();
+
+            return Mapper.Map<List<ProductResponse>>(finalResult);
         }
 
         public override IQueryable<Product> AddFilter(IQueryable<Product> query, ProductSearchObject? search = null)
@@ -45,6 +80,11 @@ namespace MojStomatolog.Services.Services
             }
 
             return query;
+        }
+
+        public override IQueryable<Product> AddInclude(IQueryable<Product> query, ProductSearchObject? search = null)
+        {
+            return query.Include(x => x.ProductCategory);
         }
     }
 }

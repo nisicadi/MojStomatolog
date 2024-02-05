@@ -1,0 +1,74 @@
+version: '3'
+services:
+  # mssql docker
+  mojstomatolog-rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    restart: unless-stopped
+    environment:
+      - RABBITMQ_DEFAULT_USER=user
+      - RABBITMQ_DEFAULT_PASS=mypass
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    expose:
+      - 5672
+    networks:
+      - mojstomatolognet2023
+
+  mojstomatolog-sql:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    restart: unless-stopped
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=QWElkj132!
+      - MSSQL_PID=Developer
+    ports:
+      - 1401:1433
+    expose:
+      - 1433
+    networks:
+      - mojstomatolognet2023
+
+  mojstomatolog-mailing-service:
+    restart: on-failure
+    build:
+      context: .
+      dockerfile: Dockerfile.mailservice
+    environment:
+      - OUTLOOK_MAIL=mojstomatolog@outlook.com
+      - OUTLOOK_PASS=2ogncWS@JD@*RM
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_USERNAME=user
+      - RABBITMQ_PASSWORD=mypass
+      - RABBITMQ_VIRTUALHOST=/
+      - HOSTNAME=localhost
+    depends_on:
+      - mojstomatolog-rabbitmq
+    networks:
+      - mojstomatolognet2023
+
+  mojstomatolog-api:
+    restart: unless-stopped
+    build:
+      context: .
+    environment:
+      - ConnectionStrings:DefaultConnection=Server=mojstomatolog-sql,1433;Database=IB180160;User=sa;Password=QWElkj132!;TrustServerCertificate=True 
+      - ASPNETCORE_ENVIRONMENT=Development
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=5672
+      - RABBITMQ_USERNAME=user
+      - RABBITMQ_PASSWORD=mypass
+      - RABBITMQ_VIRTUALHOST=/
+    ports:
+      - 7043:7043
+    networks:
+      - mojstomatolognet2023
+    links:
+      - mojstomatolog-sql
+    depends_on:
+      - mojstomatolog-sql
+
+networks:
+  mojstomatolognet2023:
+    driver: bridge

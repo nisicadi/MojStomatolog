@@ -154,8 +154,15 @@ class _ProductListScreenState extends State<ProductListScreen> {
         cells: [
           DataCell(Text(product.productId.toString())),
           DataCell(Text(product.name ?? '')),
-          DataCell(Text(product.description ?? '')),
-          DataCell(Text(product.category ?? '')),
+          DataCell(ConstrainedBox(
+            constraints: BoxConstraints(maxWidth: 200),
+            child: Text(
+              product.description ?? '',
+              overflow: TextOverflow.ellipsis,
+              softWrap: false,
+            ),
+          )),
+          DataCell(Text(product.productCategory?.name ?? '')),
           DataCell(Text(product.price?.toString() ?? '')),
           DataCell(_buildIconButton(Icons.edit, 'Uredi', () {
             _addOrUpdateProduct(product, isUpdate: true);

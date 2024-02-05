@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:mojstomatolog_desktop/screens/appointments.dart';
+import 'package:mojstomatolog_desktop/screens/articles.dart';
 import 'package:mojstomatolog_desktop/screens/employees.dart';
 import 'package:mojstomatolog_desktop/screens/login_screen.dart';
-import 'package:mojstomatolog_desktop/screens/news.dart';
+import 'package:mojstomatolog_desktop/screens/product_categories.dart';
 import 'package:mojstomatolog_desktop/screens/product_list_screen.dart';
 import 'package:mojstomatolog_desktop/screens/settings.dart';
 import 'package:mojstomatolog_desktop/providers/user_provider.dart';
@@ -29,7 +30,8 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
             buildButton('Uposlenici'),
             buildButton('Termini'),
             buildButton('Proizvodi'),
-            buildButton('Novosti'),
+            buildButton('Kategorije proizvoda'),
+            buildButton('Članci'),
             buildButton('Postavke'),
             Spacer(),
             buildLogoutButton(),
@@ -113,8 +115,11 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
       case 'Proizvodi':
         screen = ProductListScreen();
         break;
-      case 'Novosti':
-        screen = NewsScreen();
+      case 'Kategorije proizvoda':
+        screen = ProductCategoryListScreen();
+        break;
+      case 'Članci':
+        screen = ArticleListScreen();
         break;
       case 'Postavke':
         screen = SettingsScreen();
@@ -124,7 +129,21 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
     }
 
     Navigator.of(context).push(
-      MaterialPageRoute(builder: (context) => screen),
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) => screen,
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          var begin = 0.0;
+          var end = 1.0;
+          var tween = Tween(begin: begin, end: end);
+          var fadeAnimation = animation.drive(tween);
+
+          return FadeTransition(
+            opacity: fadeAnimation,
+            child: child,
+          );
+        },
+        transitionDuration: Duration(milliseconds: 150),
+      ),
     );
   }
 }

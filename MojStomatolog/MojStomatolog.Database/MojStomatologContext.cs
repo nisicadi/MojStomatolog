@@ -3,7 +3,7 @@ using MojStomatolog.Models.Core;
 
 namespace MojStomatolog.Database
 {
-    public class MojStomatologContext : DbContext
+    public partial class MojStomatologContext : DbContext
     {
 
         public MojStomatologContext(DbContextOptions<MojStomatologContext> options) : base(options)
@@ -14,6 +14,12 @@ namespace MojStomatolog.Database
         public virtual DbSet<Employee> Employees { get; set; } = null!;
         public virtual DbSet<Product> Products { get; set; } = null!;
         public virtual DbSet<Appointment> Appointments { get; set; } = null!;
+        public virtual DbSet<Article> Articles { get; set; } = null!;
+        public virtual DbSet<CompanySetting> CompanySettings { get; set; } = null!;
+        public virtual DbSet<OrderItem> OrderItems { get; set; } = null!;
+        public virtual DbSet<Order> Orders { get; set; } = null!;
+        public virtual DbSet<Rating> Ratings { get; set; } = null!;
+        public virtual DbSet<ProductCategory> ProductCategories { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -23,6 +29,10 @@ namespace MojStomatolog.Database
             {
                 foreignKey.DeleteBehavior = DeleteBehavior.NoAction;
             }
+
+            OnModelCreatingPartial(modelBuilder);
         }
+
+        partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
     }
 }

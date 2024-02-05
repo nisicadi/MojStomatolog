@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'dart:async';
 import 'package:mojstomatolog_desktop/modals/add-appointment.dart';
-import 'package:mojstomatolog_desktop/modals/filter-appointments.dart'; // Import the filter modal
+import 'package:mojstomatolog_desktop/modals/filter-appointments.dart';
 import 'package:mojstomatolog_desktop/models/appointment.dart';
 import 'package:mojstomatolog_desktop/models/search/appointment_search.dart';
 import 'package:mojstomatolog_desktop/providers/appointment_provider.dart';
@@ -145,19 +145,27 @@ class _AppointmentListScreenState extends State<AppointmentListScreen> {
       DataColumn(label: Text('Procedura')),
       DataColumn(label: Text('Potvrđeno')),
       DataColumn(label: Text('Komentar')),
+      DataColumn(label: Text('Pacijent')),
       DataColumn(label: Text('Uredi')),
       DataColumn(label: Text('Briši')),
     ];
 
     final List<DataRow> rows = _appointments.map((appointment) {
+      final patientName =
+          '${appointment.patient?.firstName ?? ''} ${appointment.patient?.lastName ?? ''}';
       return DataRow(
         cells: [
           DataCell(Text(appointment.appointmentId.toString())),
           DataCell(Text(DateFormat('dd.MM.yyyy  HH:mm')
               .format(appointment.appointmentDateTime ?? DateTime.now()))),
           DataCell(Text(appointment.procedure ?? '')),
-          DataCell(Text(appointment.isConfirmed?.toString() ?? '')),
+          DataCell(
+            appointment.isConfirmed == true
+                ? Icon(Icons.check, color: Colors.green)
+                : Icon(Icons.close, color: Colors.red),
+          ),
           DataCell(Text(appointment.notes ?? '')),
+          DataCell(Text(patientName)),
           DataCell(_buildIconButton(Icons.edit, 'Uredi', () {
             _addOrUpdateAppointment(appointment, isUpdate: true);
           })),
@@ -172,7 +180,7 @@ class _AppointmentListScreenState extends State<AppointmentListScreen> {
       currentPage: 'Termini',
       columns: columns,
       rows: rows,
-      addButtonCallback: () => _addOrUpdateAppointment(Appointment()),
+      isAddButtonHidden: true,
       searchCallback: (value) => _searchAppointments(value),
       filterButtonCallback: () => _showFilterModal(),
       totalCount: _totalCount,

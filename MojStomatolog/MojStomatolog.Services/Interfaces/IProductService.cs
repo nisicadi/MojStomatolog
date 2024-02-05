@@ -7,5 +7,6 @@ namespace MojStomatolog.Services.Interfaces
 {
     public interface IProductService : IBaseCrudService<ProductResponse, ProductSearchObject, AddProductRequest, UpdateProductRequest>
     {
+        List<ProductResponse> GetRecommendedProducts(int productId);
     }
 }

@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using MojStomatolog;
 using MojStomatolog.Database;
+using MojStomatolog.Services.Common.RecommenderModel;
 using MojStomatolog.Services.Interfaces;
 using MojStomatolog.Services.Services;
 #pragma warning disable CA1825
@@ -10,10 +11,17 @@ using MojStomatolog.Services.Services;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddSingleton<ModelTrainingService>();
+
 builder.Services.AddTransient<IUserService, UserService>();
 builder.Services.AddTransient<IEmployeeService, EmployeeService>();
 builder.Services.AddTransient<IProductService, ProductService>();
 builder.Services.AddTransient<IAppointmentService, AppointmentService>();
+builder.Services.AddTransient<IArticleService, ArticleService>();
+builder.Services.AddTransient<ICompanySettingService, CompanySettingService>();
+builder.Services.AddTransient<IOrderService, OrderService>();
+builder.Services.AddTransient<IRatingService, RatingService>();
+builder.Services.AddTransient<IProductCategoryService, ProductCategoryService>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -71,5 +79,15 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+using (var scope = app.Services.CreateAsyncScope())
+{
+    var dataContext = scope.ServiceProvider.GetRequiredService<MojStomatologContext>();
+    dataContext.Database.EnsureCreated();
+}
+
+// Train Recommender model
+var modelTrainingService = app.Services.GetRequiredService<ModelTrainingService>();
+modelTrainingService.TrainModel();
 
 app.Run();

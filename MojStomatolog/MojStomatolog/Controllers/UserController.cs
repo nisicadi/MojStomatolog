@@ -38,5 +38,23 @@ namespace MojStomatolog.Controllers
         {
             return base.Insert(insert);
         }
+
+        [HttpPost("{userId:int}/ChangePassword")]
+        public async Task<ActionResult> ChangePassword(int userId, [FromBody] ChangePasswordRequest request)
+        {
+            try
+            {
+                var isSuccessful = await _userService.ChangePassword(userId, request);
+
+                if (isSuccessful)
+                    return Ok();
+
+                return BadRequest("An error occurred while processing your request.");
+            }
+            catch
+            {
+                return BadRequest("An error occurred while processing your request.");
+            }
+        }
     }
 }
