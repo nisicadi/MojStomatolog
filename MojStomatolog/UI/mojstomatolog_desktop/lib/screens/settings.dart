@@ -256,7 +256,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   void _saveProfile() {
     if (_profileFormKey.currentState?.validate() ?? false) {
-      setState(() => isEditingProfile = false);
       _initialName = _nameController.text;
       _initialSurname = _surnameController.text;
       _initialEmail = _emailController.text;
