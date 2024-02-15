@@ -17,9 +17,6 @@ class _ProfilePageState extends State<ProfilePage> {
   TextEditingController lastNameController = TextEditingController();
   TextEditingController contactNumberController = TextEditingController();
   TextEditingController emailController = TextEditingController();
-  TextEditingController currentPasswordController = TextEditingController();
-  TextEditingController newPasswordController = TextEditingController();
-  TextEditingController confirmPasswordController = TextEditingController();
   final UserProvider _userProvider = UserProvider();
   dynamic user = {};
 
@@ -277,60 +274,49 @@ class _ProfilePageState extends State<ProfilePage> {
                         ),
                       ),
                     SizedBox(height: 16.0),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        if (!editMode)
-                          ElevatedButton(
-                            onPressed: toggleEditMode,
-                            child: Text("Uredi"),
-                          )
-                        else
-                          Row(
-                            children: [
-                              ElevatedButton(
-                                onPressed: saveChanges,
-                                child: Text("Spasi"),
-                              ),
-                              SizedBox(width: 16.0),
-                              ElevatedButton(
-                                onPressed: toggleEditMode,
-                                child: Text("Odustani"),
-                              ),
-                            ],
-                          ),
-                      ],
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 5.0),
+                      child: ElevatedButton(
+                        onPressed: () {
+                          if (!editMode)
+                            toggleEditMode();
+                          else
+                            saveChanges();
+                        },
+                        child: Text(editMode ? "Spasi" : "Uredi"),
+                      ),
                     ),
-                    SizedBox(height: 16.0),
-                    ElevatedButton(
-                      onPressed: _showChangePasswordDialog,
-                      child: Text("Promijeni šifru"),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 5.0),
+                      child: ElevatedButton(
+                        onPressed: _showChangePasswordDialog,
+                        child: Text("Promijeni šifru"),
+                      ),
                     ),
-                    SizedBox(height: 16.0),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        ElevatedButton(
-                          onPressed: () {
-                            Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => OrdersPage(),
-                            ));
-                          },
-                          child: Text("Moje narudžbe"),
-                        ),
-                        SizedBox(width: 16.0),
-                        ElevatedButton(
-                          onPressed: () {
-                            Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => MyAppointmentsPage(),
-                            ));
-                          },
-                          child: Text("Moji termini"),
-                        ),
-                      ],
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 5.0),
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => OrdersPage(),
+                          ));
+                        },
+                        child: Text("Moje narudžbe"),
+                      ),
                     ),
-                    SizedBox(height: 16.0),
-                    Center(
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 5.0),
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => MyAppointmentsPage(),
+                          ));
+                        },
+                        child: Text("Moji termini"),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 5.0),
                       child: ElevatedButton(
                         onPressed: () {
                           _userProvider.logOut();
