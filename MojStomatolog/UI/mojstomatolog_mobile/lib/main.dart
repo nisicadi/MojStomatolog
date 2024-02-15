@@ -40,6 +40,7 @@ class MyMaterialApp extends StatelessWidget {
       title: 'Moj stomatolog',
       theme: ThemeData(primarySwatch: Colors.blue, useMaterial3: false),
       home: LoginPage(),
+      debugShowCheckedModeBanner: false,
     );
   }
 }
