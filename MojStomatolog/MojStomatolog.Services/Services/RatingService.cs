@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using MojStomatolog.Database;
+using MojStomatolog.Models.Core;
 using MojStomatolog.Models.Requests.Rating;
 using MojStomatolog.Models.Responses;
 using MojStomatolog.Services.Common;

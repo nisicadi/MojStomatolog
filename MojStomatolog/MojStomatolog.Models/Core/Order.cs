@@ -12,6 +12,6 @@ namespace MojStomatolog.Models.Core
         public HashSet<OrderItem> OrderItems { get; set; } = new HashSet<OrderItem>();
 
         [ForeignKey("UserId")]
-        public User? User { get; set; }
+        public User User { get; set; } = null!;
     }
 }

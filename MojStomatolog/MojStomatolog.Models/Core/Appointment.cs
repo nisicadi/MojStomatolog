@@ -11,11 +11,15 @@ namespace MojStomatolog.Models.Core
         public string Notes { get; set; } = null!;
         public int PatientId { get; set; }
         public int EmployeeId { get; set; }
+        public int ServiceId { get; set; }
 
         [ForeignKey("PatientId")]
-        public User? Patient { get; set; }
+        public User Patient { get; set; } = null!;
 
         [ForeignKey("EmployeeId")]
-        public Employee? Employee { get; set; }
+        public Employee Employee { get; set; } = null!;
+
+        [ForeignKey("ServiceId")]
+        public Service Service { get; set; } = null!;
     }
 }

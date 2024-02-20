@@ -12,10 +12,10 @@ namespace MojStomatolog.Models.Core
         public decimal Price { get; set; }
 
         [ForeignKey("ProductId")]
-        public Product? Product { get; set; }
+        public Product Product { get; set; } = null!;
 
         [ForeignKey("OrderId")]
         [JsonIgnore]
-        public Order? Order { get; set; }
+        public Order Order { get; set; } = null!;
     }
 }

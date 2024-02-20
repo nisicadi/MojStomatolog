@@ -17,6 +17,6 @@ namespace MojStomatolog.Models.Core
         public int UserCreatedId { get; set; }
 
         [ForeignKey("UserCreatedId")]
-        public User? User { get; set; }
+        public User User { get; set; } = null!;
     }
 }

@@ -8,6 +8,7 @@ using MojStomatolog.Models.Requests.OrderItem;
 using MojStomatolog.Models.Requests.Product;
 using MojStomatolog.Models.Requests.ProductCategory;
 using MojStomatolog.Models.Requests.Rating;
+using MojStomatolog.Models.Requests.Service;
 using MojStomatolog.Models.Requests.User;
 using MojStomatolog.Models.Responses;
 
@@ -90,6 +91,14 @@ namespace MojStomatolog.Services.Mapper
             CreateMap<AddProductCategoryRequest, ProductCategory>();
             CreateMap<UpdateProductCategoryRequest, ProductCategory>();
             CreateMap<ProductCategory, ProductCategoryResponse>();
+
+            #endregion
+
+            #region Service
+
+            CreateMap<AddServiceRequest, Service>();
+            CreateMap<UpdateServiceRequest, Service>();
+            CreateMap<Service, ServiceResponse>();
 
             #endregion
         }

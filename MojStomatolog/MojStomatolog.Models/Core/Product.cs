@@ -20,6 +20,6 @@ namespace MojStomatolog.Models.Core
 
 
         [ForeignKey("ProductCategoryId")]
-        public ProductCategory? ProductCategory { get; set; }
+        public ProductCategory ProductCategory { get; set; } = null!;
     }
 }

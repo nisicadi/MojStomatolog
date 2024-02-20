@@ -12,7 +12,7 @@ public partial class MojStomatologContext
         modelBuilder.Entity<ProductCategory>().HasData(new ProductCategory
         {
             ProductCategoryId = 1,
-            Name = "četkica za zube"
+            Name = "Četkica za zube"
         });
         modelBuilder.Entity<ProductCategory>().HasData(new ProductCategory
         {
@@ -23,6 +23,36 @@ public partial class MojStomatologContext
         {
             ProductCategoryId = 3,
             Name = "Vodica za ispiranje usta"
+        });
+
+        #endregion
+
+        #region Service
+
+        modelBuilder.Entity<Service>().HasData(new Service
+        {
+            Id = 1,
+            Name = "Liječenje karijesa"
+        });
+        modelBuilder.Entity<Service>().HasData(new Service
+        {
+            Id = 2,
+            Name = "Parodontologija"
+        });
+        modelBuilder.Entity<Service>().HasData(new Service
+        {
+            Id = 3,
+            Name = "Protetika"
+        });
+        modelBuilder.Entity<Service>().HasData(new Service
+        {
+            Id = 4,
+            Name = "Pregled"
+        });
+        modelBuilder.Entity<Service>().HasData(new Service
+        {
+            Id = 5,
+            Name = "Preventivna stomatologija"
         });
 
         #endregion
@@ -720,6 +750,7 @@ public partial class MojStomatologContext
             Notes = "",
             PatientId = 1,
             EmployeeId = 3,
+            ServiceId = 1,
             AppointmentDateTime = DateTime.Today.AddHours(14).AddMinutes(30)
         });
         modelBuilder.Entity<Appointment>().HasData(new Appointment
@@ -730,6 +761,7 @@ public partial class MojStomatologContext
             Notes = "",
             PatientId = 1,
             EmployeeId = 3,
+            ServiceId = 2,
             AppointmentDateTime = DateTime.Today.AddHours(38).AddMinutes(30)
         });
         modelBuilder.Entity<Appointment>().HasData(new Appointment
@@ -740,6 +772,7 @@ public partial class MojStomatologContext
             Notes = "",
             PatientId = 2,
             EmployeeId = 4,
+            ServiceId = 3,
             AppointmentDateTime = DateTime.Today.AddHours(11).AddMinutes(30)
         });
         modelBuilder.Entity<Appointment>().HasData(new Appointment
@@ -750,6 +783,7 @@ public partial class MojStomatologContext
             Notes = "",
             PatientId = 3,
             EmployeeId = 5,
+            ServiceId = 4,
             AppointmentDateTime = DateTime.Today.AddHours(10).AddMinutes(30)
         });
         modelBuilder.Entity<Appointment>().HasData(new Appointment
@@ -760,6 +794,7 @@ public partial class MojStomatologContext
             Notes = "",
             PatientId = 2,
             EmployeeId = 1,
+            ServiceId = 5,
             AppointmentDateTime = DateTime.Today.AddHours(35).AddMinutes(30)
         });
 
