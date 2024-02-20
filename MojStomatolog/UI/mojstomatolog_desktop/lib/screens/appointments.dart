@@ -140,7 +140,6 @@ class _AppointmentListScreenState extends State<AppointmentListScreen> {
   @override
   Widget build(BuildContext context) {
     final List<DataColumn> columns = [
-      DataColumn(label: Text('Id')),
       DataColumn(label: Text('Datum i vrijeme')),
       DataColumn(label: Text('Procedura')),
       DataColumn(label: Text('Potvrđeno')),
@@ -155,7 +154,6 @@ class _AppointmentListScreenState extends State<AppointmentListScreen> {
           '${appointment.patient?.firstName ?? ''} ${appointment.patient?.lastName ?? ''}';
       return DataRow(
         cells: [
-          DataCell(Text(appointment.appointmentId.toString())),
           DataCell(Text(DateFormat('dd.MM.yyyy  HH:mm')
               .format(appointment.appointmentDateTime ?? DateTime.now()))),
           DataCell(Text(appointment.procedure ?? '')),
