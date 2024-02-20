@@ -11,5 +11,7 @@
         public string Content { get; set; } = string.Empty;
 
         public DateTime PublishDate { get; set; }
+
+        public int UserCreatedId { get; set; }
     }
 }

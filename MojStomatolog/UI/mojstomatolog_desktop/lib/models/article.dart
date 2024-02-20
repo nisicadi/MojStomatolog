@@ -9,6 +9,7 @@ class Article {
   String? summary;
   String? content;
   DateTime? publishDate;
+  int? userCreatedId;
 
   Article();
 

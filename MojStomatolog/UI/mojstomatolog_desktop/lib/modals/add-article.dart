@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:mojstomatolog_desktop/models/article.dart';
 import 'package:mojstomatolog_desktop/providers/article_provider.dart';
+import 'package:mojstomatolog_desktop/utils/util.dart';
 
 class AddArticleModal extends StatefulWidget {
   final Function(Article) onArticleAdded;
@@ -89,6 +90,7 @@ class _AddArticleModalState extends State<AddArticleModal> {
               updatedArticle.summary = _summaryController.text;
               updatedArticle.content = _contentController.text;
               updatedArticle.publishDate = _selectedDate;
+              updatedArticle.userCreatedId = widget.initialArticle?.userCreatedId ?? User.userId;
 
               try {
                 final result = _isEditing
