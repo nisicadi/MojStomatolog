@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:mojstomatolog_desktop/models/order.dart';
 import 'package:mojstomatolog_desktop/providers/company_settings_provider.dart';
@@ -193,6 +194,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
         onTap: () => !isEditing
             ? FocusScope.of(context).requestFocus(FocusNode())
             : null,
+        inputFormatters:
+            isNumber ? [FilteringTextInputFormatter.digitsOnly] : [],
       ),
     );
   }
