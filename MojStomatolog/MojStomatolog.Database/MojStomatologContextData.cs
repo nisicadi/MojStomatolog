@@ -745,7 +745,6 @@ public partial class MojStomatologContext
         modelBuilder.Entity<Appointment>().HasData(new Appointment
         {
             AppointmentId = 1,
-            Procedure = "Skidanje kamenca",
             IsConfirmed = true,
             Notes = "",
             PatientId = 1,
@@ -756,7 +755,6 @@ public partial class MojStomatologContext
         modelBuilder.Entity<Appointment>().HasData(new Appointment
         {
             AppointmentId = 2,
-            Procedure = "Pregled",
             IsConfirmed = true,
             Notes = "",
             PatientId = 1,
@@ -767,7 +765,6 @@ public partial class MojStomatologContext
         modelBuilder.Entity<Appointment>().HasData(new Appointment
         {
             AppointmentId = 3,
-            Procedure = "Skidanje kamenca",
             IsConfirmed = true,
             Notes = "",
             PatientId = 2,
@@ -778,7 +775,6 @@ public partial class MojStomatologContext
         modelBuilder.Entity<Appointment>().HasData(new Appointment
         {
             AppointmentId = 4,
-            Procedure = "Popravak zuba",
             IsConfirmed = true,
             Notes = "",
             PatientId = 3,
@@ -789,7 +785,6 @@ public partial class MojStomatologContext
         modelBuilder.Entity<Appointment>().HasData(new Appointment
         {
             AppointmentId = 5,
-            Procedure = "Pregled",
             IsConfirmed = true,
             Notes = "",
             PatientId = 2,

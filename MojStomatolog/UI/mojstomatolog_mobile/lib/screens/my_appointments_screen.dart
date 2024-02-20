@@ -82,7 +82,7 @@ class _MyAppointmentsPageState extends State<MyAppointmentsPage> {
               child: ListTile(
                 title: Text(
                     'Termin: ${DateFormat('dd.MM.yyyy HH:mm').format(appointment.appointmentDateTime ?? DateTime.now())}'),
-                subtitle: Text('Procedura: ${appointment.procedure}'),
+                subtitle: Text('Usluga: ${appointment.service?.name}'),
               ),
             );
           },

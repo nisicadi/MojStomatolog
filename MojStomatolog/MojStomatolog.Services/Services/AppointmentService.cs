@@ -27,7 +27,7 @@ namespace MojStomatolog.Services.Services
             {
                 var searchTermLower = search.SearchTerm.ToLower();
 
-                query = query.Where(x => x.Procedure.Contains(searchTermLower));
+                query = query.Where(x => x.Service.Name.Contains(searchTermLower));
             }
 
             if (search.DateTimeFrom is not null)
@@ -55,7 +55,9 @@ namespace MojStomatolog.Services.Services
 
         public override IQueryable<Appointment> AddInclude(IQueryable<Appointment> query, AppointmentSearchObject? search = null)
         {
-            return query.Include(x => x.Patient);
+            return query.Include(x => x.Patient)
+                        .Include(x => x.Employee)
+                        .Include(x => x.Service);
         }
     }
 }

@@ -4,6 +4,10 @@ import 'package:mojstomatolog_mobile/models/search/appointment_search.dart';
 import 'package:mojstomatolog_mobile/providers/company_settings_provider.dart';
 import 'package:mojstomatolog_mobile/models/appointment.dart';
 import 'package:mojstomatolog_mobile/providers/appointment_provider.dart';
+import 'package:mojstomatolog_mobile/providers/service_provider.dart';
+import 'package:mojstomatolog_mobile/providers/employee_provider.dart';
+import 'package:mojstomatolog_mobile/models/service.dart';
+import 'package:mojstomatolog_mobile/models/employee.dart';
 import 'package:mojstomatolog_mobile/utils/util.dart';
 import 'package:mojstomatolog_mobile/widgets/master_screen.dart';
 
@@ -18,14 +22,20 @@ class _AppointmentsPageState extends State<AppointmentsPage> {
   final CompanySettingsProvider _companySettingsProvider =
       CompanySettingsProvider();
   final AppointmentProvider _appointmentProvider = AppointmentProvider();
+  final ServiceProvider _serviceProvider = ServiceProvider();
+  final EmployeeProvider _employeeProvider = EmployeeProvider();
 
   List<Appointment> reservedAppointments = [];
+  List<Service> services = [];
+  List<Employee> employees = [];
 
   @override
   void initState() {
     super.initState();
     _fetchWorkingHours();
     _fetchReservedAppointments(selectedDate);
+    _fetchServices();
+    _fetchEmployees();
   }
 
   Future<void> _fetchWorkingHours() async {
@@ -91,58 +101,69 @@ class _AppointmentsPageState extends State<AppointmentsPage> {
     }
   }
 
-  void _showReservationModal(BuildContext context, String appointmentTime) {
-    String procedure = '';
-    String notes = '';
-
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Rezervacija termina'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              TextFormField(
-                decoration: InputDecoration(
-                  labelText: 'Procedura',
-                ),
-                onChanged: (value) {
-                  procedure = value;
-                },
-              ),
-              TextFormField(
-                decoration: InputDecoration(
-                  labelText: 'Bilješke',
-                ),
-                onChanged: (value) {
-                  notes = value;
-                },
-              ),
-            ],
-          ),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text('Odustani'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                _handleCreateAppointment(appointmentTime, procedure, notes);
-                Navigator.of(context).pop();
-              },
-              child: Text('Rezervisi'),
-            ),
-          ],
-        );
-      },
-    );
+  Future<void> _fetchServices() async {
+    try {
+      final services = await _serviceProvider.get();
+      setState(() {
+        this.services = services.results;
+      });
+    } catch (e) {
+      print('Error fetching services: $e');
+    }
   }
 
-  void _handleCreateAppointment(
-      String appointmentTime, String procedure, String notes) async {
+  Future<void> _fetchEmployees() async {
+    try {
+      final employees = await _employeeProvider.get();
+      setState(() {
+        this.employees = employees.results;
+      });
+    } catch (e) {
+      print('Error fetching employees: $e');
+    }
+  }
+
+  void _showReservationModal(
+      BuildContext context, String appointmentTime) async {
+    bool userHasReservation = reservedAppointments.any((appointment) =>
+        appointment.appointmentDateTime?.year == selectedDate.year &&
+        appointment.appointmentDateTime?.month == selectedDate.month &&
+        appointment.appointmentDateTime?.day == selectedDate.day &&
+        appointment.patientId == User.userId);
+
+    if (userHasReservation) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Već ste rezervisali termin za ovaj dan'),
+            content: Text('Samo jedna rezervacija dnevno je dozvoljena.'),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+    } else {
+      _ReservationDialog.show(
+        context: context,
+        services: services,
+        employees: employees,
+        onReservation: (serviceId, employeeId, notes) {
+          _handleCreateAppointment(
+              appointmentTime, serviceId, employeeId, notes);
+        },
+      );
+    }
+  }
+
+  void _handleCreateAppointment(String appointmentTime, int serviceId,
+      int employeeId, String notes) async {
     final newAppointment = Appointment();
     newAppointment.appointmentDateTime = DateTime(
       selectedDate.year,
@@ -151,7 +172,8 @@ class _AppointmentsPageState extends State<AppointmentsPage> {
       int.parse(appointmentTime.split(':')[0]),
       int.parse(appointmentTime.split(':')[1]),
     );
-    newAppointment.procedure = procedure;
+    newAppointment.serviceId = serviceId;
+    newAppointment.employeeId = employeeId;
     newAppointment.notes = notes;
     newAppointment.isConfirmed = false;
     newAppointment.patientId = User.userId;
@@ -332,5 +354,197 @@ class _AppointmentsPageState extends State<AppointmentsPage> {
     } catch (e) {
       print('Error canceling appointment: $e');
     }
+  }
+}
+
+class _ReservationDialog {
+  static void show({
+    required BuildContext context,
+    required List<Service> services,
+    required List<Employee> employees,
+    required Function(int, int, String) onReservation,
+  }) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return _ReservationDialogWidget(
+          services: services,
+          employees: employees,
+          onReservation: onReservation,
+        );
+      },
+    );
+  }
+}
+
+class _ReservationDialogWidget extends StatefulWidget {
+  final List<Service> services;
+  final List<Employee> employees;
+  final Function(int, int, String) onReservation;
+
+  const _ReservationDialogWidget({
+    Key? key,
+    required this.services,
+    required this.employees,
+    required this.onReservation,
+  }) : super(key: key);
+
+  @override
+  _ReservationDialogWidgetState createState() =>
+      _ReservationDialogWidgetState();
+}
+
+class _ReservationDialogWidgetState extends State<_ReservationDialogWidget> {
+  late Service selectedService;
+  late Employee selectedEmployee; // New: Track selected employee
+  late String notes;
+
+  @override
+  void initState() {
+    super.initState();
+    selectedService =
+        widget.services.isNotEmpty ? widget.services[0] : Service();
+    selectedEmployee = widget.employees.isNotEmpty
+        ? widget.employees[0]
+        : Employee(); // New: Initialize with the first employee
+    notes = '';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text('Rezervacija termina'),
+      content: _ReservationDialogContent(
+        services: widget.services,
+        employees: widget.employees,
+        onServiceChange: (value) {
+          setState(() {
+            selectedService = value;
+          });
+        },
+        onEmployeeChange: (value) {
+          setState(() {
+            selectedEmployee = value;
+          });
+        },
+        onNotesChange: (value) {
+          setState(() {
+            notes = value;
+          });
+        },
+      ),
+      actions: <Widget>[
+        TextButton(
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          child: Text('Odustani'),
+        ),
+        ElevatedButton(
+          onPressed: () {
+            widget.onReservation(
+                selectedService.id!, selectedEmployee.employeeId!, notes);
+            Navigator.of(context).pop();
+          },
+          child: Text('Rezervisi'),
+        ),
+      ],
+    );
+  }
+}
+
+class _ReservationDialogContent extends StatefulWidget {
+  final List<Service> services;
+  final List<Employee> employees;
+  final Function(Service) onServiceChange;
+  final Function(Employee) onEmployeeChange;
+  final Function(String) onNotesChange;
+
+  const _ReservationDialogContent({
+    Key? key,
+    required this.services,
+    required this.employees,
+    required this.onServiceChange,
+    required this.onEmployeeChange,
+    required this.onNotesChange,
+  }) : super(key: key);
+
+  @override
+  _ReservationDialogContentState createState() =>
+      _ReservationDialogContentState();
+}
+
+class _ReservationDialogContentState extends State<_ReservationDialogContent> {
+  late Service selectedService;
+  late Employee selectedEmployee;
+  late String notes;
+
+  @override
+  void initState() {
+    super.initState();
+    selectedService =
+        widget.services.isNotEmpty ? widget.services[0] : Service();
+    selectedEmployee =
+        widget.employees.isNotEmpty ? widget.employees[0] : Employee();
+    notes = '';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        DropdownButtonFormField<Service>(
+          value: selectedService,
+          items: widget.services.map((service) {
+            return DropdownMenuItem<Service>(
+              value: service,
+              child: Text(service.name!),
+            );
+          }).toList(),
+          onChanged: (value) {
+            widget.onServiceChange(value!);
+          },
+          decoration: InputDecoration(
+            labelText: 'Usluga',
+          ),
+          validator: (value) {
+            if (value == null) {
+              return 'Izaberite uslugu';
+            }
+            return null;
+          },
+        ),
+        DropdownButtonFormField<Employee>(
+          value: selectedEmployee,
+          items: widget.employees.map((employee) {
+            return DropdownMenuItem<Employee>(
+              value: employee,
+              child: Text('${employee.firstName} ${employee.lastName}'),
+            );
+          }).toList(),
+          onChanged: (value) {
+            widget.onEmployeeChange(value!);
+          },
+          decoration: InputDecoration(
+            labelText: 'Doktor',
+          ),
+          validator: (value) {
+            if (value == null) {
+              return 'Izaberite doktora';
+            }
+            return null;
+          },
+        ),
+        TextFormField(
+          decoration: InputDecoration(
+            labelText: 'Bilješke',
+          ),
+          onChanged: (value) {
+            widget.onNotesChange(value);
+          },
+        ),
+      ],
+    );
   }
 }
