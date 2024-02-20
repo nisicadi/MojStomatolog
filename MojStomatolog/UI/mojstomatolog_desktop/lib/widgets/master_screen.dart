@@ -5,6 +5,7 @@ import 'package:mojstomatolog_desktop/screens/employees.dart';
 import 'package:mojstomatolog_desktop/screens/login_screen.dart';
 import 'package:mojstomatolog_desktop/screens/product_categories.dart';
 import 'package:mojstomatolog_desktop/screens/product_list_screen.dart';
+import 'package:mojstomatolog_desktop/screens/services.dart';
 import 'package:mojstomatolog_desktop/screens/settings.dart';
 import 'package:mojstomatolog_desktop/providers/user_provider.dart';
 
@@ -31,6 +32,7 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
             buildButton('Termini'),
             buildButton('Proizvodi'),
             buildButton('Kategorije proizvoda'),
+            buildButton('Usluge'),
             buildButton('Članci'),
             buildButton('Postavke'),
             Spacer(),
@@ -117,6 +119,9 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
         break;
       case 'Kategorije proizvoda':
         screen = ProductCategoryListScreen();
+        break;
+      case 'Usluge':
+        screen = ServiceListScreen();
         break;
       case 'Članci':
         screen = ArticleListScreen();
