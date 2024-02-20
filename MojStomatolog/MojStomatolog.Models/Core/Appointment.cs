@@ -10,8 +10,12 @@ namespace MojStomatolog.Models.Core
         public bool IsConfirmed { get; set; }
         public string Notes { get; set; } = null!;
         public int PatientId { get; set; }
+        public int EmployeeId { get; set; }
 
         [ForeignKey("PatientId")]
-        public User Patient { get; set; } = null!;
+        public User? Patient { get; set; }
+
+        [ForeignKey("EmployeeId")]
+        public Employee? Employee { get; set; }
     }
 }

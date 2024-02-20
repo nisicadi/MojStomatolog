@@ -671,7 +671,8 @@ public partial class MojStomatologContext
             Content =
                 "Redoviti posjeti stomatologu ključni su za očuvanje oralnog zdravlja. Stomatolog će pregledati vaše zube, desni i ukazati na potencijalne probleme prije nego što postanu ozbiljni.",
             Summary = "Očuvanje oralnog zdravlja kroz redovite posjete stomatologu.",
-            PublishDate = DateTime.Now
+            PublishDate = DateTime.Now,
+            UserCreatedId = 4
         });
 
         modelBuilder.Entity<Article>().HasData(new Article
@@ -681,7 +682,8 @@ public partial class MojStomatologContext
             Content =
                 "Pravilna tehnika četkanja zuba ključna je za sprječavanje karijesa i bolesti desni. Obratite pažnju na pritisak, kut četkanja i koristite kvalitetnu četkicu za zube.",
             Summary = "Savjeti za postizanje savršene tehnike četkanja zuba.",
-            PublishDate = DateTime.Now
+            PublishDate = DateTime.Now,
+            UserCreatedId = 3
         });
 
         modelBuilder.Entity<Article>().HasData(new Article
@@ -691,7 +693,8 @@ public partial class MojStomatologContext
             Content =
                 "Vaša ishrana igra ključnu ulogu u održavanju zdravlja vaših zuba. Ograničite unos šećera, konzumirajte mliječne proizvode i voće te pijte dovoljno vode za optimalnu oralnu hidrataciju.",
             Summary = "Kako ishrana utječe na zdravlje zuba i desni.",
-            PublishDate = DateTime.Now
+            PublishDate = DateTime.Now,
+            UserCreatedId = 5
         });
 
         modelBuilder.Entity<Article>().HasData(new Article
@@ -701,7 +704,8 @@ public partial class MojStomatologContext
             Content =
                 "Estetski zahvati poput izbjeljivanja zuba, keramičkih faseta i ortodontskih tretmana mogu poboljšati izgled vašeg osmijeha. Posavjetujte se sa stomatologom o opcijama prilagođenim vašim potrebama.",
             Summary = "Pregled estetskih zahvata za ljepši osmijeh.",
-            PublishDate = DateTime.Now
+            PublishDate = DateTime.Now,
+            UserCreatedId = 6
         });
 
         #endregion
@@ -715,6 +719,7 @@ public partial class MojStomatologContext
             IsConfirmed = true,
             Notes = "",
             PatientId = 1,
+            EmployeeId = 3,
             AppointmentDateTime = DateTime.Today.AddHours(14).AddMinutes(30)
         });
         modelBuilder.Entity<Appointment>().HasData(new Appointment
@@ -724,6 +729,7 @@ public partial class MojStomatologContext
             IsConfirmed = true,
             Notes = "",
             PatientId = 1,
+            EmployeeId = 3,
             AppointmentDateTime = DateTime.Today.AddHours(38).AddMinutes(30)
         });
         modelBuilder.Entity<Appointment>().HasData(new Appointment
@@ -733,6 +739,7 @@ public partial class MojStomatologContext
             IsConfirmed = true,
             Notes = "",
             PatientId = 2,
+            EmployeeId = 4,
             AppointmentDateTime = DateTime.Today.AddHours(11).AddMinutes(30)
         });
         modelBuilder.Entity<Appointment>().HasData(new Appointment
@@ -742,6 +749,7 @@ public partial class MojStomatologContext
             IsConfirmed = true,
             Notes = "",
             PatientId = 3,
+            EmployeeId = 5,
             AppointmentDateTime = DateTime.Today.AddHours(10).AddMinutes(30)
         });
         modelBuilder.Entity<Appointment>().HasData(new Appointment
@@ -751,6 +759,7 @@ public partial class MojStomatologContext
             IsConfirmed = true,
             Notes = "",
             PatientId = 2,
+            EmployeeId = 1,
             AppointmentDateTime = DateTime.Today.AddHours(35).AddMinutes(30)
         });
 

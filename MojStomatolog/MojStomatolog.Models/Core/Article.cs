@@ -1,4 +1,6 @@
-﻿namespace MojStomatolog.Models.Core
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace MojStomatolog.Models.Core
 {
     public class Article
     {
@@ -11,5 +13,10 @@
         public string Content { get; set; } = string.Empty;
 
         public DateTime PublishDate { get; set; } = DateTime.Now;
+
+        public int UserCreatedId { get; set; }
+
+        [ForeignKey("UserCreatedId")]
+        public User? User { get; set; }
     }
 }

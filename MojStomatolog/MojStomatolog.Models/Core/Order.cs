@@ -1,4 +1,6 @@
-﻿namespace MojStomatolog.Models.Core
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace MojStomatolog.Models.Core
 {
     public class Order
     {
@@ -8,5 +10,8 @@
         public decimal TotalAmount { get; set; }
 
         public HashSet<OrderItem> OrderItems { get; set; } = new HashSet<OrderItem>();
+
+        [ForeignKey("UserId")]
+        public User? User { get; set; }
     }
 }

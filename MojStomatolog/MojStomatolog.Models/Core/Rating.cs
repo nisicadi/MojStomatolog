@@ -1,4 +1,5 @@
 ﻿using MojStomatolog.Models.Core;
+using System.ComponentModel.DataAnnotations.Schema;
 
 public class Rating
 {
@@ -7,5 +8,9 @@ public class Rating
     public int UserId { get; set; }
     public int RatingValue { get; set; }
 
-    public Product Product { get; set; } = null!;
+    [ForeignKey("ProductId")]
+    public Product? Product { get; set; }
+
+    [ForeignKey("UserId")]
+    public User? User { get; set; }
 }
