@@ -50,16 +50,16 @@ namespace MojStomatolog.Services.Services
             }
         }
 
-        public async Task<bool> ChangeStatus(int orderId, int orderStatus)
+        public async Task<bool> ChangeStatus(PatchOrderRequest request)
         {
-            var order = await Context.Orders.FindAsync(orderId);
-            if (order is null || orderStatus < (int)OrderStatus.InProgress || orderStatus > (int)OrderStatus.Cancelled)
+            var order = await Context.Orders.FindAsync(request.OrderId);
+            if (order is null || request.OrderStatus < (int)OrderStatus.InProgress || request.OrderStatus > (int)OrderStatus.Cancelled)
                 return false;
 
-            if (order.Status == (int)OrderStatus.Delivered && orderStatus == (int)OrderStatus.Cancelled)
+            if (order.Status == (int)OrderStatus.Delivered && request.OrderStatus == (int)OrderStatus.Cancelled)
                 return false;
 
-            order.Status = orderStatus;
+            order.Status = request.OrderStatus;
             Context.Orders.Update(order);
 
             await Context.SaveChangesAsync();

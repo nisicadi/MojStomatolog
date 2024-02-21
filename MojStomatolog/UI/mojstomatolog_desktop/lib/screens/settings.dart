@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import 'package:mojstomatolog_desktop/enums/order_status.dart';
 import 'package:mojstomatolog_desktop/models/order.dart';
 import 'package:mojstomatolog_desktop/providers/company_settings_provider.dart';
 import 'package:mojstomatolog_desktop/providers/order_provider.dart';
@@ -459,30 +460,74 @@ class _SettingsScreenState extends State<SettingsScreen> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Detalji narudžbe #${order.id}'),
-          content: Container(
-            width: double.maxFinite,
-            child: ListView.builder(
-              itemCount: order.orderItems?.length ?? 0,
-              itemBuilder: (BuildContext context, int index) {
-                final orderItem = order.orderItems![index];
-                return ListTile(
-                  title: Text(orderItem.product?.name ?? 'Proizvod'),
-                  subtitle: Text('Količina: ${orderItem.quantity}'),
-                  trailing: Text('Cijena: ${orderItem.price} KM'),
-                );
-              },
-            ),
-          ),
-          actions: [
-            ElevatedButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text('Zatvori'),
-            ),
-          ],
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: Text('Detalji narudžbe #${order.id}'),
+              content: Container(
+                width: double.maxFinite,
+                child: ListView.builder(
+                  itemCount: order.orderItems?.length ?? 0,
+                  itemBuilder: (BuildContext context, int index) {
+                    final orderItem = order.orderItems![index];
+                    return ListTile(
+                      title: Text(orderItem.product?.name ?? 'Proizvod'),
+                      subtitle: Text('Količina: ${orderItem.quantity}'),
+                      trailing: Text('Cijena: ${orderItem.price} KM'),
+                    );
+                  },
+                ),
+              ),
+              actions: [
+                if (order.status != OrderStatus.cancelled)
+                  DropdownButton<OrderStatus>(
+                    value: OrderStatus.values[order.status!],
+                    onChanged: order.status == OrderStatus.cancelled.index ? null : (newValue) async {
+                      var response = await _orderProvider.changeStatus(order.id!, newValue!.index);
+                      if (response?.statusCode == 200) {
+                        setState(() {
+                          order.status = newValue.index;
+                        });
+
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text('Status narudžbe je ažuriran.'),
+                        ));
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text('Greška pri ažuriranju statusa narudžbe.'),
+                        ));
+                      }
+                    },
+                    items: OrderStatus.values.map((status) {
+                      return DropdownMenuItem<OrderStatus>(
+                        value: status,
+                        child: Text(_getStatusText(status)),
+                      );
+                    }).toList(),
+                    disabledHint: Text(_getStatusText(OrderStatus.cancelled)),
+                  ),
+                ElevatedButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text('Zatvori'),
+                ),
+              ],
+            );
+          },
         );
       },
     );
+  }
+
+  String _getStatusText(OrderStatus status) {
+    switch (status) {
+      case OrderStatus.inProgress:
+        return 'U obradi';
+      case OrderStatus.inDelivery:
+        return 'U tijeku';
+      case OrderStatus.delivered:
+        return 'Dostavljeno';
+      case OrderStatus.cancelled:
+        return 'Otkazano';
+    }
   }
 }

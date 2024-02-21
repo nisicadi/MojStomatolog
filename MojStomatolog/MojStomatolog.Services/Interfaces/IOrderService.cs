@@ -8,6 +8,6 @@ namespace MojStomatolog.Services.Interfaces
     public interface IOrderService : IBaseService<OrderResponse, OrderSearchObject>
     {
         Task<bool> CreateOrder(AddOrderRequest request);
-        Task<bool> ChangeStatus(int orderId, int orderStatus);
+        Task<bool> ChangeStatus(PatchOrderRequest request);
     }
 }

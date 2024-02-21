@@ -36,11 +36,11 @@ namespace MojStomatolog.Controllers
         }
 
         [HttpPatch]
-        public async Task<IActionResult> ChangeOrderStatus(int orderId, int orderStatus)
+        public async Task<IActionResult> ChangeOrderStatus([FromBody] PatchOrderRequest request)
         {
             try
             {
-                var result = await _orderService.ChangeStatus(orderId, orderStatus);
+                var result = await _orderService.ChangeStatus(request);
 
                 return result ? Ok("Order status changed successfully.") : BadRequest("Failed to change the order status.");
             }
