@@ -6,6 +6,7 @@ using MojStomatolog.Models.Core;
 using MojStomatolog.Models.Requests.Order;
 using MojStomatolog.Models.Responses;
 using MojStomatolog.Services.Common;
+using MojStomatolog.Services.Common.Enums;
 using MojStomatolog.Services.Common.SearchObjects;
 using MojStomatolog.Services.Interfaces;
 
@@ -47,6 +48,23 @@ namespace MojStomatolog.Services.Services
             {
                 return false;
             }
+        }
+
+        public async Task<bool> ChangeStatus(int orderId, int orderStatus)
+        {
+            var order = await Context.Orders.FindAsync(orderId);
+            if (order is null || orderStatus < (int)OrderStatus.InProgress || orderStatus > (int)OrderStatus.Cancelled)
+                return false;
+
+            if (order.Status == (int)OrderStatus.Delivered && orderStatus == (int)OrderStatus.Cancelled)
+                return false;
+
+            order.Status = orderStatus;
+            Context.Orders.Update(order);
+
+            await Context.SaveChangesAsync();
+
+            return true;
         }
 
         public override IQueryable<Order> AddFilter(IQueryable<Order> query, OrderSearchObject? search = null)

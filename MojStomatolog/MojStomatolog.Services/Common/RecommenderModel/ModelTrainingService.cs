@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.ML;
 using Microsoft.ML.Trainers;
 using MojStomatolog.Database;
+using MojStomatolog.Services.Common.Enums;
 
 namespace MojStomatolog.Services.Common.RecommenderModel
 {
@@ -24,6 +25,7 @@ namespace MojStomatolog.Services.Common.RecommenderModel
             var dbContext = scope.ServiceProvider.GetRequiredService<MojStomatologContext>() ?? throw new InvalidOperationException("Database context cannot be null.");
 
             var tmpData = dbContext.Orders
+                .Where(x => x.Status != (int)OrderStatus.Cancelled)
                 .Include(x => x.OrderItems)
                 .ToList();
             var data = new List<ProductEntry>();

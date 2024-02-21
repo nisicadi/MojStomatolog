@@ -250,105 +250,120 @@ public partial class MojStomatologContext
             Id = 1,
             UserId = 1,
             OrderDate = new DateTime(2023, 06, 15),
-            TotalAmount = 29.30M
+            TotalAmount = 29.30M,
+            Status = 2
         });
         modelBuilder.Entity<Order>().HasData(new Order
         {
             Id = 2,
             UserId = 2,
             OrderDate = new DateTime(2023, 07, 10),
-            TotalAmount = 24.10M
+            TotalAmount = 24.10M,
+            Status = 2
         });
         modelBuilder.Entity<Order>().HasData(new Order
         {
             Id = 3,
             UserId = 3,
             OrderDate = new DateTime(2023, 08, 05),
-            TotalAmount = 19.80M
+            TotalAmount = 19.80M,
+            Status = 2
         });
         modelBuilder.Entity<Order>().HasData(new Order
         {
             Id = 4,
             UserId = 1,
             OrderDate = new DateTime(2023, 09, 20),
-            TotalAmount = 32.10M
+            TotalAmount = 32.10M,
+            Status = 2
         });
         modelBuilder.Entity<Order>().HasData(new Order
         {
             Id = 5,
             UserId = 2,
             OrderDate = new DateTime(2023, 10, 25),
-            TotalAmount = 32.21M
+            TotalAmount = 32.21M,
+            Status = 2
         });
         modelBuilder.Entity<Order>().HasData(new Order
         {
             Id = 6,
             UserId = 3,
             OrderDate = new DateTime(2023, 11, 30),
-            TotalAmount = 24.80M
+            TotalAmount = 24.80M,
+            Status = 2
         });
         modelBuilder.Entity<Order>().HasData(new Order
         {
             Id = 7,
             UserId = 1,
             OrderDate = new DateTime(2023, 12, 15),
-            TotalAmount = 15.95M
+            TotalAmount = 15.95M,
+            Status = 2
         });
         modelBuilder.Entity<Order>().HasData(new Order
         {
             Id = 8,
             UserId = 2,
             OrderDate = new DateTime(2024, 01, 05),
-            TotalAmount = 27.10M
+            TotalAmount = 27.10M,
+            Status = 2
         });
         modelBuilder.Entity<Order>().HasData(new Order
         {
             Id = 9,
             UserId = 3,
             OrderDate = new DateTime(2024, 02, 01),
-            TotalAmount = 40.26M
+            TotalAmount = 40.26M,
+            Status = 2
         });
         modelBuilder.Entity<Order>().HasData(new Order
         {
             Id = 10,
             UserId = 1,
             OrderDate = new DateTime(2023, 06, 25),
-            TotalAmount = 15.00M
+            TotalAmount = 15.00M,
+            Status = 2
         });
         modelBuilder.Entity<Order>().HasData(new Order
         {
             Id = 11,
             UserId = 2,
             OrderDate = new DateTime(2023, 07, 15),
-            TotalAmount = 19.80M
+            TotalAmount = 19.80M,
+            Status = 2
         });
         modelBuilder.Entity<Order>().HasData(new Order
         {
             Id = 12,
             UserId = 1,
             OrderDate = new DateTime(2023, 08, 10),
-            TotalAmount = 33.25M
+            TotalAmount = 33.25M,
+            Status = 2
         });
         modelBuilder.Entity<Order>().HasData(new Order
         {
             Id = 13,
             UserId = 3,
             OrderDate = new DateTime(2023, 09, 05),
-            TotalAmount = 20.41M
+            TotalAmount = 20.41M,
+            Status = 2
         });
         modelBuilder.Entity<Order>().HasData(new Order
         {
             Id = 14,
             UserId = 2,
             OrderDate = new DateTime(2023, 10, 30),
-            TotalAmount = 23.10M
+            TotalAmount = 23.10M,
+            Status = 2
         });
         modelBuilder.Entity<Order>().HasData(new Order
         {
             Id = 15,
             UserId = 1,
             OrderDate = new DateTime(2023, 11, 25),
-            TotalAmount = 28.45M
+            TotalAmount = 28.45M,
+            Status = 2
         });
 
         #endregion
