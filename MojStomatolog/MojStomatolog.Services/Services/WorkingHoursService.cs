@@ -1,14 +1,14 @@
 ﻿using AutoMapper;
 using iText.Kernel.Pdf;
+using iText.Layout;
 using iText.Layout.Element;
 using iText.Layout.Properties;
-using iText.Layout;
+using Microsoft.EntityFrameworkCore;
 using MojStomatolog.Database;
 using MojStomatolog.Models.Requests.WorkingHours;
 using MojStomatolog.Models.Responses;
 using MojStomatolog.Services.Common;
 using MojStomatolog.Services.Interfaces;
-using Microsoft.EntityFrameworkCore;
 
 namespace MojStomatolog.Services.Services
 {
@@ -16,6 +16,11 @@ namespace MojStomatolog.Services.Services
     {
         public WorkingHoursService(MojStomatologContext context, IMapper mapper) : base(context, mapper)
         {
+        }
+
+        public override IQueryable<WorkingHours> AddFilter(IQueryable<WorkingHours> query, BaseSearchObject? search = null)
+        {
+            return query.OrderBy(x => x.DayOfWeek);
         }
 
         public async Task<byte[]> GetPdfReportBytes()
