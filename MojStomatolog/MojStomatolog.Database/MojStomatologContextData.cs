@@ -696,14 +696,17 @@ public partial class MojStomatologContext
 
         #endregion
 
-        #region CompanySettings
+        #region WorkingHours
 
-        modelBuilder.Entity<CompanySetting>().HasData(new CompanySetting
-        {
-            SettingId = 1,
-            SettingName = "WorkingHours",
-            SettingValue = "08:30-18:00"
-        });
+        modelBuilder.Entity<WorkingHours>().HasData(
+            new WorkingHours { Id = 1, DayOfWeek = DayOfWeek.Monday, StartTime = new TimeSpan(9, 0, 0), EndTime = new TimeSpan(18, 0, 0), BreakStartTime = new TimeSpan(13, 0, 0), BreakEndTime = new TimeSpan(14, 0, 0) },
+            new WorkingHours { Id = 2, DayOfWeek = DayOfWeek.Tuesday, StartTime = new TimeSpan(9, 0, 0), EndTime = new TimeSpan(18, 0, 0), BreakStartTime = new TimeSpan(13, 0, 0), BreakEndTime = new TimeSpan(14, 0, 0) },
+            new WorkingHours { Id = 3, DayOfWeek = DayOfWeek.Wednesday, StartTime = new TimeSpan(9, 0, 0), EndTime = new TimeSpan(18, 0, 0), BreakStartTime = new TimeSpan(13, 0, 0), BreakEndTime = new TimeSpan(14, 0, 0) },
+            new WorkingHours { Id = 4, DayOfWeek = DayOfWeek.Thursday, StartTime = new TimeSpan(9, 0, 0), EndTime = new TimeSpan(18, 0, 0), BreakStartTime = new TimeSpan(13, 0, 0), BreakEndTime = new TimeSpan(14, 0, 0) },
+            new WorkingHours { Id = 5, DayOfWeek = DayOfWeek.Friday, StartTime = new TimeSpan(9, 0, 0), EndTime = new TimeSpan(18, 0, 0), BreakStartTime = new TimeSpan(13, 0, 0), BreakEndTime = new TimeSpan(14, 0, 0) },
+            new WorkingHours { Id = 6, DayOfWeek = DayOfWeek.Saturday, StartTime = new TimeSpan(9, 0, 0), EndTime = new TimeSpan(15, 0, 0), BreakStartTime = new TimeSpan(12, 0, 0), BreakEndTime = new TimeSpan(13, 0, 0) },
+            new WorkingHours { Id = 7, DayOfWeek = DayOfWeek.Sunday, StartTime = new TimeSpan(9, 0, 0), EndTime = new TimeSpan(15, 0, 0), BreakStartTime = new TimeSpan(12, 0, 0), BreakEndTime = new TimeSpan(13, 0, 0) }
+        );
 
         #endregion
 

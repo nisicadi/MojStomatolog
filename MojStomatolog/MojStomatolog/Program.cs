@@ -18,7 +18,7 @@ builder.Services.AddTransient<IEmployeeService, EmployeeService>();
 builder.Services.AddTransient<IProductService, ProductService>();
 builder.Services.AddTransient<IAppointmentService, AppointmentService>();
 builder.Services.AddTransient<IArticleService, ArticleService>();
-builder.Services.AddTransient<ICompanySettingService, CompanySettingService>();
+builder.Services.AddTransient<IWorkingHoursService, WorkingHoursService>();
 builder.Services.AddTransient<IOrderService, OrderService>();
 builder.Services.AddTransient<IRatingService, RatingService>();
 builder.Services.AddTransient<IProductCategoryService, ProductCategoryService>();

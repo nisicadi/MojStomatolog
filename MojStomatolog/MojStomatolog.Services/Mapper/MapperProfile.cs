@@ -10,6 +10,7 @@ using MojStomatolog.Models.Requests.ProductCategory;
 using MojStomatolog.Models.Requests.Rating;
 using MojStomatolog.Models.Requests.Service;
 using MojStomatolog.Models.Requests.User;
+using MojStomatolog.Models.Requests.WorkingHours;
 using MojStomatolog.Models.Responses;
 
 namespace MojStomatolog.Services.Mapper
@@ -99,6 +100,14 @@ namespace MojStomatolog.Services.Mapper
             CreateMap<AddServiceRequest, Service>();
             CreateMap<UpdateServiceRequest, Service>();
             CreateMap<Service, ServiceResponse>();
+
+            #endregion
+
+            #region WorkingHours
+
+            CreateMap<AddWorkingHoursRequest, WorkingHours>();
+            CreateMap<UpdateWorkingHoursRequest, WorkingHours>();
+            CreateMap<WorkingHours, WorkingHoursResponse>();
 
             #endregion
         }
