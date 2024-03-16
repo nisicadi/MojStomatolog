@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:mojstomatolog_mobile/models/search/appointment_search.dart';
+import 'package:mojstomatolog_mobile/models/working_hours.dart';
 import 'package:mojstomatolog_mobile/providers/company_settings_provider.dart';
 import 'package:mojstomatolog_mobile/models/appointment.dart';
 import 'package:mojstomatolog_mobile/providers/appointment_provider.dart';
@@ -28,6 +29,7 @@ class _AppointmentsPageState extends State<AppointmentsPage> {
   List<Appointment> reservedAppointments = [];
   List<Service> services = [];
   List<Employee> employees = [];
+  List<WorkingHours> workingHours = [];
 
   @override
   void initState() {
@@ -40,35 +42,54 @@ class _AppointmentsPageState extends State<AppointmentsPage> {
 
   Future<void> _fetchWorkingHours() async {
     try {
-      final companySettings =
-          await _companySettingsProvider.getByName('WorkingHours');
-
-      if (companySettings.containsKey('settingValue')) {
-        final workingHours = companySettings['settingValue'] as String;
-        appointments = _generateAppointments(workingHours);
-      }
+      var response = await _companySettingsProvider.get();
+      workingHours = response.results;
+      appointments = _generateAppointments(workingHours);
     } catch (e) {
       print('Error fetching working hours: $e');
     }
   }
 
-  List<String> _generateAppointments(String workingHours) {
+  List<String> _generateAppointments(List<WorkingHours> workingHours) {
     final appointments = <String>[];
-    final parts = workingHours.split('-');
-    if (parts.length == 2) {
-      final startTime = parts[0];
-      final endTime = parts[1];
+    int adjustedDayOfWeek =
+        selectedDate.weekday == 7 ? 0 : selectedDate.weekday;
+
+    final selectedWorkingHours = workingHours.firstWhere(
+      (wh) => wh.dayOfWeek == adjustedDayOfWeek,
+      orElse: () => WorkingHours(),
+    );
+
+    if (selectedWorkingHours.startTime != null &&
+        selectedWorkingHours.endTime != null) {
       final formatter = DateFormat('HH:mm');
-      final start = formatter.parse(startTime);
-      final end = formatter.parse(endTime);
+      final start = formatter.parse(selectedWorkingHours.startTime!);
+      final end = formatter.parse(selectedWorkingHours.endTime!);
+
+      final breakStart = selectedWorkingHours.breakStartTime != null
+          ? formatter.parse(selectedWorkingHours.breakStartTime!)
+          : null;
+      final breakEnd = selectedWorkingHours.breakEndTime != null
+          ? formatter.parse(selectedWorkingHours.breakEndTime!)
+          : null;
 
       final increment = Duration(hours: 1);
       var currentTime = start;
-      while (currentTime.isBefore(end)) {
-        appointments.add(formatter.format(currentTime));
+
+      while (currentTime.isBefore(end.subtract(Duration(minutes: 45)))) {
+        if (breakStart != null &&
+            breakEnd != null &&
+            currentTime.isBefore(breakStart.subtract(Duration(minutes: 45)))) {
+          appointments.add(formatter.format(currentTime));
+        } else if ((breakEnd != null && currentTime.isAfter(breakEnd)) ||
+            (breakStart == null && breakEnd == null)) {
+          appointments.add(formatter.format(currentTime));
+        }
+
         currentTime = currentTime.add(increment);
       }
     }
+
     return appointments;
   }
 
@@ -243,6 +264,7 @@ class _AppointmentsPageState extends State<AppointmentsPage> {
                 setState(() {
                   selectedDate = pickedDate;
                 });
+                await _fetchWorkingHours();
                 await _fetchReservedAppointments(selectedDate);
               }
             },
@@ -396,7 +418,7 @@ class _ReservationDialogWidget extends StatefulWidget {
 
 class _ReservationDialogWidgetState extends State<_ReservationDialogWidget> {
   late Service selectedService;
-  late Employee selectedEmployee; // New: Track selected employee
+  late Employee selectedEmployee;
   late String notes;
 
   @override
@@ -404,9 +426,8 @@ class _ReservationDialogWidgetState extends State<_ReservationDialogWidget> {
     super.initState();
     selectedService =
         widget.services.isNotEmpty ? widget.services[0] : Service();
-    selectedEmployee = widget.employees.isNotEmpty
-        ? widget.employees[0]
-        : Employee(); // New: Initialize with the first employee
+    selectedEmployee =
+        widget.employees.isNotEmpty ? widget.employees[0] : Employee();
     notes = '';
   }
 

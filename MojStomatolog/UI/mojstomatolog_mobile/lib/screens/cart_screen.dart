@@ -40,7 +40,7 @@ class CartPage extends StatelessWidget {
                       item.product.imageUrl ?? '',
                       width: 50,
                       height: 50,
-                      fit: BoxFit.cover,
+                      fit: BoxFit.contain,
                       errorBuilder: (context, error, stackTrace) => Image.asset(
                           'assets/images/no_image.jpg',
                           width: 50,
@@ -205,6 +205,7 @@ class CartPage extends StatelessWidget {
     newOrder.totalAmount = totalAmount;
     newOrder.userId = User.userId;
     newOrder.orderDate = DateTime.now();
+    newOrder.status = 0;
     newOrder.orderItems = cartProvider.cart.items.map((cartItem) {
       return OrderItem()
         ..productId = cartItem.product.productId

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:mojstomatolog_mobile/providers/user_provider.dart';
 import 'package:mojstomatolog_mobile/screens/login_screen.dart';
 import 'package:mojstomatolog_mobile/screens/my_appointments_screen.dart';
@@ -252,6 +253,9 @@ class _ProfilePageState extends State<ProfilePage> {
                       TextFormField(
                         controller: contactNumberController,
                         keyboardType: TextInputType.number,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly
+                        ],
                         decoration: InputDecoration(
                           border: OutlineInputBorder(),
                           errorText: isContactNumberValid
