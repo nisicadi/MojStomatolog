@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:mojstomatolog_desktop/models/employee.dart';
 import 'package:mojstomatolog_desktop/providers/employee_provider.dart';
@@ -136,6 +137,8 @@ class _AddEmployeeModalState extends State<AddEmployeeModal> {
         TextFormField(
           controller: controller,
           keyboardType: isNumber ? TextInputType.number : TextInputType.text,
+          inputFormatters:
+              isNumber ? [FilteringTextInputFormatter.digitsOnly] : null,
           decoration: InputDecoration(labelText: labelText),
           validator: (value) {
             if (labelText == 'Spol') {

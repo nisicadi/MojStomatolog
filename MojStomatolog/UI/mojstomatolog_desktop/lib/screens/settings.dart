@@ -35,7 +35,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
   final _confirmPasswordController = TextEditingController();
 
   final _profileFormKey = GlobalKey<FormState>();
-  final _companyFormKey = GlobalKey<FormState>();
   final _changePasswordFormKey = GlobalKey<FormState>();
 
   String _initialName = User.firstName ?? '';
@@ -54,7 +53,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
     _surnameController.text = _initialSurname;
     _emailController.text = _initialEmail;
     _phoneNumberController.text = _initialPhoneNumber;
-    _loadOrders();
   }
 
   void _resetProfileFields() {
@@ -106,9 +104,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   Widget _buildTextField(TextEditingController controller, String label,
-      {bool isEditing = false,
-      bool isEmail = false,
-      bool isNumber = false}) {
+      {bool isEditing = false, bool isEmail = false, bool isNumber = false}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: TextFormField(
@@ -121,8 +117,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
             : isNumber
                 ? TextInputType.number
                 : TextInputType.text,
-        validator: (value) => _validateField(value,
-            isEmail: isEmail, isNumber: isNumber),
+        validator: (value) =>
+            _validateField(value, isEmail: isEmail, isNumber: isNumber),
         onTap: () => !isEditing
             ? FocusScope.of(context).requestFocus(FocusNode())
             : null,
@@ -338,7 +334,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
   }
 
-  void _showOrdersDialog() {
+  void _showOrdersDialog() async {
+    await _loadOrders();
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -396,22 +394,28 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 if (order.status != OrderStatus.cancelled)
                   DropdownButton<OrderStatus>(
                     value: OrderStatus.values[order.status!],
-                    onChanged: order.status == OrderStatus.cancelled.index ? null : (newValue) async {
-                      var response = await _orderProvider.changeStatus(order.id!, newValue!.index);
-                      if (response?.statusCode == 200) {
-                        setState(() {
-                          order.status = newValue.index;
-                        });
+                    onChanged: order.status == OrderStatus.cancelled.index
+                        ? null
+                        : (newValue) async {
+                            var response = await _orderProvider.changeStatus(
+                                order.id!, newValue!.index);
+                            if (response?.statusCode == 200) {
+                              setState(() {
+                                order.status = newValue.index;
+                              });
 
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content: Text('Status narudžbe je ažuriran.'),
-                        ));
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content: Text('Greška pri ažuriranju statusa narudžbe.'),
-                        ));
-                      }
-                    },
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(SnackBar(
+                                content: Text('Status narudžbe je ažuriran.'),
+                              ));
+                            } else {
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(SnackBar(
+                                content: Text(
+                                    'Greška pri ažuriranju statusa narudžbe.'),
+                              ));
+                            }
+                          },
                     items: OrderStatus.values.map((status) {
                       return DropdownMenuItem<OrderStatus>(
                         value: status,
