@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import 'package:mojstomatolog_desktop/enums/order_status.dart';
 import 'package:mojstomatolog_desktop/models/order.dart';
 import 'package:mojstomatolog_desktop/providers/company_settings_provider.dart';
 import 'package:mojstomatolog_desktop/providers/order_provider.dart';
 import 'package:mojstomatolog_desktop/providers/product_provider.dart';
 import 'package:mojstomatolog_desktop/providers/user_provider.dart';
 import 'package:mojstomatolog_desktop/utils/util.dart';
+import 'package:mojstomatolog_desktop/widgets/company_settings_form.dart';
 import 'package:mojstomatolog_desktop/widgets/master_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -27,22 +30,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
   final _surnameController = TextEditingController();
   final _emailController = TextEditingController();
   final _phoneNumberController = TextEditingController();
-  final _workHoursFromController = TextEditingController();
-  final _workHoursToController = TextEditingController();
   final _currentPasswordController = TextEditingController();
   final _newPasswordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
 
   final _profileFormKey = GlobalKey<FormState>();
-  final _companyFormKey = GlobalKey<FormState>();
   final _changePasswordFormKey = GlobalKey<FormState>();
 
   String _initialName = User.firstName ?? '';
   String _initialSurname = User.lastName ?? '';
   String _initialEmail = User.email ?? '';
   String _initialPhoneNumber = User.number ?? '';
-  String _initialWorkHoursFrom = '';
-  String _initialWorkHoursTo = '';
 
   @override
   void initState() {
@@ -55,46 +53,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
     _surnameController.text = _initialSurname;
     _emailController.text = _initialEmail;
     _phoneNumberController.text = _initialPhoneNumber;
-    _initializeWorkHours();
-    _loadOrders();
-  }
-
-  Future<void> _initializeWorkHours() async {
-    try {
-      final companySettings =
-          await _companySettingsProvider.getByName('WorkingHours');
-      if (companySettings['settingValue'] != null) {
-        final workHours = companySettings['settingValue'].split('-');
-        if (workHours.length == 2) {
-          setState(() {
-            _initialWorkHoursFrom = workHours[0];
-            _initialWorkHoursTo = workHours[1];
-          });
-        }
-      }
-    } catch (e) {
-      print("Error initializing work hours: $e");
-    }
-    _workHoursFromController.text = _initialWorkHoursFrom;
-    _workHoursToController.text = _initialWorkHoursTo;
-  }
-
-  Future<void> _updateWorkHours() async {
-    if (_companyFormKey.currentState?.validate() ?? false) {
-      final newWorkHours =
-          '${_workHoursFromController.text}-${_workHoursToController.text}';
-      await _companySettingsProvider.addOrUpdate('WorkingHours', newWorkHours);
-      setState(() {
-        isEditingCompany = false;
-      });
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Radno vrijeme ažurirano.')));
-    }
-  }
-
-  bool _isTimeFormatValid(String value) {
-    final timePattern = RegExp(r'^\d{2}:\d{2}$');
-    return timePattern.hasMatch(value);
   }
 
   void _resetProfileFields() {
@@ -105,15 +63,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
       _phoneNumberController.text = _initialPhoneNumber;
       _profileFormKey.currentState?.reset();
       _toggleProfileEditing();
-    });
-  }
-
-  void _resetCompanyFields() {
-    setState(() {
-      _workHoursFromController.text = _initialWorkHoursFrom;
-      _workHoursToController.text = _initialWorkHoursTo;
-      _companyFormKey.currentState?.reset();
-      _toggleCompanyEditing();
     });
   }
 
@@ -154,28 +103,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  Widget _buildCompanySettingsForm() {
-    return Form(
-      key: _companyFormKey,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildTextField(_workHoursFromController, 'Radno vrijeme - Od',
-              isEditing: isEditingCompany, isTime: true),
-          _buildTextField(_workHoursToController, 'Radno vrijeme - Do',
-              isEditing: isEditingCompany, isTime: true),
-          _buildEditingActions(isEditingCompany, _toggleCompanyEditing,
-              _resetCompanyFields, _updateWorkHours),
-        ],
-      ),
-    );
-  }
-
   Widget _buildTextField(TextEditingController controller, String label,
-      {bool isEditing = false,
-      bool isEmail = false,
-      bool isNumber = false,
-      bool isTime = false}) {
+      {bool isEditing = false, bool isEmail = false, bool isNumber = false}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: TextFormField(
@@ -188,17 +117,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
             : isNumber
                 ? TextInputType.number
                 : TextInputType.text,
-        validator: (value) => _validateField(value,
-            isEmail: isEmail, isNumber: isNumber, isTime: isTime),
+        validator: (value) =>
+            _validateField(value, isEmail: isEmail, isNumber: isNumber),
         onTap: () => !isEditing
             ? FocusScope.of(context).requestFocus(FocusNode())
             : null,
+        inputFormatters:
+            isNumber ? [FilteringTextInputFormatter.digitsOnly] : [],
       ),
     );
   }
 
   String? _validateField(String? value,
-      {bool isEmail = false, bool isNumber = false, bool isTime = false}) {
+      {bool isEmail = false, bool isNumber = false}) {
     if (value == null || value.isEmpty) return 'Polje ne smije biti prazno';
 
     if (isEmail) {
@@ -209,23 +140,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
     if (isNumber && (!value.contains(RegExp(r'^[0-9]+$')) || value.length < 6))
       return 'Unesite valjan broj';
-
-    if (isTime) {
-      final timePattern = RegExp(r'^\d{2}:\d{2}$');
-      if (!timePattern.hasMatch(value))
-        return 'Neispravan format vremena (XX:XX)';
-      final parts = value.split(':');
-      final hour = int.tryParse(parts[0]);
-      final minute = int.tryParse(parts[1]);
-      if (hour == null ||
-          minute == null ||
-          hour < 0 ||
-          hour > 23 ||
-          minute < 0 ||
-          minute > 59) {
-        return 'Vrijeme je van valjanog opsega (00:00 do 23:59)';
-      }
-    }
 
     return null;
   }
@@ -379,7 +293,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             Divider(height: 32, thickness: 2),
             Text('Postavke kompanije',
                 style: Theme.of(context).textTheme.titleLarge),
-            _buildCompanySettingsForm(),
+            CompanySettingsForm(),
             Divider(height: 32, thickness: 2),
             Text('Dodatne opcije',
                 style: Theme.of(context).textTheme.headline6),
@@ -420,7 +334,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
   }
 
-  void _showOrdersDialog() {
+  void _showOrdersDialog() async {
+    await _loadOrders();
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -456,30 +372,80 @@ class _SettingsScreenState extends State<SettingsScreen> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Detalji narudžbe #${order.id}'),
-          content: Container(
-            width: double.maxFinite,
-            child: ListView.builder(
-              itemCount: order.orderItems?.length ?? 0,
-              itemBuilder: (BuildContext context, int index) {
-                final orderItem = order.orderItems![index];
-                return ListTile(
-                  title: Text(orderItem.product?.name ?? 'Proizvod'),
-                  subtitle: Text('Količina: ${orderItem.quantity}'),
-                  trailing: Text('Cijena: ${orderItem.price} KM'),
-                );
-              },
-            ),
-          ),
-          actions: [
-            ElevatedButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text('Zatvori'),
-            ),
-          ],
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: Text('Detalji narudžbe #${order.id}'),
+              content: Container(
+                width: double.maxFinite,
+                child: ListView.builder(
+                  itemCount: order.orderItems?.length ?? 0,
+                  itemBuilder: (BuildContext context, int index) {
+                    final orderItem = order.orderItems![index];
+                    return ListTile(
+                      title: Text(orderItem.product?.name ?? 'Proizvod'),
+                      subtitle: Text('Količina: ${orderItem.quantity}'),
+                      trailing: Text('Cijena: ${orderItem.price} KM'),
+                    );
+                  },
+                ),
+              ),
+              actions: [
+                if (order.status != OrderStatus.cancelled)
+                  DropdownButton<OrderStatus>(
+                    value: OrderStatus.values[order.status!],
+                    onChanged: order.status == OrderStatus.cancelled.index
+                        ? null
+                        : (newValue) async {
+                            var response = await _orderProvider.changeStatus(
+                                order.id!, newValue!.index);
+                            if (response?.statusCode == 200) {
+                              setState(() {
+                                order.status = newValue.index;
+                              });
+
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(SnackBar(
+                                content: Text('Status narudžbe je ažuriran.'),
+                              ));
+                            } else {
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(SnackBar(
+                                content: Text(
+                                    'Greška pri ažuriranju statusa narudžbe.'),
+                              ));
+                            }
+                          },
+                    items: OrderStatus.values.map((status) {
+                      return DropdownMenuItem<OrderStatus>(
+                        value: status,
+                        child: Text(_getStatusText(status)),
+                      );
+                    }).toList(),
+                    disabledHint: Text(_getStatusText(OrderStatus.cancelled)),
+                  ),
+                ElevatedButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text('Zatvori'),
+                ),
+              ],
+            );
+          },
         );
       },
     );
+  }
+
+  String _getStatusText(OrderStatus status) {
+    switch (status) {
+      case OrderStatus.inProgress:
+        return 'U obradi';
+      case OrderStatus.inDelivery:
+        return 'U tijeku';
+      case OrderStatus.delivered:
+        return 'Dostavljeno';
+      case OrderStatus.cancelled:
+        return 'Otkazano';
+    }
   }
 }

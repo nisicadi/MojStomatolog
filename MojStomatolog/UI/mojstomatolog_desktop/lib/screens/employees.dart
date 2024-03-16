@@ -163,7 +163,6 @@ class _EmployeeListScreenState extends State<EmployeeListScreen> {
   @override
   Widget build(BuildContext context) {
     final List<DataColumn> columns = [
-      DataColumn(label: Text('Id')),
       DataColumn(label: Text('Ime')),
       DataColumn(label: Text('Prezime')),
       DataColumn(label: Text('Pozicija')),
@@ -174,7 +173,6 @@ class _EmployeeListScreenState extends State<EmployeeListScreen> {
     final List<DataRow> rows = _employees.map((employee) {
       return DataRow(
         cells: [
-          DataCell(Text(employee.employeeId.toString())),
           DataCell(Text(employee.firstName ?? '')),
           DataCell(Text(employee.lastName ?? '')),
           DataCell(Text(employee.specialization ?? '')),

@@ -78,7 +78,6 @@ class _ProductCategoryListScreenState extends State<ProductCategoryListScreen> {
   @override
   Widget build(BuildContext context) {
     final List<DataColumn> columns = [
-      DataColumn(label: Text('Id')),
       DataColumn(label: Text('Naziv')),
       DataColumn(label: Text('Uredi')),
       DataColumn(label: Text('Briši')),
@@ -87,7 +86,6 @@ class _ProductCategoryListScreenState extends State<ProductCategoryListScreen> {
     final List<DataRow> rows = _categories.map((category) {
       return DataRow(
         cells: [
-          DataCell(Text(category.productCategoryId.toString())),
           DataCell(Text(category.name ?? '')),
           DataCell(IconButton(
             icon: Icon(Icons.edit),

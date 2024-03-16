@@ -10,6 +10,7 @@ class Order {
   int? quantity;
   DateTime? orderDate;
   double? totalAmount;
+  int? status;
   List<OrderItem>? orderItems;
 
   Order();

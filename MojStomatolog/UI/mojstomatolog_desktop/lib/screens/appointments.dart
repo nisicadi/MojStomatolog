@@ -140,12 +140,12 @@ class _AppointmentListScreenState extends State<AppointmentListScreen> {
   @override
   Widget build(BuildContext context) {
     final List<DataColumn> columns = [
-      DataColumn(label: Text('Id')),
       DataColumn(label: Text('Datum i vrijeme')),
-      DataColumn(label: Text('Procedura')),
+      DataColumn(label: Text('Usluga')),
       DataColumn(label: Text('Potvrđeno')),
-      DataColumn(label: Text('Komentar')),
+      DataColumn(label: Text('Bilješke')),
       DataColumn(label: Text('Pacijent')),
+      DataColumn(label: Text('Uposlenik')),
       DataColumn(label: Text('Uredi')),
       DataColumn(label: Text('Briši')),
     ];
@@ -153,12 +153,13 @@ class _AppointmentListScreenState extends State<AppointmentListScreen> {
     final List<DataRow> rows = _appointments.map((appointment) {
       final patientName =
           '${appointment.patient?.firstName ?? ''} ${appointment.patient?.lastName ?? ''}';
+      final employeeName =
+          '${appointment.employee?.firstName ?? ''} ${appointment.employee?.lastName ?? ''}';
       return DataRow(
         cells: [
-          DataCell(Text(appointment.appointmentId.toString())),
           DataCell(Text(DateFormat('dd.MM.yyyy  HH:mm')
               .format(appointment.appointmentDateTime ?? DateTime.now()))),
-          DataCell(Text(appointment.procedure ?? '')),
+          DataCell(Text(appointment.service?.name ?? '')),
           DataCell(
             appointment.isConfirmed == true
                 ? Icon(Icons.check, color: Colors.green)
@@ -166,6 +167,7 @@ class _AppointmentListScreenState extends State<AppointmentListScreen> {
           ),
           DataCell(Text(appointment.notes ?? '')),
           DataCell(Text(patientName)),
+          DataCell(Text(employeeName)),
           DataCell(_buildIconButton(Icons.edit, 'Uredi', () {
             _addOrUpdateAppointment(appointment, isUpdate: true);
           })),

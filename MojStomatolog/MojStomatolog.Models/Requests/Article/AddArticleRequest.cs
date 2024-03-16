@@ -9,5 +9,7 @@
         public string Content { get; set; } = string.Empty;
 
         public DateTime PublishDate { get; set; } = DateTime.Now;
+
+        public int UserCreatedId { get; set; }
     }
 }

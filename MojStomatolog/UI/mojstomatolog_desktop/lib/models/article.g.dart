@@ -13,7 +13,8 @@ Article _$ArticleFromJson(Map<String, dynamic> json) => Article()
   ..content = json['content'] as String?
   ..publishDate = json['publishDate'] == null
       ? null
-      : DateTime.parse(json['publishDate'] as String);
+      : DateTime.parse(json['publishDate'] as String)
+  ..userCreatedId = json['userCreatedId'] as int?;
 
 Map<String, dynamic> _$ArticleToJson(Article instance) => <String, dynamic>{
       'articleId': instance.articleId,
@@ -21,4 +22,5 @@ Map<String, dynamic> _$ArticleToJson(Article instance) => <String, dynamic>{
       'summary': instance.summary,
       'content': instance.content,
       'publishDate': instance.publishDate?.toIso8601String(),
+      'userCreatedId': instance.userCreatedId,
     };

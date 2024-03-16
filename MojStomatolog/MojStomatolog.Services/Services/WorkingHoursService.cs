@@ -1,54 +1,36 @@
-﻿using iText.Kernel.Pdf;
+﻿using AutoMapper;
+using iText.Kernel.Pdf;
 using iText.Layout;
 using iText.Layout.Element;
 using iText.Layout.Properties;
 using Microsoft.EntityFrameworkCore;
 using MojStomatolog.Database;
-using MojStomatolog.Models.Core;
+using MojStomatolog.Models.Requests.WorkingHours;
+using MojStomatolog.Models.Responses;
+using MojStomatolog.Services.Common;
 using MojStomatolog.Services.Interfaces;
 
 namespace MojStomatolog.Services.Services
 {
-    public class CompanySettingService : ICompanySettingService
+    public class WorkingHoursService : BaseCrudService<WorkingHoursResponse, WorkingHours, BaseSearchObject, AddWorkingHoursRequest, UpdateWorkingHoursRequest>, IWorkingHoursService
     {
-        private readonly MojStomatologContext _context;
-
-        public CompanySettingService(MojStomatologContext context)
+        public WorkingHoursService(MojStomatologContext context, IMapper mapper) : base(context, mapper)
         {
-            _context = context;
-        }
-        public async Task<CompanySetting> AddOrUpdate(CompanySetting request)
-        {
-            var entity = await _context.CompanySettings
-                .FirstOrDefaultAsync(x => x.SettingName == request.SettingName);
-
-            if (entity == null)
-            {
-                await _context.CompanySettings.AddAsync(request);
-            }
-            else
-            {
-                entity.SettingValue = request.SettingValue;
-                _context.CompanySettings.Update(entity);
-            }
-
-            await _context.SaveChangesAsync();
-            return await GetBySettingName(request.SettingName);
         }
 
-        public async Task<CompanySetting> GetBySettingName(string name)
+        public override IQueryable<WorkingHours> AddFilter(IQueryable<WorkingHours> query, BaseSearchObject? search = null)
         {
-            return await _context.CompanySettings.FirstOrDefaultAsync(x => x.SettingName == name) ?? new CompanySetting();
+            return query.OrderBy(x => x.DayOfWeek);
         }
 
         public async Task<byte[]> GetPdfReportBytes()
         {
-            var employees = await _context.Employees.CountAsync();
-            var users = await _context.Users.CountAsync();
-            var noOfAppointments = await _context.Appointments.CountAsync();
-            var noOfOrders = await _context.Orders.CountAsync();
+            var employees = await Context.Employees.CountAsync();
+            var users = await Context.Users.CountAsync();
+            var noOfAppointments = await Context.Appointments.CountAsync();
+            var noOfOrders = await Context.Orders.CountAsync();
 
-            var topSellingProductsData = await _context.OrderItems
+            var topSellingProductsData = await Context.OrderItems
                 .Where(x => x.Product.Active)
                 .GroupBy(x => x.ProductId)
                 .Select(group => new
@@ -62,7 +44,7 @@ namespace MojStomatolog.Services.Services
 
             var topSellingProductIds = topSellingProductsData.Select(x => x.ProductId).ToList();
 
-            var topSellingProducts = _context.Products
+            var topSellingProducts = Context.Products
                 .Where(x => topSellingProductIds.Contains(x.ProductId))
                 .ToList()
                 .Select(x => (

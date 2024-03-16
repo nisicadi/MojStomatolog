@@ -34,5 +34,21 @@ namespace MojStomatolog.Controllers
                 return StatusCode(500, "Internal Server Error");
             }
         }
+
+        [HttpPatch]
+        public async Task<IActionResult> ChangeOrderStatus([FromBody] PatchOrderRequest request)
+        {
+            try
+            {
+                var result = await _orderService.ChangeStatus(request);
+
+                return result ? Ok("Order status changed successfully.") : BadRequest("Failed to change the order status.");
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, "Error occurred while processing the request.");
+                return StatusCode(500, "Internal Server Error");
+            }
+        }
     }
 }

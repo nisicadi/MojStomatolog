@@ -15,7 +15,7 @@ namespace MojStomatolog.Database
         public virtual DbSet<Product> Products { get; set; } = null!;
         public virtual DbSet<Appointment> Appointments { get; set; } = null!;
         public virtual DbSet<Article> Articles { get; set; } = null!;
-        public virtual DbSet<CompanySetting> CompanySettings { get; set; } = null!;
+        public virtual DbSet<WorkingHours> WorkingHours { get; set; } = null!;
         public virtual DbSet<OrderItem> OrderItems { get; set; } = null!;
         public virtual DbSet<Order> Orders { get; set; } = null!;
         public virtual DbSet<Rating> Ratings { get; set; } = null!;

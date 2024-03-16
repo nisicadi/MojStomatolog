@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:mojstomatolog_desktop/models/employee.dart';
 import 'package:mojstomatolog_desktop/providers/employee_provider.dart';
@@ -7,9 +8,11 @@ class AddEmployeeModal extends StatefulWidget {
   final Function(Employee) onEmployeeAdded;
   final Employee? initialEmployee;
 
-  const AddEmployeeModal(
-      {Key? key, required this.onEmployeeAdded, this.initialEmployee})
-      : super(key: key);
+  const AddEmployeeModal({
+    Key? key,
+    required this.onEmployeeAdded,
+    this.initialEmployee,
+  }) : super(key: key);
 
   @override
   _AddEmployeeModalState createState() => _AddEmployeeModalState();
@@ -30,6 +33,7 @@ class _AddEmployeeModalState extends State<AddEmployeeModal> {
 
   DateTime? _selectedDate;
   bool _isEditing = false;
+  String? _selectedGender;
 
   @override
   void initState() {
@@ -43,14 +47,17 @@ class _AddEmployeeModalState extends State<AddEmployeeModal> {
   void _loadInitialData(Employee employee) {
     _firstNameController.text = employee.firstName ?? '';
     _lastNameController.text = employee.lastName ?? '';
-    _genderController.text = employee.gender ?? '';
     _emailController.text = employee.email ?? '';
     _numberController.text = employee.number ?? '';
     _specializationController.text = employee.specialization ?? '';
     _startDateController.text = employee.startDate != null
-        ? '${employee.startDate!.day}-${employee.startDate!.month}-${employee.startDate!.year}'
+        ? DateFormat('dd.MM.yyyy').format(employee.startDate!)
         : '';
     _selectedDate = employee.startDate;
+
+    if (employee.gender == 'M' || employee.gender == 'F') {
+      _selectedGender = employee.gender;
+    }
   }
 
   @override
@@ -66,9 +73,10 @@ class _AddEmployeeModalState extends State<AddEmployeeModal> {
               children: [
                 _buildTextField(_firstNameController, 'Ime'),
                 _buildTextField(_lastNameController, 'Prezime'),
-                _buildTextField(_genderController, 'Spol'),
+                _buildGenderDropdown(),
                 _buildTextField(_emailController, 'Email'),
-                _buildTextField(_numberController, 'Broj telefona'),
+                _buildTextField(_numberController, 'Broj telefona',
+                    isNumber: true),
                 _buildTextField(_specializationController, 'Specijalizacija'),
                 _buildDateField(),
               ],
@@ -90,7 +98,7 @@ class _AddEmployeeModalState extends State<AddEmployeeModal> {
               updatedEmployee.employeeId = widget.initialEmployee?.employeeId;
               updatedEmployee.firstName = _firstNameController.text;
               updatedEmployee.lastName = _lastNameController.text;
-              updatedEmployee.gender = _genderController.text;
+              updatedEmployee.gender = _selectedGender;
               updatedEmployee.email = _emailController.text;
               updatedEmployee.number = _numberController.text;
               updatedEmployee.specialization = _specializationController.text;
@@ -117,22 +125,63 @@ class _AddEmployeeModalState extends State<AddEmployeeModal> {
     );
   }
 
-  Widget _buildTextField(TextEditingController controller, String labelText) {
+  Widget _buildTextField(
+    TextEditingController controller,
+    String labelText, {
+    bool isOptional = false,
+    bool isNumber = false,
+  }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         TextFormField(
           controller: controller,
+          keyboardType: isNumber ? TextInputType.number : TextInputType.text,
+          inputFormatters:
+              isNumber ? [FilteringTextInputFormatter.digitsOnly] : null,
           decoration: InputDecoration(labelText: labelText),
           validator: (value) {
             if (labelText == 'Spol') {
-              if (value != 'M' && value != 'Ž') {
-                return 'Spol mora biti "M" ili "Ž"';
+              if (value != 'M' && value != 'F') {
+                return 'Spol mora biti "M" ili "F"';
               }
             } else {
-              if (value == null || value.isEmpty) {
+              if (!isOptional && (value == null || value.isEmpty)) {
                 return '$labelText je obavezno polje';
               }
+            }
+            return null;
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _buildGenderDropdown() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        DropdownButtonFormField<String>(
+          value: _selectedGender,
+          items: [
+            DropdownMenuItem<String>(
+              value: 'M',
+              child: Text('Muški'),
+            ),
+            DropdownMenuItem<String>(
+              value: 'F',
+              child: Text('Ženski'),
+            ),
+          ],
+          onChanged: (value) {
+            setState(() {
+              _selectedGender = value;
+            });
+          },
+          decoration: InputDecoration(labelText: 'Spol'),
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Spol je obavezno polje';
             }
             return null;
           },
@@ -175,15 +224,6 @@ class _AddEmployeeModalState extends State<AddEmployeeModal> {
           },
         ),
       ],
-    );
-  }
-
-  void _showErrorMessage(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        duration: Duration(seconds: 2),
-      ),
     );
   }
 }

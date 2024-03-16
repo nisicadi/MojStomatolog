@@ -396,3 +396,17 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+/MojStomatolog/UI/mojstomatolog_desktop/windows/flutter/generated_plugins.cmake
+/MojStomatolog/UI/mojstomatolog_desktop/windows/flutter/generated_plugin_registrant.h
+/MojStomatolog/UI/mojstomatolog_desktop/windows/flutter/generated_plugin_registrant.cc
+/MojStomatolog/UI/mojstomatolog_desktop/macos/Flutter/GeneratedPluginRegistrant.swift
+/MojStomatolog/UI/mojstomatolog_desktop/linux/flutter/generated_plugin_registrant.h
+/MojStomatolog/UI/mojstomatolog_desktop/linux/flutter/generated_plugins.cmake
+/MojStomatolog/UI/mojstomatolog_desktop/linux/flutter/generated_plugin_registrant.cc
+/MojStomatolog/UI/mojstomatolog_mobile/linux/flutter/generated_plugins.cmake
+/MojStomatolog/UI/mojstomatolog_mobile/linux/flutter/generated_plugin_registrant.cc
+/MojStomatolog/UI/mojstomatolog_mobile/linux/flutter/generated_plugin_registrant.h
+/MojStomatolog/UI/mojstomatolog_mobile/macos/Flutter/GeneratedPluginRegistrant.swift
+/MojStomatolog/UI/mojstomatolog_mobile/windows/flutter/generated_plugins.cmake
+/MojStomatolog/UI/mojstomatolog_mobile/windows/flutter/generated_plugin_registrant.cc
+/MojStomatolog/UI/mojstomatolog_mobile/windows/flutter/generated_plugin_registrant.h

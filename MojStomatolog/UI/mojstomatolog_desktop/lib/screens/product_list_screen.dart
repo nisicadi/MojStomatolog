@@ -140,7 +140,6 @@ class _ProductListScreenState extends State<ProductListScreen> {
   @override
   Widget build(BuildContext context) {
     final List<DataColumn> columns = [
-      DataColumn(label: Text('Id')),
       DataColumn(label: Text('Naziv')),
       DataColumn(label: Text('Opis')),
       DataColumn(label: Text('Kategorija')),
@@ -152,7 +151,6 @@ class _ProductListScreenState extends State<ProductListScreen> {
     final List<DataRow> rows = _products.map((product) {
       return DataRow(
         cells: [
-          DataCell(Text(product.productId.toString())),
           DataCell(Text(product.name ?? '')),
           DataCell(ConstrainedBox(
             constraints: BoxConstraints(maxWidth: 200),

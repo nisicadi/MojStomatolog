@@ -8,6 +8,7 @@ namespace MojStomatolog.Models.Responses
         public int UserId { get; set; }
         public DateTime OrderDate { get; set; }
         public decimal TotalAmount { get; set; }
+        public int Status { get; set; }
 
         public List<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
     }

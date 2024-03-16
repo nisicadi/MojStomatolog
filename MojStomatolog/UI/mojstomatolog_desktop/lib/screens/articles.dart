@@ -127,7 +127,6 @@ class _ArticleListScreenState extends State<ArticleListScreen> {
   @override
   Widget build(BuildContext context) {
     final List<DataColumn> columns = [
-      DataColumn(label: Text('Id')),
       DataColumn(label: Text('Naslov')),
       DataColumn(label: Text('Sažetak')),
       DataColumn(label: Text('Datum Objavljivanja')),
@@ -138,7 +137,6 @@ class _ArticleListScreenState extends State<ArticleListScreen> {
     final List<DataRow> rows = _articles.map((article) {
       return DataRow(
         cells: [
-          DataCell(Text(article.articleId.toString())),
           DataCell(Text(article.title ?? '')),
           DataCell(ConstrainedBox(
             constraints: BoxConstraints(maxWidth: 200),

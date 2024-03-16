@@ -12,7 +12,7 @@ public partial class MojStomatologContext
         modelBuilder.Entity<ProductCategory>().HasData(new ProductCategory
         {
             ProductCategoryId = 1,
-            Name = "četkica za zube"
+            Name = "Četkica za zube"
         });
         modelBuilder.Entity<ProductCategory>().HasData(new ProductCategory
         {
@@ -23,6 +23,36 @@ public partial class MojStomatologContext
         {
             ProductCategoryId = 3,
             Name = "Vodica za ispiranje usta"
+        });
+
+        #endregion
+
+        #region Service
+
+        modelBuilder.Entity<Service>().HasData(new Service
+        {
+            Id = 1,
+            Name = "Liječenje karijesa"
+        });
+        modelBuilder.Entity<Service>().HasData(new Service
+        {
+            Id = 2,
+            Name = "Parodontologija"
+        });
+        modelBuilder.Entity<Service>().HasData(new Service
+        {
+            Id = 3,
+            Name = "Protetika"
+        });
+        modelBuilder.Entity<Service>().HasData(new Service
+        {
+            Id = 4,
+            Name = "Pregled"
+        });
+        modelBuilder.Entity<Service>().HasData(new Service
+        {
+            Id = 5,
+            Name = "Preventivna stomatologija"
         });
 
         #endregion
@@ -220,105 +250,120 @@ public partial class MojStomatologContext
             Id = 1,
             UserId = 1,
             OrderDate = new DateTime(2023, 06, 15),
-            TotalAmount = 29.30M
+            TotalAmount = 29.30M,
+            Status = 2
         });
         modelBuilder.Entity<Order>().HasData(new Order
         {
             Id = 2,
             UserId = 2,
             OrderDate = new DateTime(2023, 07, 10),
-            TotalAmount = 24.10M
+            TotalAmount = 24.10M,
+            Status = 2
         });
         modelBuilder.Entity<Order>().HasData(new Order
         {
             Id = 3,
             UserId = 3,
             OrderDate = new DateTime(2023, 08, 05),
-            TotalAmount = 19.80M
+            TotalAmount = 19.80M,
+            Status = 2
         });
         modelBuilder.Entity<Order>().HasData(new Order
         {
             Id = 4,
             UserId = 1,
             OrderDate = new DateTime(2023, 09, 20),
-            TotalAmount = 32.10M
+            TotalAmount = 32.10M,
+            Status = 2
         });
         modelBuilder.Entity<Order>().HasData(new Order
         {
             Id = 5,
             UserId = 2,
             OrderDate = new DateTime(2023, 10, 25),
-            TotalAmount = 32.21M
+            TotalAmount = 32.21M,
+            Status = 2
         });
         modelBuilder.Entity<Order>().HasData(new Order
         {
             Id = 6,
             UserId = 3,
             OrderDate = new DateTime(2023, 11, 30),
-            TotalAmount = 24.80M
+            TotalAmount = 24.80M,
+            Status = 2
         });
         modelBuilder.Entity<Order>().HasData(new Order
         {
             Id = 7,
             UserId = 1,
             OrderDate = new DateTime(2023, 12, 15),
-            TotalAmount = 15.95M
+            TotalAmount = 15.95M,
+            Status = 2
         });
         modelBuilder.Entity<Order>().HasData(new Order
         {
             Id = 8,
             UserId = 2,
             OrderDate = new DateTime(2024, 01, 05),
-            TotalAmount = 27.10M
+            TotalAmount = 27.10M,
+            Status = 2
         });
         modelBuilder.Entity<Order>().HasData(new Order
         {
             Id = 9,
             UserId = 3,
             OrderDate = new DateTime(2024, 02, 01),
-            TotalAmount = 40.26M
+            TotalAmount = 40.26M,
+            Status = 2
         });
         modelBuilder.Entity<Order>().HasData(new Order
         {
             Id = 10,
             UserId = 1,
             OrderDate = new DateTime(2023, 06, 25),
-            TotalAmount = 15.00M
+            TotalAmount = 15.00M,
+            Status = 2
         });
         modelBuilder.Entity<Order>().HasData(new Order
         {
             Id = 11,
             UserId = 2,
             OrderDate = new DateTime(2023, 07, 15),
-            TotalAmount = 19.80M
+            TotalAmount = 19.80M,
+            Status = 2
         });
         modelBuilder.Entity<Order>().HasData(new Order
         {
             Id = 12,
             UserId = 1,
             OrderDate = new DateTime(2023, 08, 10),
-            TotalAmount = 33.25M
+            TotalAmount = 33.25M,
+            Status = 2
         });
         modelBuilder.Entity<Order>().HasData(new Order
         {
             Id = 13,
             UserId = 3,
             OrderDate = new DateTime(2023, 09, 05),
-            TotalAmount = 20.41M
+            TotalAmount = 20.41M,
+            Status = 2
         });
         modelBuilder.Entity<Order>().HasData(new Order
         {
             Id = 14,
             UserId = 2,
             OrderDate = new DateTime(2023, 10, 30),
-            TotalAmount = 23.10M
+            TotalAmount = 23.10M,
+            Status = 2
         });
         modelBuilder.Entity<Order>().HasData(new Order
         {
             Id = 15,
             UserId = 1,
             OrderDate = new DateTime(2023, 11, 25),
-            TotalAmount = 28.45M
+            TotalAmount = 28.45M,
+            Status = 2
         });
 
         #endregion
@@ -651,14 +696,17 @@ public partial class MojStomatologContext
 
         #endregion
 
-        #region CompanySettings
+        #region WorkingHours
 
-        modelBuilder.Entity<CompanySetting>().HasData(new CompanySetting
-        {
-            SettingId = 1,
-            SettingName = "WorkingHours",
-            SettingValue = "08:30-18:00"
-        });
+        modelBuilder.Entity<WorkingHours>().HasData(
+            new WorkingHours { Id = 1, DayOfWeek = DayOfWeek.Monday, StartTime = new TimeSpan(9, 0, 0), EndTime = new TimeSpan(18, 0, 0), BreakStartTime = new TimeSpan(13, 0, 0), BreakEndTime = new TimeSpan(14, 0, 0) },
+            new WorkingHours { Id = 2, DayOfWeek = DayOfWeek.Tuesday, StartTime = new TimeSpan(9, 0, 0), EndTime = new TimeSpan(18, 0, 0), BreakStartTime = new TimeSpan(13, 0, 0), BreakEndTime = new TimeSpan(14, 0, 0) },
+            new WorkingHours { Id = 3, DayOfWeek = DayOfWeek.Wednesday, StartTime = new TimeSpan(9, 0, 0), EndTime = new TimeSpan(18, 0, 0), BreakStartTime = new TimeSpan(13, 0, 0), BreakEndTime = new TimeSpan(14, 0, 0) },
+            new WorkingHours { Id = 4, DayOfWeek = DayOfWeek.Thursday, StartTime = new TimeSpan(9, 0, 0), EndTime = new TimeSpan(18, 0, 0), BreakStartTime = new TimeSpan(13, 0, 0), BreakEndTime = new TimeSpan(14, 0, 0) },
+            new WorkingHours { Id = 5, DayOfWeek = DayOfWeek.Friday, StartTime = new TimeSpan(9, 0, 0), EndTime = new TimeSpan(18, 0, 0), BreakStartTime = new TimeSpan(13, 0, 0), BreakEndTime = new TimeSpan(14, 0, 0) },
+            new WorkingHours { Id = 6, DayOfWeek = DayOfWeek.Saturday, StartTime = new TimeSpan(9, 0, 0), EndTime = new TimeSpan(15, 0, 0), BreakStartTime = new TimeSpan(12, 0, 0), BreakEndTime = new TimeSpan(13, 0, 0) },
+            new WorkingHours { Id = 7, DayOfWeek = DayOfWeek.Sunday, StartTime = new TimeSpan(9, 0, 0), EndTime = new TimeSpan(15, 0, 0), BreakStartTime = new TimeSpan(12, 0, 0), BreakEndTime = new TimeSpan(13, 0, 0) }
+        );
 
         #endregion
 
@@ -671,7 +719,8 @@ public partial class MojStomatologContext
             Content =
                 "Redoviti posjeti stomatologu ključni su za očuvanje oralnog zdravlja. Stomatolog će pregledati vaše zube, desni i ukazati na potencijalne probleme prije nego što postanu ozbiljni.",
             Summary = "Očuvanje oralnog zdravlja kroz redovite posjete stomatologu.",
-            PublishDate = DateTime.Now
+            PublishDate = DateTime.Now,
+            UserCreatedId = 4
         });
 
         modelBuilder.Entity<Article>().HasData(new Article
@@ -681,7 +730,8 @@ public partial class MojStomatologContext
             Content =
                 "Pravilna tehnika četkanja zuba ključna je za sprječavanje karijesa i bolesti desni. Obratite pažnju na pritisak, kut četkanja i koristite kvalitetnu četkicu za zube.",
             Summary = "Savjeti za postizanje savršene tehnike četkanja zuba.",
-            PublishDate = DateTime.Now
+            PublishDate = DateTime.Now,
+            UserCreatedId = 3
         });
 
         modelBuilder.Entity<Article>().HasData(new Article
@@ -691,7 +741,8 @@ public partial class MojStomatologContext
             Content =
                 "Vaša ishrana igra ključnu ulogu u održavanju zdravlja vaših zuba. Ograničite unos šećera, konzumirajte mliječne proizvode i voće te pijte dovoljno vode za optimalnu oralnu hidrataciju.",
             Summary = "Kako ishrana utječe na zdravlje zuba i desni.",
-            PublishDate = DateTime.Now
+            PublishDate = DateTime.Now,
+            UserCreatedId = 5
         });
 
         modelBuilder.Entity<Article>().HasData(new Article
@@ -701,7 +752,8 @@ public partial class MojStomatologContext
             Content =
                 "Estetski zahvati poput izbjeljivanja zuba, keramičkih faseta i ortodontskih tretmana mogu poboljšati izgled vašeg osmijeha. Posavjetujte se sa stomatologom o opcijama prilagođenim vašim potrebama.",
             Summary = "Pregled estetskih zahvata za ljepši osmijeh.",
-            PublishDate = DateTime.Now
+            PublishDate = DateTime.Now,
+            UserCreatedId = 6
         });
 
         #endregion
@@ -711,46 +763,51 @@ public partial class MojStomatologContext
         modelBuilder.Entity<Appointment>().HasData(new Appointment
         {
             AppointmentId = 1,
-            Procedure = "Skidanje kamenca",
             IsConfirmed = true,
             Notes = "",
             PatientId = 1,
+            EmployeeId = 3,
+            ServiceId = 1,
             AppointmentDateTime = DateTime.Today.AddHours(14).AddMinutes(30)
         });
         modelBuilder.Entity<Appointment>().HasData(new Appointment
         {
             AppointmentId = 2,
-            Procedure = "Pregled",
             IsConfirmed = true,
             Notes = "",
             PatientId = 1,
+            EmployeeId = 3,
+            ServiceId = 2,
             AppointmentDateTime = DateTime.Today.AddHours(38).AddMinutes(30)
         });
         modelBuilder.Entity<Appointment>().HasData(new Appointment
         {
             AppointmentId = 3,
-            Procedure = "Skidanje kamenca",
             IsConfirmed = true,
             Notes = "",
             PatientId = 2,
+            EmployeeId = 4,
+            ServiceId = 3,
             AppointmentDateTime = DateTime.Today.AddHours(11).AddMinutes(30)
         });
         modelBuilder.Entity<Appointment>().HasData(new Appointment
         {
             AppointmentId = 4,
-            Procedure = "Popravak zuba",
             IsConfirmed = true,
             Notes = "",
             PatientId = 3,
+            EmployeeId = 5,
+            ServiceId = 4,
             AppointmentDateTime = DateTime.Today.AddHours(10).AddMinutes(30)
         });
         modelBuilder.Entity<Appointment>().HasData(new Appointment
         {
             AppointmentId = 5,
-            Procedure = "Pregled",
             IsConfirmed = true,
             Notes = "",
             PatientId = 2,
+            EmployeeId = 1,
+            ServiceId = 5,
             AppointmentDateTime = DateTime.Today.AddHours(35).AddMinutes(30)
         });
 

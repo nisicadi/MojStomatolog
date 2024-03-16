@@ -9,7 +9,7 @@ import 'package:mojstomatolog_desktop/utils/util.dart';
 
 abstract class BaseProvider<T> with ChangeNotifier {
   static String? _baseUrl;
-  get baseUrl => _baseUrl;
+  String? get baseUrl => _baseUrl;
   String? _endpoint;
   HttpClient client = HttpClient();
   IOClient? http;

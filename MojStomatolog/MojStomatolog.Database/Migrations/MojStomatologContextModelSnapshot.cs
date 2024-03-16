@@ -33,6 +33,9 @@ namespace MojStomatolog.Database.Migrations
                     b.Property<DateTime>("AppointmentDateTime")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("EmployeeId")
+                        .HasColumnType("int");
+
                     b.Property<bool>("IsConfirmed")
                         .HasColumnType("bit");
 
@@ -43,13 +46,16 @@ namespace MojStomatolog.Database.Migrations
                     b.Property<int>("PatientId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Procedure")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("ServiceId")
+                        .HasColumnType("int");
 
                     b.HasKey("AppointmentId");
 
+                    b.HasIndex("EmployeeId");
+
                     b.HasIndex("PatientId");
+
+                    b.HasIndex("ServiceId");
 
                     b.ToTable("Appointments");
 
@@ -57,47 +63,52 @@ namespace MojStomatolog.Database.Migrations
                         new
                         {
                             AppointmentId = 1,
-                            AppointmentDateTime = new DateTime(2024, 2, 2, 14, 30, 0, 0, DateTimeKind.Local),
+                            AppointmentDateTime = new DateTime(2024, 3, 14, 14, 30, 0, 0, DateTimeKind.Local),
+                            EmployeeId = 3,
                             IsConfirmed = true,
                             Notes = "",
                             PatientId = 1,
-                            Procedure = "Skidanje kamenca"
+                            ServiceId = 1
                         },
                         new
                         {
                             AppointmentId = 2,
-                            AppointmentDateTime = new DateTime(2024, 2, 3, 14, 30, 0, 0, DateTimeKind.Local),
+                            AppointmentDateTime = new DateTime(2024, 3, 15, 14, 30, 0, 0, DateTimeKind.Local),
+                            EmployeeId = 3,
                             IsConfirmed = true,
                             Notes = "",
                             PatientId = 1,
-                            Procedure = "Pregled"
+                            ServiceId = 2
                         },
                         new
                         {
                             AppointmentId = 3,
-                            AppointmentDateTime = new DateTime(2024, 2, 2, 11, 30, 0, 0, DateTimeKind.Local),
+                            AppointmentDateTime = new DateTime(2024, 3, 14, 11, 30, 0, 0, DateTimeKind.Local),
+                            EmployeeId = 4,
                             IsConfirmed = true,
                             Notes = "",
                             PatientId = 2,
-                            Procedure = "Skidanje kamenca"
+                            ServiceId = 3
                         },
                         new
                         {
                             AppointmentId = 4,
-                            AppointmentDateTime = new DateTime(2024, 2, 2, 10, 30, 0, 0, DateTimeKind.Local),
+                            AppointmentDateTime = new DateTime(2024, 3, 14, 10, 30, 0, 0, DateTimeKind.Local),
+                            EmployeeId = 5,
                             IsConfirmed = true,
                             Notes = "",
                             PatientId = 3,
-                            Procedure = "Popravak zuba"
+                            ServiceId = 4
                         },
                         new
                         {
                             AppointmentId = 5,
-                            AppointmentDateTime = new DateTime(2024, 2, 3, 11, 30, 0, 0, DateTimeKind.Local),
+                            AppointmentDateTime = new DateTime(2024, 3, 15, 11, 30, 0, 0, DateTimeKind.Local),
+                            EmployeeId = 1,
                             IsConfirmed = true,
                             Notes = "",
                             PatientId = 2,
-                            Procedure = "Pregled"
+                            ServiceId = 5
                         });
                 });
 
@@ -124,7 +135,12 @@ namespace MojStomatolog.Database.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("UserCreatedId")
+                        .HasColumnType("int");
+
                     b.HasKey("ArticleId");
+
+                    b.HasIndex("UserCreatedId");
 
                     b.ToTable("Articles");
 
@@ -133,62 +149,37 @@ namespace MojStomatolog.Database.Migrations
                         {
                             ArticleId = 1,
                             Content = "Redoviti posjeti stomatologu ključni su za očuvanje oralnog zdravlja. Stomatolog će pregledati vaše zube, desni i ukazati na potencijalne probleme prije nego što postanu ozbiljni.",
-                            PublishDate = new DateTime(2024, 2, 2, 18, 28, 56, 971, DateTimeKind.Local).AddTicks(2268),
+                            PublishDate = new DateTime(2024, 3, 14, 14, 12, 18, 112, DateTimeKind.Local).AddTicks(6545),
                             Summary = "Očuvanje oralnog zdravlja kroz redovite posjete stomatologu.",
-                            Title = "Važnost Redovitih Pregleda Kod Stomatologa"
+                            Title = "Važnost Redovitih Pregleda Kod Stomatologa",
+                            UserCreatedId = 4
                         },
                         new
                         {
                             ArticleId = 2,
                             Content = "Pravilna tehnika četkanja zuba ključna je za sprječavanje karijesa i bolesti desni. Obratite pažnju na pritisak, kut četkanja i koristite kvalitetnu četkicu za zube.",
-                            PublishDate = new DateTime(2024, 2, 2, 18, 28, 56, 971, DateTimeKind.Local).AddTicks(2277),
+                            PublishDate = new DateTime(2024, 3, 14, 14, 12, 18, 112, DateTimeKind.Local).AddTicks(6554),
                             Summary = "Savjeti za postizanje savršene tehnike četkanja zuba.",
-                            Title = "Pravilno Četkanje Zuba: Kako Postići Savršenu Tehniku"
+                            Title = "Pravilno Četkanje Zuba: Kako Postići Savršenu Tehniku",
+                            UserCreatedId = 3
                         },
                         new
                         {
                             ArticleId = 3,
                             Content = "Vaša ishrana igra ključnu ulogu u održavanju zdravlja vaših zuba. Ograničite unos šećera, konzumirajte mliječne proizvode i voće te pijte dovoljno vode za optimalnu oralnu hidrataciju.",
-                            PublishDate = new DateTime(2024, 2, 2, 18, 28, 56, 971, DateTimeKind.Local).AddTicks(2314),
+                            PublishDate = new DateTime(2024, 3, 14, 14, 12, 18, 112, DateTimeKind.Local).AddTicks(6607),
                             Summary = "Kako ishrana utječe na zdravlje zuba i desni.",
-                            Title = "Zdrava Ishrana za Zdrave Zube"
+                            Title = "Zdrava Ishrana za Zdrave Zube",
+                            UserCreatedId = 5
                         },
                         new
                         {
                             ArticleId = 4,
                             Content = "Estetski zahvati poput izbjeljivanja zuba, keramičkih faseta i ortodontskih tretmana mogu poboljšati izgled vašeg osmijeha. Posavjetujte se sa stomatologom o opcijama prilagođenim vašim potrebama.",
-                            PublishDate = new DateTime(2024, 2, 2, 18, 28, 56, 971, DateTimeKind.Local).AddTicks(2328),
+                            PublishDate = new DateTime(2024, 3, 14, 14, 12, 18, 112, DateTimeKind.Local).AddTicks(6615),
                             Summary = "Pregled estetskih zahvata za ljepši osmijeh.",
-                            Title = "Estetski Zahvati u Stomatologiji: Sve Što Trebate Znati"
-                        });
-                });
-
-            modelBuilder.Entity("MojStomatolog.Models.Core.CompanySetting", b =>
-                {
-                    b.Property<int>("SettingId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SettingId"), 1L, 1);
-
-                    b.Property<string>("SettingName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("SettingValue")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("SettingId");
-
-                    b.ToTable("CompanySettings");
-
-                    b.HasData(
-                        new
-                        {
-                            SettingId = 1,
-                            SettingName = "WorkingHours",
-                            SettingValue = "08:30-18:00"
+                            Title = "Estetski Zahvati u Stomatologiji: Sve Što Trebate Znati",
+                            UserCreatedId = 6
                         });
                 });
 
@@ -300,6 +291,9 @@ namespace MojStomatolog.Database.Migrations
                     b.Property<DateTime>("OrderDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
                     b.Property<decimal>("TotalAmount")
                         .HasColumnType("decimal(18,2)");
 
@@ -308,6 +302,8 @@ namespace MojStomatolog.Database.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("UserId");
+
                     b.ToTable("Orders");
 
                     b.HasData(
@@ -315,6 +311,7 @@ namespace MojStomatolog.Database.Migrations
                         {
                             Id = 1,
                             OrderDate = new DateTime(2023, 6, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Status = 2,
                             TotalAmount = 29.30m,
                             UserId = 1
                         },
@@ -322,6 +319,7 @@ namespace MojStomatolog.Database.Migrations
                         {
                             Id = 2,
                             OrderDate = new DateTime(2023, 7, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Status = 2,
                             TotalAmount = 24.10m,
                             UserId = 2
                         },
@@ -329,6 +327,7 @@ namespace MojStomatolog.Database.Migrations
                         {
                             Id = 3,
                             OrderDate = new DateTime(2023, 8, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Status = 2,
                             TotalAmount = 19.80m,
                             UserId = 3
                         },
@@ -336,6 +335,7 @@ namespace MojStomatolog.Database.Migrations
                         {
                             Id = 4,
                             OrderDate = new DateTime(2023, 9, 20, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Status = 2,
                             TotalAmount = 32.10m,
                             UserId = 1
                         },
@@ -343,6 +343,7 @@ namespace MojStomatolog.Database.Migrations
                         {
                             Id = 5,
                             OrderDate = new DateTime(2023, 10, 25, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Status = 2,
                             TotalAmount = 32.21m,
                             UserId = 2
                         },
@@ -350,6 +351,7 @@ namespace MojStomatolog.Database.Migrations
                         {
                             Id = 6,
                             OrderDate = new DateTime(2023, 11, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Status = 2,
                             TotalAmount = 24.80m,
                             UserId = 3
                         },
@@ -357,6 +359,7 @@ namespace MojStomatolog.Database.Migrations
                         {
                             Id = 7,
                             OrderDate = new DateTime(2023, 12, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Status = 2,
                             TotalAmount = 15.95m,
                             UserId = 1
                         },
@@ -364,6 +367,7 @@ namespace MojStomatolog.Database.Migrations
                         {
                             Id = 8,
                             OrderDate = new DateTime(2024, 1, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Status = 2,
                             TotalAmount = 27.10m,
                             UserId = 2
                         },
@@ -371,6 +375,7 @@ namespace MojStomatolog.Database.Migrations
                         {
                             Id = 9,
                             OrderDate = new DateTime(2024, 2, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Status = 2,
                             TotalAmount = 40.26m,
                             UserId = 3
                         },
@@ -378,6 +383,7 @@ namespace MojStomatolog.Database.Migrations
                         {
                             Id = 10,
                             OrderDate = new DateTime(2023, 6, 25, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Status = 2,
                             TotalAmount = 15.00m,
                             UserId = 1
                         },
@@ -385,6 +391,7 @@ namespace MojStomatolog.Database.Migrations
                         {
                             Id = 11,
                             OrderDate = new DateTime(2023, 7, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Status = 2,
                             TotalAmount = 19.80m,
                             UserId = 2
                         },
@@ -392,6 +399,7 @@ namespace MojStomatolog.Database.Migrations
                         {
                             Id = 12,
                             OrderDate = new DateTime(2023, 8, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Status = 2,
                             TotalAmount = 33.25m,
                             UserId = 1
                         },
@@ -399,6 +407,7 @@ namespace MojStomatolog.Database.Migrations
                         {
                             Id = 13,
                             OrderDate = new DateTime(2023, 9, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Status = 2,
                             TotalAmount = 20.41m,
                             UserId = 3
                         },
@@ -406,6 +415,7 @@ namespace MojStomatolog.Database.Migrations
                         {
                             Id = 14,
                             OrderDate = new DateTime(2023, 10, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Status = 2,
                             TotalAmount = 23.10m,
                             UserId = 2
                         },
@@ -413,6 +423,7 @@ namespace MojStomatolog.Database.Migrations
                         {
                             Id = 15,
                             OrderDate = new DateTime(2023, 11, 25, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Status = 2,
                             TotalAmount = 28.45m,
                             UserId = 1
                         });
@@ -945,7 +956,7 @@ namespace MojStomatolog.Database.Migrations
                         new
                         {
                             ProductCategoryId = 1,
-                            Name = "četkica za zube"
+                            Name = "Četkica za zube"
                         },
                         new
                         {
@@ -956,6 +967,176 @@ namespace MojStomatolog.Database.Migrations
                         {
                             ProductCategoryId = 3,
                             Name = "Vodica za ispiranje usta"
+                        });
+                });
+
+            modelBuilder.Entity("MojStomatolog.Models.Core.Rating", b =>
+                {
+                    b.Property<int>("RatingId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RatingId"), 1L, 1);
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("RatingValue")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("RatingId");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Ratings");
+
+                    b.HasData(
+                        new
+                        {
+                            RatingId = 1,
+                            ProductId = 1,
+                            RatingValue = 4,
+                            UserId = 1
+                        },
+                        new
+                        {
+                            RatingId = 2,
+                            ProductId = 2,
+                            RatingValue = 5,
+                            UserId = 1
+                        },
+                        new
+                        {
+                            RatingId = 3,
+                            ProductId = 3,
+                            RatingValue = 3,
+                            UserId = 1
+                        },
+                        new
+                        {
+                            RatingId = 4,
+                            ProductId = 5,
+                            RatingValue = 2,
+                            UserId = 1
+                        },
+                        new
+                        {
+                            RatingId = 5,
+                            ProductId = 3,
+                            RatingValue = 4,
+                            UserId = 2
+                        },
+                        new
+                        {
+                            RatingId = 6,
+                            ProductId = 5,
+                            RatingValue = 5,
+                            UserId = 2
+                        },
+                        new
+                        {
+                            RatingId = 7,
+                            ProductId = 6,
+                            RatingValue = 5,
+                            UserId = 2
+                        },
+                        new
+                        {
+                            RatingId = 8,
+                            ProductId = 10,
+                            RatingValue = 2,
+                            UserId = 2
+                        },
+                        new
+                        {
+                            RatingId = 9,
+                            ProductId = 14,
+                            RatingValue = 4,
+                            UserId = 2
+                        },
+                        new
+                        {
+                            RatingId = 10,
+                            ProductId = 7,
+                            RatingValue = 4,
+                            UserId = 3
+                        },
+                        new
+                        {
+                            RatingId = 11,
+                            ProductId = 4,
+                            RatingValue = 4,
+                            UserId = 3
+                        },
+                        new
+                        {
+                            RatingId = 12,
+                            ProductId = 13,
+                            RatingValue = 1,
+                            UserId = 3
+                        },
+                        new
+                        {
+                            RatingId = 13,
+                            ProductId = 12,
+                            RatingValue = 5,
+                            UserId = 3
+                        },
+                        new
+                        {
+                            RatingId = 14,
+                            ProductId = 12,
+                            RatingValue = 5,
+                            UserId = 3
+                        });
+                });
+
+            modelBuilder.Entity("MojStomatolog.Models.Core.Service", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Service");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Liječenje karijesa"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Parodontologija"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Protetika"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Name = "Pregled"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Name = "Preventivna stomatologija"
                         });
                 });
 
@@ -1069,139 +1250,151 @@ namespace MojStomatolog.Database.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Rating", b =>
+            modelBuilder.Entity("WorkingHours", b =>
                 {
-                    b.Property<int>("RatingId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RatingId"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int>("ProductId")
+                    b.Property<TimeSpan>("BreakEndTime")
+                        .HasColumnType("time");
+
+                    b.Property<TimeSpan>("BreakStartTime")
+                        .HasColumnType("time");
+
+                    b.Property<int>("DayOfWeek")
                         .HasColumnType("int");
 
-                    b.Property<int>("RatingValue")
+                    b.Property<TimeSpan>("EndTime")
+                        .HasColumnType("time");
+
+                    b.Property<TimeSpan>("StartTime")
+                        .HasColumnType("time");
+
+                    b.Property<int?>("UserModifiedId")
                         .HasColumnType("int");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
+                    b.HasKey("Id");
 
-                    b.HasKey("RatingId");
+                    b.HasIndex("UserModifiedId");
 
-                    b.HasIndex("ProductId");
-
-                    b.ToTable("Ratings");
+                    b.ToTable("WorkingHours");
 
                     b.HasData(
                         new
                         {
-                            RatingId = 1,
-                            ProductId = 1,
-                            RatingValue = 4,
-                            UserId = 1
+                            Id = 1,
+                            BreakEndTime = new TimeSpan(0, 14, 0, 0, 0),
+                            BreakStartTime = new TimeSpan(0, 13, 0, 0, 0),
+                            DayOfWeek = 1,
+                            EndTime = new TimeSpan(0, 18, 0, 0, 0),
+                            StartTime = new TimeSpan(0, 9, 0, 0, 0)
                         },
                         new
                         {
-                            RatingId = 2,
-                            ProductId = 2,
-                            RatingValue = 5,
-                            UserId = 1
+                            Id = 2,
+                            BreakEndTime = new TimeSpan(0, 14, 0, 0, 0),
+                            BreakStartTime = new TimeSpan(0, 13, 0, 0, 0),
+                            DayOfWeek = 2,
+                            EndTime = new TimeSpan(0, 18, 0, 0, 0),
+                            StartTime = new TimeSpan(0, 9, 0, 0, 0)
                         },
                         new
                         {
-                            RatingId = 3,
-                            ProductId = 3,
-                            RatingValue = 3,
-                            UserId = 1
+                            Id = 3,
+                            BreakEndTime = new TimeSpan(0, 14, 0, 0, 0),
+                            BreakStartTime = new TimeSpan(0, 13, 0, 0, 0),
+                            DayOfWeek = 3,
+                            EndTime = new TimeSpan(0, 18, 0, 0, 0),
+                            StartTime = new TimeSpan(0, 9, 0, 0, 0)
                         },
                         new
                         {
-                            RatingId = 4,
-                            ProductId = 5,
-                            RatingValue = 2,
-                            UserId = 1
+                            Id = 4,
+                            BreakEndTime = new TimeSpan(0, 14, 0, 0, 0),
+                            BreakStartTime = new TimeSpan(0, 13, 0, 0, 0),
+                            DayOfWeek = 4,
+                            EndTime = new TimeSpan(0, 18, 0, 0, 0),
+                            StartTime = new TimeSpan(0, 9, 0, 0, 0)
                         },
                         new
                         {
-                            RatingId = 5,
-                            ProductId = 3,
-                            RatingValue = 4,
-                            UserId = 2
+                            Id = 5,
+                            BreakEndTime = new TimeSpan(0, 14, 0, 0, 0),
+                            BreakStartTime = new TimeSpan(0, 13, 0, 0, 0),
+                            DayOfWeek = 5,
+                            EndTime = new TimeSpan(0, 18, 0, 0, 0),
+                            StartTime = new TimeSpan(0, 9, 0, 0, 0)
                         },
                         new
                         {
-                            RatingId = 6,
-                            ProductId = 5,
-                            RatingValue = 5,
-                            UserId = 2
+                            Id = 6,
+                            BreakEndTime = new TimeSpan(0, 13, 0, 0, 0),
+                            BreakStartTime = new TimeSpan(0, 12, 0, 0, 0),
+                            DayOfWeek = 6,
+                            EndTime = new TimeSpan(0, 15, 0, 0, 0),
+                            StartTime = new TimeSpan(0, 9, 0, 0, 0)
                         },
                         new
                         {
-                            RatingId = 7,
-                            ProductId = 6,
-                            RatingValue = 5,
-                            UserId = 2
-                        },
-                        new
-                        {
-                            RatingId = 8,
-                            ProductId = 10,
-                            RatingValue = 2,
-                            UserId = 2
-                        },
-                        new
-                        {
-                            RatingId = 9,
-                            ProductId = 14,
-                            RatingValue = 4,
-                            UserId = 2
-                        },
-                        new
-                        {
-                            RatingId = 10,
-                            ProductId = 7,
-                            RatingValue = 4,
-                            UserId = 3
-                        },
-                        new
-                        {
-                            RatingId = 11,
-                            ProductId = 4,
-                            RatingValue = 4,
-                            UserId = 3
-                        },
-                        new
-                        {
-                            RatingId = 12,
-                            ProductId = 13,
-                            RatingValue = 1,
-                            UserId = 3
-                        },
-                        new
-                        {
-                            RatingId = 13,
-                            ProductId = 12,
-                            RatingValue = 5,
-                            UserId = 3
-                        },
-                        new
-                        {
-                            RatingId = 14,
-                            ProductId = 12,
-                            RatingValue = 5,
-                            UserId = 3
+                            Id = 7,
+                            BreakEndTime = new TimeSpan(0, 13, 0, 0, 0),
+                            BreakStartTime = new TimeSpan(0, 12, 0, 0, 0),
+                            DayOfWeek = 0,
+                            EndTime = new TimeSpan(0, 15, 0, 0, 0),
+                            StartTime = new TimeSpan(0, 9, 0, 0, 0)
                         });
                 });
 
             modelBuilder.Entity("MojStomatolog.Models.Core.Appointment", b =>
                 {
+                    b.HasOne("MojStomatolog.Models.Core.Employee", "Employee")
+                        .WithMany()
+                        .HasForeignKey("EmployeeId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
                     b.HasOne("MojStomatolog.Models.Core.User", "Patient")
                         .WithMany()
                         .HasForeignKey("PatientId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
+                    b.HasOne("MojStomatolog.Models.Core.Service", "Service")
+                        .WithMany()
+                        .HasForeignKey("ServiceId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Employee");
+
                     b.Navigation("Patient");
+
+                    b.Navigation("Service");
+                });
+
+            modelBuilder.Entity("MojStomatolog.Models.Core.Article", b =>
+                {
+                    b.HasOne("MojStomatolog.Models.Core.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserCreatedId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("MojStomatolog.Models.Core.Order", b =>
+                {
+                    b.HasOne("MojStomatolog.Models.Core.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("MojStomatolog.Models.Core.OrderItem", b =>
@@ -1234,7 +1427,7 @@ namespace MojStomatolog.Database.Migrations
                     b.Navigation("ProductCategory");
                 });
 
-            modelBuilder.Entity("Rating", b =>
+            modelBuilder.Entity("MojStomatolog.Models.Core.Rating", b =>
                 {
                     b.HasOne("MojStomatolog.Models.Core.Product", "Product")
                         .WithMany()
@@ -1242,7 +1435,25 @@ namespace MojStomatolog.Database.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
+                    b.HasOne("MojStomatolog.Models.Core.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
                     b.Navigation("Product");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("WorkingHours", b =>
+                {
+                    b.HasOne("MojStomatolog.Models.Core.User", "UserModified")
+                        .WithMany()
+                        .HasForeignKey("UserModifiedId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.Navigation("UserModified");
                 });
 
             modelBuilder.Entity("MojStomatolog.Models.Core.Order", b =>
