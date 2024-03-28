@@ -12,6 +12,7 @@ namespace MojStomatolog.Services.Common.RecommenderModel
         private readonly IServiceScopeFactory _scopeFactory;
         private readonly MLContext _mlContext;
         private ITransformer? _model;
+        private const string ModelPath = "trained_model.zip";
 
         public ModelTrainingService(IServiceScopeFactory scopeFactory)
         {
@@ -19,7 +20,7 @@ namespace MojStomatolog.Services.Common.RecommenderModel
             _mlContext = new MLContext();
         }
 
-        public void TrainModel()
+        private void TrainModel()
         {
             using var scope = _scopeFactory.CreateScope();
             var dbContext = scope.ServiceProvider.GetRequiredService<MojStomatologContext>() ?? throw new InvalidOperationException("Database context cannot be null.");
@@ -74,13 +75,24 @@ namespace MojStomatolog.Services.Common.RecommenderModel
 
             var est = _mlContext.Recommendation().Trainers.MatrixFactorization(options);
             _model = est.Fit(trainData);
+
+            // Save the trained model to disk
+            _mlContext.Model.Save(_model, trainData.Schema, ModelPath);
         }
 
         public ITransformer GetTrainedModel()
         {
             if (_model == null)
             {
-                TrainModel();
+                // Check if there's a model saved to disk
+                if (File.Exists(ModelPath))
+                {
+                    _model = _mlContext.Model.Load(ModelPath, out _);
+                }
+                else
+                {
+                    TrainModel(); // Train the model if no saved model is found
+                }
             }
 
             return _model ?? throw new InvalidOperationException("Model training failed, model is null.");

@@ -87,8 +87,8 @@ using (var scope = app.Services.CreateAsyncScope())
     dataContext.Database.EnsureCreated();
 }
 
-// Train Recommender model
+// Load or train Recommender model
 var modelTrainingService = app.Services.GetRequiredService<ModelTrainingService>();
-modelTrainingService.TrainModel();
+modelTrainingService.GetTrainedModel();
 
 app.Run();

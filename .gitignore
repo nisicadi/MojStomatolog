@@ -410,3 +410,4 @@ FodyWeavers.xsd
 /MojStomatolog/UI/mojstomatolog_mobile/windows/flutter/generated_plugins.cmake
 /MojStomatolog/UI/mojstomatolog_mobile/windows/flutter/generated_plugin_registrant.cc
 /MojStomatolog/UI/mojstomatolog_mobile/windows/flutter/generated_plugin_registrant.h
+/MojStomatolog/MojStomatolog/trained_model.zip
