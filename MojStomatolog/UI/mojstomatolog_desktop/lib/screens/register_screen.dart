@@ -37,7 +37,7 @@ class RegisterPage extends StatelessWidget {
                       ),
                       controller: _usernameController,
                       validator: (value) {
-                        if (value == null || value.isEmpty) {
+                        if (value?.trim().isEmpty ?? true) {
                           return 'Please enter your username';
                         }
                         return null;
@@ -53,11 +53,11 @@ class RegisterPage extends StatelessWidget {
                       ),
                       controller: _emailController,
                       validator: (value) {
-                        if (value == null || value.isEmpty) {
+                        if (value?.trim().isEmpty ?? true) {
                           return 'Please enter your email';
                         }
-                        if (!RegExp(r'^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$')
-                            .hasMatch(value)) {
+                        else if (!RegExp(r'^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$')
+                            .hasMatch(value ?? '')) {
                           return 'Please enter a valid email address';
                         }
                         return null;
@@ -74,7 +74,7 @@ class RegisterPage extends StatelessWidget {
                       ),
                       controller: _passwordController,
                       validator: (value) {
-                        if (value == null || value.isEmpty) {
+                        if (value?.trim().isEmpty ?? true) {
                           return 'Please enter your password';
                         }
                         return null;
@@ -91,10 +91,10 @@ class RegisterPage extends StatelessWidget {
                       ),
                       controller: _confirmPasswordController,
                       validator: (value) {
-                        if (value == null || value.isEmpty) {
+                        if (value?.trim().isEmpty ?? true) {
                           return 'Please confirm your password';
                         }
-                        if (value != _passwordController.text) {
+                        else if (value != _passwordController.text) {
                           return 'Passwords do not match';
                         }
                         return null;

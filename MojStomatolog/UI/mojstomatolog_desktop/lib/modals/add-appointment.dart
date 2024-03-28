@@ -213,7 +213,7 @@ class _AddAppointmentModalState extends State<AddAppointmentModal> {
           controller: controller,
           decoration: InputDecoration(labelText: labelText),
           validator: (value) {
-            if (!isOptional && (value == null || value.isEmpty)) {
+            if (!isOptional && (value?.trim().isEmpty ?? true)) {
               return '$labelText je obavezno polje';
             }
             return null;

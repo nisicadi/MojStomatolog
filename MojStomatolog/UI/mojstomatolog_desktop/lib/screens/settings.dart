@@ -130,7 +130,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   String? _validateField(String? value,
       {bool isEmail = false, bool isNumber = false}) {
-    if (value == null || value.isEmpty) return 'Polje ne smije biti prazno';
+    if (value == null || value.isEmpty || value.trim().isEmpty) return 'Polje ne smije biti prazno';
 
     if (isEmail) {
       final emailRegex =
@@ -209,7 +209,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     decoration: InputDecoration(labelText: 'Trenutna lozinka'),
                     obscureText: true,
                     validator: (value) {
-                      if (value == null || value.isEmpty) {
+                      if (value?.trim().isEmpty ?? true) {
                         return 'Polje ne smije biti prazno';
                       }
                       return null;
@@ -220,7 +220,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     decoration: InputDecoration(labelText: 'Nova lozinka'),
                     obscureText: true,
                     validator: (value) {
-                      if (value == null || value.isEmpty) {
+                      if (value?.trim().isEmpty ?? true) {
                         return 'Polje ne smije biti prazno';
                       }
                       return null;
@@ -232,7 +232,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         InputDecoration(labelText: 'Potvrdi novu lozinku'),
                     obscureText: true,
                     validator: (value) {
-                      if (value != _newPasswordController.text) {
+                      if (value?.trim().isEmpty ?? true) {
+                        return 'Polje ne smije biti prazno';
+                      }
+                      else if (value != _newPasswordController.text) {
                         return 'Lozinke se ne poklapaju';
                       }
                       return null;

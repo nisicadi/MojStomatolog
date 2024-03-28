@@ -41,7 +41,7 @@ class LoginPage extends StatelessWidget {
                       ),
                       controller: _usernameController,
                       validator: (value) {
-                        if (value == null || value.isEmpty) {
+                        if (value?.trim().isEmpty ?? true) {
                           return 'Please enter your username';
                         }
                         return null;
@@ -58,7 +58,7 @@ class LoginPage extends StatelessWidget {
                       ),
                       controller: _passwordController,
                       validator: (value) {
-                        if (value == null || value.isEmpty) {
+                        if (value?.trim().isEmpty ?? true) {
                           return 'Please enter your password';
                         }
                         return null;
