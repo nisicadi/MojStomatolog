@@ -20,7 +20,7 @@ class LoginPage extends StatelessWidget {
         child: Container(
           constraints: const BoxConstraints(
             maxWidth: 400,
-            maxHeight: 400,
+            maxHeight: 450,
           ),
           child: Card(
             child: Padding(
@@ -41,7 +41,7 @@ class LoginPage extends StatelessWidget {
                       ),
                       controller: _usernameController,
                       validator: (value) {
-                        if (value == null || value.isEmpty) {
+                        if (value == null || value.trim().isEmpty) {
                           return 'Please enter your username';
                         }
                         return null;
@@ -58,7 +58,7 @@ class LoginPage extends StatelessWidget {
                       ),
                       controller: _passwordController,
                       validator: (value) {
-                        if (value == null || value.isEmpty) {
+                        if (value == null || value.trim().isEmpty) {
                           return 'Please enter your password';
                         }
                         return null;

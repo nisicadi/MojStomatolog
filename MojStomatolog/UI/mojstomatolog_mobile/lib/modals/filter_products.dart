@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class ProductFilterModal extends StatefulWidget {
   final Function(double? priceFrom, double? priceTo) onFilter;
@@ -106,6 +107,7 @@ class _ProductFilterModalState extends State<ProductFilterModal> {
       controller: controller,
       decoration: InputDecoration(labelText: labelText, errorText: errorText),
       keyboardType: TextInputType.number,
+      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
       validator: (value) {
         if (value != null && value.isNotEmpty) {
           final double? price = double.tryParse(value);

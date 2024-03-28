@@ -37,7 +37,7 @@ class RegisterPage extends StatelessWidget {
                       ),
                       controller: _usernameController,
                       validator: (value) {
-                        if (value == null || value.isEmpty) {
+                        if (value == null || value.trim().isEmpty) {
                           return 'Please enter your username';
                         }
                         return null;
@@ -53,7 +53,7 @@ class RegisterPage extends StatelessWidget {
                       ),
                       controller: _emailController,
                       validator: (value) {
-                        if (value == null || value.isEmpty) {
+                        if (value == null || value.trim().isEmpty) {
                           return 'Please enter your email';
                         }
                         if (!RegExp(
@@ -75,7 +75,7 @@ class RegisterPage extends StatelessWidget {
                       ),
                       controller: _passwordController,
                       validator: (value) {
-                        if (value == null || value.isEmpty) {
+                        if (value == null || value.trim().isEmpty) {
                           return 'Please enter your password';
                         }
                         return null;
@@ -92,7 +92,7 @@ class RegisterPage extends StatelessWidget {
                       ),
                       controller: _confirmPasswordController,
                       validator: (value) {
-                        if (value == null || value.isEmpty) {
+                        if (value == null || value.trim().isEmpty) {
                           return 'Please confirm your password';
                         }
                         if (value != _passwordController.text) {

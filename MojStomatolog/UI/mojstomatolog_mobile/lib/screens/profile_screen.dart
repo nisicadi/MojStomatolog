@@ -163,11 +163,11 @@ class _ProfilePageState extends State<ProfilePage> {
                       newPasswordError = '';
                       confirmPasswordError = '';
 
-                      if (currentPasswordController.text.isEmpty) {
+                      if (currentPasswordController.text.trim().isEmpty) {
                         currentPasswordError = 'Unesite trenutnu šifru';
                       }
 
-                      if (newPasswordController.text.isEmpty) {
+                      if (newPasswordController.text.trim().isEmpty) {
                         newPasswordError = 'Unesite novu šifru';
                       }
 
