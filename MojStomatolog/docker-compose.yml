@@ -43,6 +43,8 @@ services:
       - RABBITMQ_PASSWORD=mypass
       - RABBITMQ_VIRTUALHOST=/
       - HOSTNAME=localhost
+      - SMTP_HOST=smtp.office365.com
+      - SMTP_PORT=589
     depends_on:
       - mojstomatolog-rabbitmq
     networks:

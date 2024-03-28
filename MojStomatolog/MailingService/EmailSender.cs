@@ -16,7 +16,14 @@ namespace MailingService
 
         public Task SendEmailAsync(string email, string subject, string message)
         {
-            var client = new SmtpClient("smtp.office365.com", 587)
+            var smtpHost = Environment.GetEnvironmentVariable("SMTP_HOST") ?? "smtp.office365.com";
+            int smtpPort = 587;
+
+            if (int.TryParse(Environment.GetEnvironmentVariable("SMTP_PORT"), out int port)) {
+                smtpPort = port;
+            }
+
+            var client = new SmtpClient(smtpHost, smtpPort)
             {
                 EnableSsl = true,
                 UseDefaultCredentials = false,
