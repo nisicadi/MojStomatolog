@@ -99,8 +99,8 @@ class _OrdersPageState extends State<OrdersPage> {
       return ListTile(
         title: ElevatedButton(
           onPressed: () => _showCancelConfirmationDialog(order),
-          style: ElevatedButton.styleFrom(
-            primary: Colors.red,
+          style: ButtonStyle(
+            backgroundColor: MaterialStateProperty.all<Color>(Colors.red),
           ),
           child: Text(
             'Otkaži narudžbu',
