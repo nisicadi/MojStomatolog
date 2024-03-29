@@ -251,7 +251,8 @@ public partial class MojStomatologContext
             UserId = 1,
             OrderDate = new DateTime(2023, 06, 15),
             TotalAmount = 29.30M,
-            Status = 2
+            Status = 2,
+            PaymentId = 1
         });
         modelBuilder.Entity<Order>().HasData(new Order
         {
@@ -259,7 +260,8 @@ public partial class MojStomatologContext
             UserId = 2,
             OrderDate = new DateTime(2023, 07, 10),
             TotalAmount = 24.10M,
-            Status = 2
+            Status = 2,
+            PaymentId = 2
         });
         modelBuilder.Entity<Order>().HasData(new Order
         {
@@ -267,7 +269,8 @@ public partial class MojStomatologContext
             UserId = 3,
             OrderDate = new DateTime(2023, 08, 05),
             TotalAmount = 19.80M,
-            Status = 2
+            Status = 2,
+            PaymentId = 3
         });
         modelBuilder.Entity<Order>().HasData(new Order
         {
@@ -275,7 +278,8 @@ public partial class MojStomatologContext
             UserId = 1,
             OrderDate = new DateTime(2023, 09, 20),
             TotalAmount = 32.10M,
-            Status = 2
+            Status = 2,
+            PaymentId = 4
         });
         modelBuilder.Entity<Order>().HasData(new Order
         {
@@ -283,7 +287,8 @@ public partial class MojStomatologContext
             UserId = 2,
             OrderDate = new DateTime(2023, 10, 25),
             TotalAmount = 32.21M,
-            Status = 2
+            Status = 2,
+            PaymentId = 5
         });
         modelBuilder.Entity<Order>().HasData(new Order
         {
@@ -291,7 +296,8 @@ public partial class MojStomatologContext
             UserId = 3,
             OrderDate = new DateTime(2023, 11, 30),
             TotalAmount = 24.80M,
-            Status = 2
+            Status = 2,
+            PaymentId = 6
         });
         modelBuilder.Entity<Order>().HasData(new Order
         {
@@ -299,7 +305,8 @@ public partial class MojStomatologContext
             UserId = 1,
             OrderDate = new DateTime(2023, 12, 15),
             TotalAmount = 15.95M,
-            Status = 2
+            Status = 2,
+            PaymentId = 7
         });
         modelBuilder.Entity<Order>().HasData(new Order
         {
@@ -307,7 +314,8 @@ public partial class MojStomatologContext
             UserId = 2,
             OrderDate = new DateTime(2024, 01, 05),
             TotalAmount = 27.10M,
-            Status = 2
+            Status = 2,
+            PaymentId = 8
         });
         modelBuilder.Entity<Order>().HasData(new Order
         {
@@ -315,7 +323,8 @@ public partial class MojStomatologContext
             UserId = 3,
             OrderDate = new DateTime(2024, 02, 01),
             TotalAmount = 40.26M,
-            Status = 2
+            Status = 2,
+            PaymentId = 9
         });
         modelBuilder.Entity<Order>().HasData(new Order
         {
@@ -323,7 +332,8 @@ public partial class MojStomatologContext
             UserId = 1,
             OrderDate = new DateTime(2023, 06, 25),
             TotalAmount = 15.00M,
-            Status = 2
+            Status = 2,
+            PaymentId = 10
         });
         modelBuilder.Entity<Order>().HasData(new Order
         {
@@ -331,7 +341,8 @@ public partial class MojStomatologContext
             UserId = 2,
             OrderDate = new DateTime(2023, 07, 15),
             TotalAmount = 19.80M,
-            Status = 2
+            Status = 2,
+            PaymentId = 11
         });
         modelBuilder.Entity<Order>().HasData(new Order
         {
@@ -339,7 +350,8 @@ public partial class MojStomatologContext
             UserId = 1,
             OrderDate = new DateTime(2023, 08, 10),
             TotalAmount = 33.25M,
-            Status = 2
+            Status = 2,
+            PaymentId = 12
         });
         modelBuilder.Entity<Order>().HasData(new Order
         {
@@ -347,7 +359,8 @@ public partial class MojStomatologContext
             UserId = 3,
             OrderDate = new DateTime(2023, 09, 05),
             TotalAmount = 20.41M,
-            Status = 2
+            Status = 2,
+            PaymentId = 13
         });
         modelBuilder.Entity<Order>().HasData(new Order
         {
@@ -355,7 +368,8 @@ public partial class MojStomatologContext
             UserId = 2,
             OrderDate = new DateTime(2023, 10, 30),
             TotalAmount = 23.10M,
-            Status = 2
+            Status = 2,
+            PaymentId = 14
         });
         modelBuilder.Entity<Order>().HasData(new Order
         {
@@ -363,7 +377,8 @@ public partial class MojStomatologContext
             UserId = 1,
             OrderDate = new DateTime(2023, 11, 25),
             TotalAmount = 28.45M,
-            Status = 2
+            Status = 2,
+            PaymentId = 15
         });
 
         #endregion
@@ -956,6 +971,117 @@ public partial class MojStomatologContext
             PasswordHash = "eAgjVa5u+yP5GzGoMTpY0Sb5XowehZl3VNOjuUX8kJc=",
             Number = "123789456"
         });
+
+        #endregion
+
+        #region Payment
+
+        modelBuilder.Entity<Payment>().HasData(new Payment
+        {
+            Id = 1,
+            Amount = 29.30,
+            PaymentDate = new DateTime(2023, 06, 15),
+            PaymentNumber = "PAY-001"
+        });
+        modelBuilder.Entity<Payment>().HasData(new Payment
+        {
+            Id = 2,
+            Amount = 24.10,
+            PaymentDate = new DateTime(2023, 07, 10),
+            PaymentNumber = "PAY-002"
+        });
+        modelBuilder.Entity<Payment>().HasData(new Payment
+        {
+            Id = 3,
+            Amount = 19.80,
+            PaymentDate = new DateTime(2023, 08, 05),
+            PaymentNumber = "PAY-003"
+        });
+        modelBuilder.Entity<Payment>().HasData(new Payment
+        {
+            Id = 4,
+            Amount = 32.10,
+            PaymentDate = new DateTime(2023, 09, 20),
+            PaymentNumber = "PAY-004"
+        });
+        modelBuilder.Entity<Payment>().HasData(new Payment
+        {
+            Id = 5,
+            Amount = 32.21,
+            PaymentDate = new DateTime(2023, 10, 25),
+            PaymentNumber = "PAY-005"
+        });
+        modelBuilder.Entity<Payment>().HasData(new Payment
+        {
+            Id = 6,
+            Amount = 24.80,
+            PaymentDate = new DateTime(2023, 11, 30),
+            PaymentNumber = "PAY-006"
+        });
+        modelBuilder.Entity<Payment>().HasData(new Payment
+        {
+            Id = 7,
+            Amount = 15.95,
+            PaymentDate = new DateTime(2023, 12, 15),
+            PaymentNumber = "PAY-007"
+        });
+        modelBuilder.Entity<Payment>().HasData(new Payment
+        {
+            Id = 8,
+            Amount = 27.10,
+            PaymentDate = new DateTime(2024, 01, 05),
+            PaymentNumber = "PAY-008"
+        });
+        modelBuilder.Entity<Payment>().HasData(new Payment
+        {
+            Id = 9,
+            Amount = 40.26,
+            PaymentDate = new DateTime(2024, 02, 01),
+            PaymentNumber = "PAY-009"
+        });
+        modelBuilder.Entity<Payment>().HasData(new Payment
+        {
+            Id = 10,
+            Amount = 15.00,
+            PaymentDate = new DateTime(2023, 06, 25),
+            PaymentNumber = "PAY-010"
+        });
+        modelBuilder.Entity<Payment>().HasData(new Payment
+        {
+            Id = 11,
+            Amount = 19.80,
+            PaymentDate = new DateTime(2023, 07, 15),
+            PaymentNumber = "PAY-011"
+        });
+        modelBuilder.Entity<Payment>().HasData(new Payment
+        {
+            Id = 12,
+            Amount = 33.25,
+            PaymentDate = new DateTime(2023, 08, 10),
+            PaymentNumber = "PAY-012"
+        });
+        modelBuilder.Entity<Payment>().HasData(new Payment
+        {
+            Id = 13,
+            Amount = 20.41,
+            PaymentDate = new DateTime(2023, 09, 05),
+            PaymentNumber = "PAY-013"
+        });
+        modelBuilder.Entity<Payment>().HasData(new Payment
+        {
+            Id = 14,
+            Amount = 23.10,
+            PaymentDate = new DateTime(2023, 10, 30),
+            PaymentNumber = "PAY-014"
+        });
+        modelBuilder.Entity<Payment>().HasData(new Payment
+        {
+            Id = 15,
+            Amount = 28.45,
+            PaymentDate = new DateTime(2023, 11, 25),
+            PaymentNumber = "PAY-015"
+        });
+
 
         #endregion
     }

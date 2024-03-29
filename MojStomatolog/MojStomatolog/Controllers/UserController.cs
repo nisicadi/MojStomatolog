@@ -8,6 +8,7 @@ using MojStomatolog.Services.Interfaces;
 
 namespace MojStomatolog.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("[controller]")]
     public class UserController : BaseCrudController<UserResponse, BaseSearchObject, AddUserRequest, UpdateUserRequest>

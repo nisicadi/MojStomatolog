@@ -4,8 +4,8 @@ using MojStomatolog.Services.Common;
 
 namespace MojStomatolog.Controllers
 {
-    [Route("[controller]")]
     [Authorize]
+    [Route("[controller]")]
     public class BaseController<T, TSearch> : ControllerBase
         where T : class
         where TSearch : class

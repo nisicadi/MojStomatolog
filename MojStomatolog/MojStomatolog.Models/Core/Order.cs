@@ -6,6 +6,7 @@ namespace MojStomatolog.Models.Core
     {
         public int Id { get; set; }
         public int UserId { get; set; }
+        public int PaymentId { get; set; }
         public DateTime OrderDate { get; set; }
         public decimal TotalAmount { get; set; }
         public int Status { get; set; }
@@ -14,5 +15,8 @@ namespace MojStomatolog.Models.Core
 
         [ForeignKey("UserId")]
         public User User { get; set; } = null!;
+
+        [ForeignKey("PaymentId")]
+        public Payment Payment { get; set; } = null!;
     }
 }

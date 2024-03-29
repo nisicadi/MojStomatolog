@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using MojStomatolog.Services.Common;
 
 namespace MojStomatolog.Controllers
 {
+    [Authorize]
     [Route("[controller]")]
     public class BaseCrudController<T, TSearch, TInsert, TUpdate> : BaseController<T, TSearch> 
         where T : class

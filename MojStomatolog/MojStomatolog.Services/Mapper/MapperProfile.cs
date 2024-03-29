@@ -5,6 +5,7 @@ using MojStomatolog.Models.Requests.Article;
 using MojStomatolog.Models.Requests.Employee;
 using MojStomatolog.Models.Requests.Order;
 using MojStomatolog.Models.Requests.OrderItem;
+using MojStomatolog.Models.Requests.Payment;
 using MojStomatolog.Models.Requests.Product;
 using MojStomatolog.Models.Requests.ProductCategory;
 using MojStomatolog.Models.Requests.Rating;
@@ -108,6 +109,14 @@ namespace MojStomatolog.Services.Mapper
             CreateMap<AddWorkingHoursRequest, WorkingHours>();
             CreateMap<UpdateWorkingHoursRequest, WorkingHours>();
             CreateMap<WorkingHours, WorkingHoursResponse>();
+
+            #endregion
+
+            #region Payment
+
+            CreateMap<AddPaymentRequest, Payment>();
+            CreateMap<UpdatePaymentRequest, Payment>();
+            CreateMap<Payment, PaymentResponse>();
 
             #endregion
         }
