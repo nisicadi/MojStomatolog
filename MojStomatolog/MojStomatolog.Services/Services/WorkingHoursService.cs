@@ -5,6 +5,7 @@ using iText.Layout.Element;
 using iText.Layout.Properties;
 using Microsoft.EntityFrameworkCore;
 using MojStomatolog.Database;
+using MojStomatolog.Models.Core;
 using MojStomatolog.Models.Requests.WorkingHours;
 using MojStomatolog.Models.Responses;
 using MojStomatolog.Services.Common;
