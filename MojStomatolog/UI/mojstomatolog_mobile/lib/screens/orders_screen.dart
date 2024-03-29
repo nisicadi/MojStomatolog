@@ -192,6 +192,11 @@ class _OrdersPageState extends State<OrdersPage> {
                     ),
                     SizedBox(height: 8.0),
                     Text(
+                      'Broj transakcije: ${order.payment?.paymentNumber}',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(height: 8.0),
+                    Text(
                       'Ukupni iznos: ${order.totalAmount} KM',
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),

@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:mojstomatolog_mobile/models/cart_item.dart';
 import 'package:mojstomatolog_mobile/models/order.dart';
 import 'package:mojstomatolog_mobile/models/order_item.dart';
+import 'package:mojstomatolog_mobile/models/payment.dart';
 import 'package:mojstomatolog_mobile/providers/cart_provider.dart';
 import 'package:mojstomatolog_mobile/providers/order_provider.dart';
+import 'package:mojstomatolog_mobile/providers/payment_provider.dart';
 import 'package:mojstomatolog_mobile/utils/util.dart';
 import 'package:provider/provider.dart';
 import 'package:mojstomatolog_mobile/widgets/master_screen.dart';
@@ -173,7 +175,7 @@ class CartPage extends StatelessWidget {
         await Stripe.instance.initPaymentSheet(
           paymentSheetParameters: SetupPaymentSheetParameters(
             paymentIntentClientSecret: paymentIntentData['client_secret'],
-            merchantDisplayName: 'Pero Peric',
+            merchantDisplayName: 'MojStomatolog',
           ),
         );
 
@@ -181,8 +183,11 @@ class CartPage extends StatelessWidget {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Plaćanje uspješno!')),
         );
+        var payment = await _createPayment(paymentIntentData!['id'], calculateTotal());
 
-        await _createOrder(cartProvider, totalAmount / 100);
+        if (payment != null && payment.id != null) {
+          await _createOrder(cartProvider, totalAmount / 100, payment.id!);
+        }
 
         cartProvider.clearCart();
       } else {
@@ -198,12 +203,13 @@ class CartPage extends StatelessWidget {
   }
 
   Future<void> _createOrder(
-      CartProvider cartProvider, double totalAmount) async {
+      CartProvider cartProvider, double totalAmount, int paymentId) async {
     OrderProvider orderProvider = OrderProvider();
 
     Order newOrder = Order();
     newOrder.totalAmount = totalAmount;
     newOrder.userId = User.userId;
+    newOrder.paymentId = paymentId;
     newOrder.orderDate = DateTime.now();
     newOrder.status = 0;
     newOrder.orderItems = cartProvider.cart.items.map((cartItem) {
@@ -214,5 +220,17 @@ class CartPage extends StatelessWidget {
     }).toList();
 
     await orderProvider.createOrder(newOrder);
+  }
+
+  Future<Payment?> _createPayment(
+      String paymentNumber, double totalAmount) async {
+    PaymentProvider paymentProvider = PaymentProvider();
+
+    Payment newPayment = Payment();
+    newPayment.amount = totalAmount;
+    newPayment.paymentDate = DateTime.now();
+    newPayment.paymentNumber = paymentNumber;
+
+    return await paymentProvider.insert(newPayment);
   }
 }
