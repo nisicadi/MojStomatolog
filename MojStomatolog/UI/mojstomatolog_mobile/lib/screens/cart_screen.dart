@@ -119,6 +119,7 @@ class CartPage extends StatelessWidget {
     } else {
       provider.removeFromCart(item.product);
     }
+    // ignore: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
     provider.notifyListeners();
   }
 
@@ -183,7 +184,8 @@ class CartPage extends StatelessWidget {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Plaćanje uspješno!')),
         );
-        var payment = await _createPayment(paymentIntentData!['id'], calculateTotal());
+        var payment =
+            await _createPayment(paymentIntentData!['id'], calculateTotal());
 
         if (payment != null && payment.id != null) {
           await _createOrder(cartProvider, totalAmount / 100, payment.id!);

@@ -12,6 +12,7 @@ namespace MojStomatolog.Models.Responses
         public int Status { get; set; }
 
         public List<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
-        public Payment Payment { get; set; } = null!;
+        public PaymentResponse Payment { get; set; } = null!;
+        public UserResponse User { get; set; } = null!;
     }
 }

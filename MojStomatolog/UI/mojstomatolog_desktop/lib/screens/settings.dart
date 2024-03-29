@@ -130,7 +130,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   String? _validateField(String? value,
       {bool isEmail = false, bool isNumber = false}) {
-    if (value == null || value.isEmpty || value.trim().isEmpty) return 'Polje ne smije biti prazno';
+    if (value == null || value.isEmpty || value.trim().isEmpty)
+      return 'Polje ne smije biti prazno';
 
     if (isEmail) {
       final emailRegex =
@@ -234,8 +235,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     validator: (value) {
                       if (value?.trim().isEmpty ?? true) {
                         return 'Polje ne smije biti prazno';
-                      }
-                      else if (value != _newPasswordController.text) {
+                      } else if (value != _newPasswordController.text) {
                         return 'Lozinke se ne poklapaju';
                       }
                       return null;
@@ -381,16 +381,29 @@ class _SettingsScreenState extends State<SettingsScreen> {
               title: Text('Detalji narudžbe #${order.id}'),
               content: Container(
                 width: double.maxFinite,
-                child: ListView.builder(
-                  itemCount: order.orderItems?.length ?? 0,
-                  itemBuilder: (BuildContext context, int index) {
-                    final orderItem = order.orderItems![index];
-                    return ListTile(
-                      title: Text(orderItem.product?.name ?? 'Proizvod'),
-                      subtitle: Text('Količina: ${orderItem.quantity}'),
-                      trailing: Text('Cijena: ${orderItem.price} KM'),
-                    );
-                  },
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text('Ime: ${order.user?.firstName ?? ''}'),
+                    Text('Prezime: ${order.user?.lastName ?? ''}'),
+                    Text(
+                        'Broj transakcije: ${order.payment?.paymentNumber ?? 'N/A'}'),
+                    SizedBox(height: 10),
+                    Text('Proizvodi:'),
+                    ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: order.orderItems?.length ?? 0,
+                      itemBuilder: (BuildContext context, int index) {
+                        final orderItem = order.orderItems![index];
+                        return ListTile(
+                          title: Text(orderItem.product?.name ?? 'Proizvod'),
+                          subtitle: Text('Količina: ${orderItem.quantity}'),
+                          trailing: Text('Cijena: ${orderItem.price} KM'),
+                        );
+                      },
+                    ),
+                  ],
                 ),
               ),
               actions: [

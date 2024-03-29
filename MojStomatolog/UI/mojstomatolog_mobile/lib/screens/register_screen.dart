@@ -2,13 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:mojstomatolog_mobile/providers/user_provider.dart';
 import 'package:mojstomatolog_mobile/screens/login_screen.dart';
 
-class RegisterPage extends StatelessWidget {
+class RegisterPage extends StatefulWidget {
   RegisterPage({Key? key});
 
+  @override
+  State<RegisterPage> createState() => _RegisterPageState();
+}
+
+class _RegisterPageState extends State<RegisterPage> {
   TextEditingController _usernameController = TextEditingController();
+
   TextEditingController _emailController = TextEditingController();
+
   TextEditingController _passwordController = TextEditingController();
+
   TextEditingController _confirmPasswordController = TextEditingController();
+
   final _formKey = GlobalKey<FormState>();
 
   @override

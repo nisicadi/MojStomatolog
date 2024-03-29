@@ -81,7 +81,8 @@ namespace MojStomatolog.Services.Services
         {
             return query.Include(x => x.OrderItems)
                         .ThenInclude(x => x.Product)
-                        .Include(x => x.Payment);
+                        .Include(x => x.Payment)
+                        .Include(x => x.User);
         }
     }
 }
