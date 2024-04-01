@@ -783,7 +783,7 @@ public partial class MojStomatologContext
             PatientId = 1,
             EmployeeId = 3,
             ServiceId = 1,
-            AppointmentDateTime = DateTime.Today.AddHours(14).AddMinutes(30)
+            AppointmentDateTime = new DateTime(2024, 03, 15, 14, 0, 0)
         });
         modelBuilder.Entity<Appointment>().HasData(new Appointment
         {
@@ -793,7 +793,7 @@ public partial class MojStomatologContext
             PatientId = 1,
             EmployeeId = 3,
             ServiceId = 2,
-            AppointmentDateTime = DateTime.Today.AddHours(38).AddMinutes(30)
+            AppointmentDateTime = new DateTime(2024, 03, 16, 9, 0, 0)
         });
         modelBuilder.Entity<Appointment>().HasData(new Appointment
         {
@@ -803,7 +803,7 @@ public partial class MojStomatologContext
             PatientId = 2,
             EmployeeId = 4,
             ServiceId = 3,
-            AppointmentDateTime = DateTime.Today.AddHours(11).AddMinutes(30)
+            AppointmentDateTime = new DateTime(2024, 03, 17, 11, 0, 0)
         });
         modelBuilder.Entity<Appointment>().HasData(new Appointment
         {
@@ -813,7 +813,7 @@ public partial class MojStomatologContext
             PatientId = 3,
             EmployeeId = 5,
             ServiceId = 4,
-            AppointmentDateTime = DateTime.Today.AddHours(10).AddMinutes(30)
+            AppointmentDateTime = new DateTime(2024, 03, 18, 10, 0, 0)
         });
         modelBuilder.Entity<Appointment>().HasData(new Appointment
         {
@@ -823,7 +823,7 @@ public partial class MojStomatologContext
             PatientId = 2,
             EmployeeId = 1,
             ServiceId = 5,
-            AppointmentDateTime = DateTime.Today.AddHours(35).AddMinutes(30)
+            AppointmentDateTime = new DateTime(2024, 03, 19, 14, 0, 0)
         });
 
         #endregion

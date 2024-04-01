@@ -196,6 +196,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   void _showChangePasswordDialog() {
     showDialog(
       context: context,
+      barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text('Promijeni lozinku'),
@@ -248,6 +249,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           actions: <Widget>[
             ElevatedButton(
               onPressed: () {
+                _resetPasswordFields();
                 Navigator.of(context).pop();
               },
               child: Text('Odustani'),
@@ -260,6 +262,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
         );
       },
     );
+  }
+
+  void _resetPasswordFields() {
+    _currentPasswordController.clear();
+    _newPasswordController.clear();
+    _confirmPasswordController.clear();
   }
 
   Future<void> _changePassword() async {
