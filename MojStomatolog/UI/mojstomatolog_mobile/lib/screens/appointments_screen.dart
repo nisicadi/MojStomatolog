@@ -144,103 +144,6 @@ class _AppointmentsPageState extends State<AppointmentsPage> {
     }
   }
 
-  void _showReservationModal(
-      BuildContext context, String appointmentTime) async {
-    bool userHasReservation = reservedAppointments.any((appointment) =>
-        appointment.appointmentDateTime?.year == selectedDate.year &&
-        appointment.appointmentDateTime?.month == selectedDate.month &&
-        appointment.appointmentDateTime?.day == selectedDate.day &&
-        appointment.patientId == User.userId);
-
-    if (userHasReservation) {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text('Već ste rezervisali termin za ovaj dan'),
-            content: Text('Samo jedna rezervacija dnevno je dozvoljena.'),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: Text('OK'),
-              ),
-            ],
-          );
-        },
-      );
-    } else {
-      _ReservationDialog.show(
-        context: context,
-        services: services,
-        employees: employees,
-        onReservation: (serviceId, employeeId, notes) {
-          _handleCreateAppointment(
-              appointmentTime, serviceId, employeeId, notes);
-        },
-      );
-    }
-  }
-
-  void _handleCreateAppointment(String appointmentTime, int serviceId,
-      int employeeId, String notes) async {
-    final newAppointment = Appointment();
-    newAppointment.appointmentDateTime = DateTime(
-      selectedDate.year,
-      selectedDate.month,
-      selectedDate.day,
-      int.parse(appointmentTime.split(':')[0]),
-      int.parse(appointmentTime.split(':')[1]),
-    );
-    newAppointment.serviceId = serviceId;
-    newAppointment.employeeId = employeeId;
-    newAppointment.notes = notes;
-    newAppointment.isConfirmed = false;
-    newAppointment.patientId = User.userId;
-
-    try {
-      final createdAppointment =
-          await _appointmentProvider.insert(newAppointment.toJson());
-
-      if (createdAppointment != null) {
-        print('Appointment created: ${createdAppointment.appointmentId}');
-        await _fetchReservedAppointments(selectedDate);
-      } else {
-        print('Failed to create appointment.');
-      }
-    } catch (e) {
-      print('Error creating appointment: $e');
-    }
-  }
-
-  Widget build(BuildContext context) {
-    return MasterScreenWidget(
-      currentIndex: 1,
-      child: Column(
-        children: [
-          _buildDatePicker(),
-          Expanded(
-            child: ListView.builder(
-              itemCount: appointments.length,
-              itemBuilder: (context, index) {
-                final appointmentTime = appointments[index];
-                final isReserved = reservedAppointments.any((appointment) =>
-                    appointment.appointmentDateTime?.hour ==
-                        int.parse(appointmentTime.split(':')[0]) &&
-                    appointment.appointmentDateTime?.minute ==
-                        int.parse(appointmentTime.split(':')[1]));
-
-                return _buildAppointmentItem(
-                    context, appointmentTime, isReserved);
-              },
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildDatePicker() {
     return Container(
       padding: EdgeInsets.all(16),
@@ -376,6 +279,110 @@ class _AppointmentsPageState extends State<AppointmentsPage> {
     } catch (e) {
       print('Error canceling appointment: $e');
     }
+  }
+
+  void _showReservationModal(
+      BuildContext context, String appointmentTime) async {
+    bool userHasReservation = reservedAppointments.any((appointment) =>
+        appointment.appointmentDateTime?.year == selectedDate.year &&
+        appointment.appointmentDateTime?.month == selectedDate.month &&
+        appointment.appointmentDateTime?.day == selectedDate.day &&
+        appointment.patientId == User.userId);
+
+    if (userHasReservation) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Već ste rezervisali termin za ovaj dan'),
+            content: Text('Samo jedna rezervacija dnevno je dozvoljena.'),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+    } else {
+      _ReservationDialog.show(
+        context: context,
+        services: services,
+        employees: employees,
+        onReservation: (serviceId, employeeId, notes) {
+          _handleCreateAppointment(
+              appointmentTime, serviceId, employeeId, notes);
+        },
+      );
+    }
+  }
+
+  void _handleCreateAppointment(String appointmentTime, int serviceId,
+      int employeeId, String notes) async {
+    final newAppointment = Appointment();
+    newAppointment.appointmentDateTime = DateTime(
+      selectedDate.year,
+      selectedDate.month,
+      selectedDate.day,
+      int.parse(appointmentTime.split(':')[0]),
+      int.parse(appointmentTime.split(':')[1]),
+    );
+    newAppointment.serviceId = serviceId;
+    newAppointment.employeeId = employeeId;
+    newAppointment.notes = notes;
+    newAppointment.isConfirmed = false;
+    newAppointment.patientId = User.userId;
+
+    try {
+      final createdAppointment =
+          await _appointmentProvider.insert(newAppointment.toJson());
+
+      if (createdAppointment != null) {
+        print('Appointment created: ${createdAppointment.appointmentId}');
+        await _fetchReservedAppointments(selectedDate);
+      } else {
+        print('Failed to create appointment.');
+      }
+    } catch (e) {
+      print('Error creating appointment: $e');
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MasterScreenWidget(
+      currentIndex: 1,
+      child: Column(
+        children: [
+          _buildDatePicker(),
+          Expanded(
+            child: RefreshIndicator(
+              onRefresh: () async {
+                await _fetchWorkingHours();
+                await _fetchReservedAppointments(selectedDate);
+              },
+              child: ListView.builder(
+                itemCount: appointments.length,
+                itemBuilder: (context, index) {
+                  final appointmentTime = appointments[index];
+                  final isReserved = reservedAppointments.any((appointment) =>
+                      appointment.appointmentDateTime?.hour ==
+                          int.parse(appointmentTime.split(':')[0]) &&
+                      appointment.appointmentDateTime?.minute ==
+                          int.parse(appointmentTime.split(':')[1]));
+
+                  return _buildAppointmentItem(
+                      context, appointmentTime, isReserved);
+                },
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
 

@@ -72,43 +72,53 @@ class _NewsPageState extends State<NewsPage> {
       child: Scaffold(
         body: RefreshIndicator(
           onRefresh: _refreshList,
-          child: ListView.builder(
+          child: SingleChildScrollView(
+            physics: AlwaysScrollableScrollPhysics(),
             controller: _scrollController,
-            itemCount: _articles.length,
-            itemBuilder: (BuildContext context, int index) {
-              Article article = _articles[index];
-              return InkWell(
-                onTap: () {
-                  Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => ArticleScreen(article: article),
-                  ));
-                },
-                child: Card(
-                  child: Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text(article.title ?? "Bez naslova",
-                            style: TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.bold)),
-                        SizedBox(height: 8),
-                        Text(article.summary ?? "Bez sažetka",
-                            style: TextStyle(fontSize: 14)),
-                        SizedBox(height: 8),
-                        Text(
-                            'Objavljeno: ${DateFormat('dd.MM.yyyy HH:mm').format(article.publishDate ?? DateTime.now())}',
-                            style: TextStyle(
-                                color: Colors.grey[600], fontSize: 12)),
-                      ],
-                    ),
-                  ),
+            child: Column(
+              children: [
+                ListView.builder(
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
+                  itemCount: _articles.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    Article article = _articles[index];
+                    return InkWell(
+                      onTap: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => ArticleScreen(article: article),
+                        ));
+                      },
+                      child: Card(
+                        child: Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Text(article.title ?? "Bez naslova",
+                                  style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold)),
+                              SizedBox(height: 8),
+                              Text(article.summary ?? "Bez sažetka",
+                                  style: TextStyle(fontSize: 14)),
+                              SizedBox(height: 8),
+                              Text(
+                                  'Objavljeno: ${DateFormat('dd.MM.yyyy HH:mm').format(article.publishDate ?? DateTime.now())}',
+                                  style: TextStyle(
+                                      color: Colors.grey[600], fontSize: 12)),
+                            ],
+                          ),
+                        ),
+                      ),
+                    );
+                  },
                 ),
-              );
-            },
+                if (_isLoading) CircularProgressIndicator(),
+              ],
+            ),
           ),
         ),
-        floatingActionButton: _isLoading ? CircularProgressIndicator() : null,
       ),
     );
   }
