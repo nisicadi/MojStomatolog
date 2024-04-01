@@ -420,16 +420,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 order.status = newValue.index;
                               });
 
-                              ScaffoldMessenger.of(context)
-                                  .showSnackBar(SnackBar(
-                                content: Text('Status narudžbe je ažuriran.'),
-                              ));
+                              Navigator.pop(context);
+
+                              _showMessageDialog(
+                                title: 'Uspjeh',
+                                message: 'Status narudžbe je uspješno ažuriran.',
+                              );
                             } else {
-                              ScaffoldMessenger.of(context)
-                                  .showSnackBar(SnackBar(
-                                content: Text(
-                                    'Greška pri ažuriranju statusa narudžbe.'),
-                              ));
+                              Navigator.pop(context);
+
+                              _showMessageDialog(
+                                title: 'Greška',
+                                message: 'Greška pri ažuriranju statusa narudžbe.',
+                              );
                             }
                           },
                     items: OrderStatus.values.map((status) {
@@ -447,6 +450,24 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ],
             );
           },
+        );
+      },
+    );
+  }
+
+  void _showMessageDialog({required String title, required String message}) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(title),
+          content: Text(message),
+          actions: [
+            ElevatedButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text('OK'),
+            ),
+          ],
         );
       },
     );

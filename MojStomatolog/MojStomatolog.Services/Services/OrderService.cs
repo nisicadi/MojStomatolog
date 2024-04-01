@@ -56,9 +56,6 @@ namespace MojStomatolog.Services.Services
             if (order is null || request.OrderStatus < (int)OrderStatus.InProgress || request.OrderStatus > (int)OrderStatus.Cancelled)
                 return false;
 
-            if (order.Status == (int)OrderStatus.Delivered && request.OrderStatus == (int)OrderStatus.Cancelled)
-                return false;
-
             order.Status = request.OrderStatus;
             Context.Orders.Update(order);
 
