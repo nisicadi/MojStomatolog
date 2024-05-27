@@ -307,7 +307,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             CompanySettingsForm(),
             Divider(height: 32, thickness: 2),
             Text('Dodatne opcije',
-                style: Theme.of(context).textTheme.headline6),
+                style: Theme.of(context).textTheme.titleLarge),
             SizedBox(height: 16),
             ElevatedButton(
               onPressed: _retrainModel,
@@ -432,14 +432,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
                               _showMessageDialog(
                                 title: 'Uspjeh',
-                                message: 'Status narudžbe je uspješno ažuriran.',
+                                message:
+                                    'Status narudžbe je uspješno ažuriran.',
                               );
                             } else {
                               Navigator.pop(context);
 
                               _showMessageDialog(
                                 title: 'Greška',
-                                message: 'Greška pri ažuriranju statusa narudžbe.',
+                                message:
+                                    'Greška pri ažuriranju statusa narudžbe.',
                               );
                             }
                           },

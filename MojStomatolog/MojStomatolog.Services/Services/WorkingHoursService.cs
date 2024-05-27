@@ -15,9 +15,61 @@ namespace MojStomatolog.Services.Services
 {
     public class WorkingHoursService : BaseCrudService<WorkingHoursResponse, WorkingHours, BaseSearchObject, AddWorkingHoursRequest, UpdateWorkingHoursRequest>, IWorkingHoursService
     {
+        private readonly IMapper _mapper;
         public WorkingHoursService(MojStomatologContext context, IMapper mapper) : base(context, mapper)
         {
+            _mapper = mapper;
         }
+
+        public override async Task<WorkingHoursResponse> Update(int id, UpdateWorkingHoursRequest update)
+        {
+            var workingHours = await Context.WorkingHours.FindAsync(id) ?? throw new Exception("Working hours not found");
+            _mapper.Map(update, workingHours);
+
+            Context.WorkingHours.Update(workingHours);
+
+            var futureAppointments = await Context.Appointments
+                .Where(a => a.AppointmentDateTime > DateTime.Now)
+                .ToListAsync();
+
+            var appointmentsToDelete = futureAppointments
+                .Where(a => a.AppointmentDateTime.DayOfWeek == update.DayOfWeek)
+                .ToList();
+
+            if (appointmentsToDelete.Any())
+            {
+                Context.Appointments.RemoveRange(appointmentsToDelete);
+            }
+
+            await Context.SaveChangesAsync();
+
+            return _mapper.Map<WorkingHoursResponse>(workingHours);
+        }
+
+        public override async Task<bool> Delete(int id)
+        {
+            var workingHours = await Context.WorkingHours.FindAsync(id) ?? throw new Exception("Working hours not found");
+
+            var futureAppointments = await Context.Appointments
+                .Where(a => a.AppointmentDateTime > DateTime.Now)
+                .ToListAsync();
+
+            var appointmentsToDelete = futureAppointments
+                .Where(a => a.AppointmentDateTime.DayOfWeek == workingHours.DayOfWeek)
+                .ToList();
+
+            if (appointmentsToDelete.Any())
+            {
+                Context.Appointments.RemoveRange(appointmentsToDelete);
+            }
+
+            Context.WorkingHours.Remove(workingHours);
+
+            await Context.SaveChangesAsync();
+
+            return true;
+        }
+
 
         public override IQueryable<WorkingHours> AddFilter(IQueryable<WorkingHours> query, BaseSearchObject? search = null)
         {
