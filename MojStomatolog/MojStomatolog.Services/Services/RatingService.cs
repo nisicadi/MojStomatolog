@@ -9,12 +9,10 @@ using MojStomatolog.Services.Interfaces;
 
 namespace MojStomatolog.Services.Services
 {
-    public class RatingService : BaseCrudService<RatingResponse, Rating, BaseSearchObject, AddRatingRequest, UpdateRatingRequest>, IRatingService
+    public class RatingService(MojStomatologContext context, IMapper mapper)
+        : BaseCrudService<RatingResponse, Rating, BaseSearchObject, AddRatingRequest, UpdateRatingRequest>(context,
+            mapper), IRatingService
     {
-        public RatingService(MojStomatologContext context, IMapper mapper) : base(context, mapper)
-        {
-        }
-
         public async Task<double> GetAverageRatingAsync(int productId)
         {
             return await Context.Ratings

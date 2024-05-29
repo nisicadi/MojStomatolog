@@ -10,12 +10,10 @@ using MojStomatolog.Services.Interfaces;
 
 namespace MojStomatolog.Services.Services
 {
-    public class AppointmentService : BaseCrudService<AppointmentResponse, Appointment, AppointmentSearchObject, AddAppointmentRequest, UpdateAppointmentRequest>, IAppointmentService
+    public class AppointmentService(MojStomatologContext context, IMapper mapper)
+        : BaseCrudService<AppointmentResponse, Appointment, AppointmentSearchObject, AddAppointmentRequest,
+            UpdateAppointmentRequest>(context, mapper), IAppointmentService
     {
-        public AppointmentService(MojStomatologContext context, IMapper mapper) : base(context, mapper)
-        {
-        }
-
         public override IQueryable<Appointment> AddFilter(IQueryable<Appointment> query, AppointmentSearchObject? search = null)
         {
             if (search is null)
@@ -25,9 +23,7 @@ namespace MojStomatolog.Services.Services
 
             if (!string.IsNullOrWhiteSpace(search.SearchTerm))
             {
-                var searchTermLower = search.SearchTerm.ToLower();
-
-                query = query.Where(x => x.Service.Name.Contains(searchTermLower));
+                query = query.Where(x => EF.Functions.Like(x.Service.Name, $"%{search.SearchTerm}%"));
             }
 
             if (search.DateTimeFrom is not null)

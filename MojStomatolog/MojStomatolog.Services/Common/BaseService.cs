@@ -4,24 +4,18 @@ using MojStomatolog.Database;
 
 namespace MojStomatolog.Services.Common
 {
-    public class BaseService<T, TDb, TSearch> : IBaseService<T, TSearch>
+    public class BaseService<T, TDb, TSearch>(MojStomatologContext context, IMapper mapper) : IBaseService<T, TSearch>
         where TDb : class
         where T : class
         where TSearch : BaseSearchObject
     {
-        protected MojStomatologContext Context;
-        protected IMapper Mapper { get; }
-
-        public BaseService(MojStomatologContext context, IMapper mapper)
-        {
-            Context = context ?? throw new ArgumentNullException(nameof(context));
-            Mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-        }
+        protected MojStomatologContext Context = context ?? throw new ArgumentNullException(nameof(context));
+        protected IMapper Mapper { get; } = mapper ?? throw new ArgumentNullException(nameof(mapper));
 
         public virtual async Task<PagedResult<T>> Get(TSearch? search = null)
         {
-            var query = Context.Set<TDb>().AsQueryable();
-            var result = new PagedResult<T>();
+            IQueryable<TDb> query = Context.Set<TDb>().AsQueryable();
+            PagedResult<T> result = new();
 
             query = AddFilter(query, search);
             query = AddInclude(query, search);
@@ -34,9 +28,9 @@ namespace MojStomatolog.Services.Common
                 query = query.Skip((search.Page.Value - 1) * search.PageSize.Value).Take(search.PageSize.Value);
             }
 
-            var list = await query.ToListAsync().ConfigureAwait(false);
+            List<TDb> list = await query.ToListAsync().ConfigureAwait(false);
 
-            var mappedList = Mapper.Map<List<T>>(list);
+            List<T> mappedList = Mapper.Map<List<T>>(list);
             result.Results = mappedList;
             return result;
         }

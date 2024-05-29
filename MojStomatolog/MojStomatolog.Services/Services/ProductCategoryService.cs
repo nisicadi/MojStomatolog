@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using MojStomatolog.Database;
 using MojStomatolog.Models.Core;
 using MojStomatolog.Models.Requests.ProductCategory;
@@ -9,12 +10,10 @@ using MojStomatolog.Services.Interfaces;
 
 namespace MojStomatolog.Services.Services
 {
-    public class ProductCategoryService : BaseCrudService<ProductCategoryResponse, ProductCategory, ProductCategorySearchObject, AddProductCategoryRequest, UpdateProductCategoryRequest>, IProductCategoryService
+    public class ProductCategoryService(MojStomatologContext context, IMapper mapper)
+        : BaseCrudService<ProductCategoryResponse, ProductCategory, ProductCategorySearchObject,
+            AddProductCategoryRequest, UpdateProductCategoryRequest>(context, mapper), IProductCategoryService
     {
-        public ProductCategoryService(MojStomatologContext context, IMapper mapper) : base(context, mapper)
-        {
-        }
-
         public override IQueryable<ProductCategory> AddFilter(IQueryable<ProductCategory> query, ProductCategorySearchObject? search = null)
         {
             if (search is null)
@@ -24,9 +23,7 @@ namespace MojStomatolog.Services.Services
 
             if (!string.IsNullOrWhiteSpace(search.SearchTerm))
             {
-                var searchTermLower = search.SearchTerm.ToLower();
-
-                query = query.Where(x => x.Name.ToLower().Contains(searchTermLower));
+                query = query.Where(x => EF.Functions.Like(x.Name, $"%{search.SearchTerm}%"));
             }
 
             return query;

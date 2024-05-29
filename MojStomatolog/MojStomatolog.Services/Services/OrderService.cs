@@ -12,12 +12,9 @@ using MojStomatolog.Services.Interfaces;
 
 namespace MojStomatolog.Services.Services
 {
-    public class OrderService : BaseService<OrderResponse, Order, OrderSearchObject>, IOrderService
+    public class OrderService(MojStomatologContext context, IMapper mapper)
+        : BaseService<OrderResponse, Order, OrderSearchObject>(context, mapper), IOrderService
     {
-        public OrderService(MojStomatologContext context, IMapper mapper) : base(context, mapper)
-        {
-        }
-
         public async Task<bool> CreateOrder(AddOrderRequest request)
         {
             try
@@ -31,14 +28,14 @@ namespace MojStomatolog.Services.Services
                 var user = await Context.Users.FindAsync(request.UserId);
                 if (user != null && !string.IsNullOrEmpty(user.Email))
                 {
-                    var sendEmailRequest = new SendEmailRequest
+                    SendEmailRequest sendEmailRequest = new()
                     {
                         Email = user.Email,
                         Subject = "Narudžba kreirana",
                         Message = "Vaša narudžba je uspješno kreirana."
                     };
 
-                    var messageSender = new MessageSender();
+                    MessageSender messageSender = new();
                     messageSender.SendMessage(sendEmailRequest);
                 }
 
@@ -54,7 +51,9 @@ namespace MojStomatolog.Services.Services
         {
             var order = await Context.Orders.FindAsync(request.OrderId);
             if (order is null || request.OrderStatus < (int)OrderStatus.InProgress || request.OrderStatus > (int)OrderStatus.Cancelled)
+            {
                 return false;
+            }
 
             order.Status = request.OrderStatus;
             Context.Orders.Update(order);

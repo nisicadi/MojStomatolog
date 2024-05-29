@@ -10,20 +10,18 @@ namespace MojStomatolog.Controllers
     [Authorize]
     [ApiController]
     [Route("[controller]")]
-    public class CompanySettingsController : BaseCrudController<WorkingHoursResponse, BaseSearchObject, AddWorkingHoursRequest, UpdateWorkingHoursRequest>
+    public class CompanySettingsController(
+        ILogger<BaseController<WorkingHoursResponse, BaseSearchObject>> logger,
+        IWorkingHoursService service)
+        : BaseCrudController<WorkingHoursResponse, BaseSearchObject, AddWorkingHoursRequest, UpdateWorkingHoursRequest>(
+            logger, service)
     {
-        private readonly IWorkingHoursService _workingHoursService;
-        public CompanySettingsController(ILogger<BaseController<WorkingHoursResponse, BaseSearchObject>> logger, IWorkingHoursService service) : base(logger, service)
-        {
-            _workingHoursService = service;
-        }
-
         [HttpGet("GeneratePDF")]
         public async Task<ActionResult> GetPdfReport()
         {
             try
             {
-                var pdfBytes = await _workingHoursService.GetPdfReportBytes();
+                var pdfBytes = await service.GetPdfReportBytes();
                 return File(pdfBytes, "application/pdf", "Izvjestaj.pdf");
             }
             catch

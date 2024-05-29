@@ -1,6 +1,4 @@
-﻿using MojStomatolog.Models.Core;
-
-namespace MojStomatolog.Models.Responses
+﻿namespace MojStomatolog.Models.Responses
 {
     public class RatingResponse
     {

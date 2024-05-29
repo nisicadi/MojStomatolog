@@ -10,10 +10,9 @@ namespace MojStomatolog.Controllers
     [Authorize]
     [ApiController]
     [Route("[controller]")]
-    public class EmployeeController : BaseCrudController<EmployeeResponse, EmployeeSearchObject, AddEmployeeRequest, UpdateEmployeeRequest>
-    {
-        public EmployeeController(ILogger<BaseController<EmployeeResponse, EmployeeSearchObject>> logger, IEmployeeService service) : base(logger, service)
-        {
-        }
-    }
+    public class EmployeeController(
+        ILogger<BaseController<EmployeeResponse, EmployeeSearchObject>> logger,
+        IEmployeeService service)
+        : BaseCrudController<EmployeeResponse, EmployeeSearchObject, AddEmployeeRequest, UpdateEmployeeRequest>(logger,
+            service);
 }

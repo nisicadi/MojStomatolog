@@ -6,19 +6,15 @@ namespace MojStomatolog.Controllers
 {
     [Authorize]
     [Route("[controller]")]
-    public class BaseCrudController<T, TSearch, TInsert, TUpdate> : BaseController<T, TSearch> 
+    public class BaseCrudController<T, TSearch, TInsert, TUpdate>(
+        ILogger<BaseController<T, TSearch>> logger,
+        IBaseCrudService<T, TSearch, TInsert, TUpdate> service)
+        : BaseController<T, TSearch>(logger, service)
         where T : class
         where TSearch : class
     {
-        protected readonly IBaseCrudService<T, TSearch, TInsert, TUpdate> CrudService;
-        protected readonly ILogger<BaseController<T, TSearch>> CrudLogger;
-
-        public BaseCrudController(ILogger<BaseController<T, TSearch>> logger, IBaseCrudService<T, TSearch, TInsert, TUpdate> service)
-            : base(logger, service)
-        {
-            CrudLogger = logger ?? throw new ArgumentNullException(nameof(logger));
-            CrudService = service ?? throw new ArgumentNullException(nameof(service));
-        }
+        protected readonly IBaseCrudService<T, TSearch, TInsert, TUpdate> CrudService = service ?? throw new ArgumentNullException(nameof(service));
+        protected readonly ILogger<BaseController<T, TSearch>> CrudLogger = logger ?? throw new ArgumentNullException(nameof(logger));
 
         [HttpPost]
         public virtual async Task<ActionResult<T>> Insert([FromBody] TInsert insert)

@@ -3,9 +3,9 @@ using MojStomatolog.Models;
 
 namespace MailingService
 {
-    class Program
+    internal class Program
     {
-        static async Task Main()
+        private static async Task Main()
         {
             var email = Environment.GetEnvironmentVariable("OUTLOOK_MAIL") ?? "mojstomatolog@outlook.com";
             var password = Environment.GetEnvironmentVariable("OUTLOOK_PASS") ?? "2ogncWS@JD@*RM";
@@ -16,20 +16,19 @@ namespace MailingService
             var passwordMq = Environment.GetEnvironmentVariable("RABBITMQ_PASSWORD") ?? "mypass";
             var virtualHostMq = Environment.GetEnvironmentVariable("RABBITMQ_VIRTUALHOST") ?? "/";
 
-            var emailSender = new EmailSender(email, password);
+            EmailSender emailSender = new(email, password);
             var rabbitMqConnectionString = $"host={hostNameMq};username={usernameMq};password={passwordMq};virtualHost={virtualHostMq}";
 
             await WaitForRabbitMq(rabbitMqConnectionString);
 
-            using (var bus = RabbitHutch.CreateBus(rabbitMqConnectionString))
-            {
-                await bus.PubSub.SubscribeAsync<SendEmailRequest>("order_processed", request => HandleMessage(request, emailSender));
-                Console.WriteLine("Listening for messages...");
-                await Task.Delay(Timeout.Infinite);
-            }
+            using var bus = RabbitHutch.CreateBus(rabbitMqConnectionString);
+            await bus.PubSub.SubscribeAsync<SendEmailRequest>("order_processed",
+                request => HandleMessage(request, emailSender));
+            Console.WriteLine("Listening for messages...");
+            await Task.Delay(Timeout.Infinite);
         }
 
-        static async void HandleMessage(SendEmailRequest request, EmailSender emailSender)
+        private static async void HandleMessage(SendEmailRequest request, EmailSender emailSender)
         {
             Console.WriteLine($"Received: {request.Subject}, {request.Message}");
 
@@ -50,12 +49,10 @@ namespace MailingService
             {
                 try
                 {
-                    using (var bus = RabbitHutch.CreateBus(connectionString))
-                    {
-                        var queue = await bus.Advanced.QueueDeclareAsync("dummy_queue");
-                        bus.Advanced.QueueDelete("dummy_queue");
-                        break;
-                    }
+                    using var bus = RabbitHutch.CreateBus(connectionString);
+                    await bus.Advanced.QueueDeclareAsync("dummy_queue");
+                    bus.Advanced.QueueDelete("dummy_queue");
+                    break;
                 }
                 catch (Exception ex)
                 {

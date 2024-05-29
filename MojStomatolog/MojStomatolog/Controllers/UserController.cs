@@ -11,26 +11,16 @@ namespace MojStomatolog.Controllers
     [Authorize]
     [ApiController]
     [Route("[controller]")]
-    public class UserController : BaseCrudController<UserResponse, BaseSearchObject, AddUserRequest, UpdateUserRequest>
+    public class UserController(ILogger<BaseController<UserResponse, BaseSearchObject>> logger, IUserService service)
+        : BaseCrudController<UserResponse, BaseSearchObject, AddUserRequest, UpdateUserRequest>(logger, service)
     {
-        private readonly IUserService _userService;
-        public UserController(ILogger<BaseController<UserResponse, BaseSearchObject>> logger, IUserService service) : base(logger, service)
-        {
-            _userService = service;
-        }
-
         [AllowAnonymous]
         [HttpPost("Login")]
         public async Task<ActionResult<LoginResponse>> Login([FromBody] LoginRequest login)
         {
-            var loginResponse = await _userService.Login(login.Username, login.Password);
+            var loginResponse = await service.Login(login.Username, login.Password);
 
-            if (loginResponse.Result == LoginResult.Success)
-            {
-                return Ok(loginResponse.User);
-            }
-
-            return BadRequest(loginResponse.Result);
+            return loginResponse.Result == LoginResult.Success ? Ok(loginResponse.User) : BadRequest(loginResponse.Result);
         }
 
         [AllowAnonymous]
@@ -45,12 +35,9 @@ namespace MojStomatolog.Controllers
         {
             try
             {
-                var isSuccessful = await _userService.ChangePassword(userId, request);
+                var isSuccessful = await service.ChangePassword(userId, request);
 
-                if (isSuccessful)
-                    return Ok();
-
-                return BadRequest("An error occurred while processing your request.");
+                return isSuccessful ? Ok() : BadRequest("An error occurred while processing your request.");
             }
             catch
             {

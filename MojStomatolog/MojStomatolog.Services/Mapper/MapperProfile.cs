@@ -82,7 +82,7 @@ namespace MojStomatolog.Services.Mapper
                 .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId))
                 .ForMember(dest => dest.RatingValue, opt => opt.MapFrom(src => src.RatingValue))
                 .ForMember(dest => dest.Product, opt => opt.Ignore());
-            
+
             CreateMap<UpdateRatingRequest, Rating>();
             CreateMap<Rating, RatingResponse>();
 

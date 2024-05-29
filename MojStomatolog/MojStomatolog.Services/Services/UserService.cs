@@ -12,33 +12,25 @@ using System.Text;
 
 namespace MojStomatolog.Services.Services
 {
-    public class UserService : BaseCrudService<UserResponse, User, BaseSearchObject, AddUserRequest, UpdateUserRequest>, IUserService
+    public class UserService(MojStomatologContext context, IMapper mapper)
+        : BaseCrudService<UserResponse, User, BaseSearchObject, AddUserRequest, UpdateUserRequest>(context, mapper),
+            IUserService
     {
-        public UserService(MojStomatologContext context, IMapper mapper) : base(context, mapper)
-        {
-        }
-
         public async Task<LoginResponse> Login(string username, string password)
         {
             try
             {
                 var user = await Context.Users.SingleOrDefaultAsync(x => x.Username == username);
 
-                if (user is null)
-                {
-                    return new LoginResponse { Result = LoginResult.UserNotFound };
-                }
-
-                if (!VerifyPassword(password, user.PasswordSalt, user.PasswordHash))
-                {
-                    return new LoginResponse { Result = LoginResult.IncorrectPassword };
-                }
-
-                return new LoginResponse
-                {
-                    Result = LoginResult.Success,
-                    User = Mapper.Map<UserResponse>(user)
-                };
+                return user is null
+                    ? new LoginResponse { Result = LoginResult.UserNotFound }
+                    : !VerifyPassword(password, user.PasswordSalt, user.PasswordHash)
+                    ? new LoginResponse { Result = LoginResult.IncorrectPassword }
+                    : new LoginResponse
+                    {
+                        Result = LoginResult.Success,
+                        User = Mapper.Map<UserResponse>(user)
+                    };
             }
             catch (Exception)
             {
@@ -49,7 +41,7 @@ namespace MojStomatolog.Services.Services
         public async Task<bool> ChangePassword(int userId, ChangePasswordRequest request)
         {
             var isSuccessful = false;
-            
+
             var user = await Context.Users.SingleOrDefaultAsync(x => x.UserId == userId);
             if (user is not null)
             {
@@ -94,9 +86,7 @@ namespace MojStomatolog.Services.Services
             var combinedBytes = new byte[saltBytes.Length + passwordBytes.Length];
             Buffer.BlockCopy(saltBytes, 0, combinedBytes, 0, saltBytes.Length);
             Buffer.BlockCopy(passwordBytes, 0, combinedBytes, saltBytes.Length, passwordBytes.Length);
-
-            using var sha256 = SHA256.Create();
-            var hashBytes = sha256.ComputeHash(combinedBytes);
+            var hashBytes = SHA256.HashData(combinedBytes);
 
             return Convert.ToBase64String(hashBytes);
         }

@@ -6,18 +6,15 @@ namespace MojStomatolog.Controllers
 {
     [Authorize]
     [Route("[controller]")]
-    public class BaseController<T, TSearch> : ControllerBase
+    public class BaseController<T, TSearch>(
+        ILogger<BaseController<T, TSearch>> logger,
+        IBaseService<T, TSearch> service)
+        : ControllerBase
         where T : class
         where TSearch : class
     {
-        protected readonly IBaseService<T, TSearch> Service;
-        protected readonly ILogger<BaseController<T, TSearch>> Logger;
-
-        public BaseController(ILogger<BaseController<T, TSearch>> logger, IBaseService<T, TSearch> service)
-        {
-            Logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            Service = service ?? throw new ArgumentNullException(nameof(service));
-        }
+        protected readonly IBaseService<T, TSearch> Service = service ?? throw new ArgumentNullException(nameof(service));
+        protected readonly ILogger<BaseController<T, TSearch>> Logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
         [HttpGet]
         public async Task<ActionResult<PagedResult<T>>> Get([FromQuery] TSearch? search = null)

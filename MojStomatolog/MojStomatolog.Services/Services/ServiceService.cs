@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using MojStomatolog.Database;
 using MojStomatolog.Models.Core;
 using MojStomatolog.Models.Requests.Service;
@@ -9,12 +10,10 @@ using MojStomatolog.Services.Interfaces;
 
 namespace MojStomatolog.Services.Services
 {
-    public class ServiceService : BaseCrudService<ServiceResponse, Service, ServiceSearchObject, AddServiceRequest, UpdateServiceRequest>, IServiceService
+    public class ServiceService(MojStomatologContext context, IMapper mapper)
+        : BaseCrudService<ServiceResponse, Service, ServiceSearchObject, AddServiceRequest, UpdateServiceRequest>(
+            context, mapper), IServiceService
     {
-        public ServiceService(MojStomatologContext context, IMapper mapper) : base(context, mapper)
-        {
-        }
-
         public override IQueryable<Service> AddFilter(IQueryable<Service> query, ServiceSearchObject? search = null)
         {
             if (search is null)
@@ -24,9 +23,7 @@ namespace MojStomatolog.Services.Services
 
             if (!string.IsNullOrWhiteSpace(search.SearchTerm))
             {
-                var searchTermLower = search.SearchTerm.ToLower();
-
-                query = query.Where(x => x.Name.ToLower().Contains(searchTermLower));
+                query = query.Where(x => EF.Functions.Like(x.Name, $"%{search.SearchTerm}%"));
             }
 
             return query;

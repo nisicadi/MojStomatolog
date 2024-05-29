@@ -11,7 +11,7 @@ namespace MojStomatolog.Models.Core
         public decimal TotalAmount { get; set; }
         public int Status { get; set; }
 
-        public HashSet<OrderItem> OrderItems { get; set; } = new HashSet<OrderItem>();
+        public HashSet<OrderItem> OrderItems { get; set; } = [];
 
         [ForeignKey("UserId")]
         public User User { get; set; } = null!;

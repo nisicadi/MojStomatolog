@@ -8,10 +8,7 @@ using MojStomatolog.Services.Interfaces;
 
 namespace MojStomatolog.Services.Services
 {
-    public class PaymentService : BaseCrudService<PaymentResponse, Payment, BaseSearchObject, AddPaymentRequest, UpdatePaymentRequest>, IPaymentService
-    {
-        public PaymentService(MojStomatologContext context, IMapper mapper) : base(context, mapper)
-        {
-        }
-    }
+    public class PaymentService(MojStomatologContext context, IMapper mapper)
+        : BaseCrudService<PaymentResponse, Payment, BaseSearchObject, AddPaymentRequest, UpdatePaymentRequest>(context,
+            mapper), IPaymentService;
 }

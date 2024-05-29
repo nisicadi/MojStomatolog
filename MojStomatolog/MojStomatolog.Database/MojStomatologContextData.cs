@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MojStomatolog.Models.Core;
+#pragma warning disable CA1822
 
 namespace MojStomatolog.Database;
 
@@ -63,7 +64,8 @@ public partial class MojStomatologContext
         {
             ProductId = 1,
             Name = "Colgate 360 Max White Medium",
-            Active = true, ProductCategoryId = 1,
+            Active = true,
+            ProductCategoryId = 1,
             Description =
                 "Colgate 360 Max White medium četkica za zube, odlična je za čišćenje zuba, jezika, obraza i desni. Zahvaljujući jedinstvenim spiralnim vlaknima pomažu u izbjeljivanju zuba, uklanjanju površinskih mrlja i čišćenju čak i teško dostupnih mjesta. Osim toga, čistač jezika na stražnjoj strani četkice efikasno i nježno uklanja bakterije koje uzrokuju loš zadah. Obogatite oralnu higijenu uz Colgate 360 Max white četkicu za zube!",
             ImageUrl =
@@ -687,9 +689,9 @@ public partial class MojStomatologContext
             Quantity = 1,
             Price = 9.95M
         });
-        
+
         #endregion
-        
+
         #region Rating
 
         modelBuilder.Entity<Rating>().HasData(new Rating { RatingId = 1, UserId = 1, ProductId = 1, RatingValue = 4 });

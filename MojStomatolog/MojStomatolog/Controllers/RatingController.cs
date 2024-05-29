@@ -11,20 +11,17 @@ namespace MojStomatolog.Controllers
     [Authorize]
     [ApiController]
     [Route("[controller]")]
-    public class RatingController : BaseCrudController<RatingResponse, BaseSearchObject, AddRatingRequest, UpdateRatingRequest>
+    public class RatingController(
+        ILogger<BaseController<RatingResponse, BaseSearchObject>> logger,
+        IRatingService service)
+        : BaseCrudController<RatingResponse, BaseSearchObject, AddRatingRequest, UpdateRatingRequest>(logger, service)
     {
-        private readonly IRatingService _ratingService;
-        public RatingController(ILogger<BaseController<RatingResponse, BaseSearchObject>> logger, IRatingService service) : base(logger, service)
-        {
-            _ratingService = service;
-        }
-
         [HttpGet("{productId}/averageRating")]
         public async Task<IActionResult> GetAverageRating(int productId)
         {
             try
             {
-                var averageRating = await _ratingService.GetAverageRatingAsync(productId);
+                var averageRating = await service.GetAverageRatingAsync(productId);
                 return Ok(averageRating);
             }
             catch (Exception ex)
@@ -39,7 +36,7 @@ namespace MojStomatolog.Controllers
         {
             try
             {
-                var rating = await _ratingService.GetUserRatingAsync(userId, productId);
+                var rating = await service.GetUserRatingAsync(userId, productId);
                 return Ok(rating);
             }
             catch (Exception ex)
