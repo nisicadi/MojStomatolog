@@ -12,7 +12,7 @@ namespace MojStomatolog.Services.Common.RecommenderModel
         private readonly IServiceScopeFactory _scopeFactory;
         private readonly MLContext _mlContext;
         private ITransformer? _model;
-        private const string ModelPath = "trained_model.zip";
+        private readonly string _modelPath = Environment.GetEnvironmentVariable("MODEL_PATH") ?? "trained_model.zip";
 
         public ModelTrainingService(IServiceScopeFactory scopeFactory)
         {
@@ -77,7 +77,7 @@ namespace MojStomatolog.Services.Common.RecommenderModel
             _model = est.Fit(trainData);
 
             // Save the trained model to disk
-            _mlContext.Model.Save(_model, trainData.Schema, ModelPath);
+            _mlContext.Model.Save(_model, trainData.Schema, _modelPath);
         }
 
         public ITransformer GetTrainedModel()
@@ -85,9 +85,9 @@ namespace MojStomatolog.Services.Common.RecommenderModel
             if (_model == null)
             {
                 // Check if there's a model saved to disk
-                if (File.Exists(ModelPath))
+                if (File.Exists(_modelPath))
                 {
-                    _model = _mlContext.Model.Load(ModelPath, out _);
+                    _model = _mlContext.Model.Load(_modelPath, out _);
                 }
                 else
                 {
