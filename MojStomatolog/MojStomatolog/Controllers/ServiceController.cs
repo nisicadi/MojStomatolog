@@ -10,10 +10,9 @@ namespace MojStomatolog.Controllers
     [Authorize]
     [ApiController]
     [Route("[controller]")]
-    public class ServiceController : BaseCrudController<ServiceResponse, ServiceSearchObject, AddServiceRequest, UpdateServiceRequest>
-    {
-        public ServiceController(ILogger<BaseController<ServiceResponse, ServiceSearchObject>> logger, IServiceService service) : base(logger, service)
-        {
-        }
-    }
+    public class ServiceController(
+        ILogger<BaseController<ServiceResponse, ServiceSearchObject>> logger,
+        IServiceService service)
+        : BaseCrudController<ServiceResponse, ServiceSearchObject, AddServiceRequest, UpdateServiceRequest>(logger,
+            service);
 }

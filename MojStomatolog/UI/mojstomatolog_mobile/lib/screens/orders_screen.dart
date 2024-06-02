@@ -99,8 +99,8 @@ class _OrdersPageState extends State<OrdersPage> {
       return ListTile(
         title: ElevatedButton(
           onPressed: () => _showCancelConfirmationDialog(order),
-          style: ElevatedButton.styleFrom(
-            primary: Colors.red,
+          style: ButtonStyle(
+            backgroundColor: MaterialStateProperty.all<Color>(Colors.red),
           ),
           child: Text(
             'Otkaži narudžbu',
@@ -189,6 +189,11 @@ class _OrdersPageState extends State<OrdersPage> {
                           style: TextStyle(color: Colors.grey),
                         ),
                       ],
+                    ),
+                    SizedBox(height: 8.0),
+                    Text(
+                      'Broj transakcije: ${order.payment?.paymentNumber}',
+                      style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                     SizedBox(height: 8.0),
                     Text(

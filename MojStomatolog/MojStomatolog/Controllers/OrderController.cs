@@ -10,21 +10,17 @@ namespace MojStomatolog.Controllers
     [Authorize]
     [ApiController]
     [Route("[controller]")]
-    public class OrderController : BaseController<OrderResponse, OrderSearchObject>
+    public class OrderController(
+        ILogger<BaseController<OrderResponse, OrderSearchObject>> logger,
+        IOrderService service)
+        : BaseController<OrderResponse, OrderSearchObject>(logger, service)
     {
-        private readonly IOrderService _orderService;
-
-        public OrderController(ILogger<BaseController<OrderResponse, OrderSearchObject>> logger, IOrderService service) : base(logger, service)
-        {
-            _orderService = service;
-        }
-
         [HttpPost]
         public async Task<IActionResult> CreateOrder([FromBody] AddOrderRequest request)
         {
             try
             {
-                var result = await _orderService.CreateOrder(request);
+                var result = await service.CreateOrder(request);
 
                 return result ? Ok("Order created successfully.") : BadRequest("Failed to create an order.");
             }
@@ -40,7 +36,7 @@ namespace MojStomatolog.Controllers
         {
             try
             {
-                var result = await _orderService.ChangeStatus(request);
+                var result = await service.ChangeStatus(request);
 
                 return result ? Ok("Order status changed successfully.") : BadRequest("Failed to change the order status.");
             }

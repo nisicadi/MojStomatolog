@@ -6,7 +6,6 @@ namespace MojStomatolog.Services.Common
     public class LoginResponse
     {
         public LoginResult Result { get; set; }
-        public UserResponse User { get; set; } = null!;
+        public UserResponse? User { get; set; }
     }
-
 }

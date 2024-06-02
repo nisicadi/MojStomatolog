@@ -3,9 +3,11 @@ import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:mojstomatolog_desktop/enums/order_status.dart';
 import 'package:mojstomatolog_desktop/models/order.dart';
+import 'package:mojstomatolog_desktop/models/sent_email.dart';
 import 'package:mojstomatolog_desktop/providers/company_settings_provider.dart';
 import 'package:mojstomatolog_desktop/providers/order_provider.dart';
 import 'package:mojstomatolog_desktop/providers/product_provider.dart';
+import 'package:mojstomatolog_desktop/providers/sent_email_provider.dart';
 import 'package:mojstomatolog_desktop/providers/user_provider.dart';
 import 'package:mojstomatolog_desktop/utils/util.dart';
 import 'package:mojstomatolog_desktop/widgets/company_settings_form.dart';
@@ -24,7 +26,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
   final _userProvider = UserProvider();
   final _companySettingsProvider = CompanySettingsProvider();
   final _orderProvider = OrderProvider();
+  final _sentMailProvider = SentEmailProvider();
   List<Order> _orders = [];
+  List<SentEmail> _sentMail = [];
 
   final _nameController = TextEditingController();
   final _surnameController = TextEditingController();
@@ -83,6 +87,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
   }
 
+  Future<void> _loadSentMail() async {
+    try {
+      final sentMail = await _sentMailProvider.get();
+      setState(() => _sentMail = sentMail.results);
+    } catch (e) {
+      print('Error loading sent emails: $e');
+    }
+  }
+
   Widget _buildProfileSettingsForm() {
     return Form(
       key: _profileFormKey,
@@ -130,7 +143,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   String? _validateField(String? value,
       {bool isEmail = false, bool isNumber = false}) {
-    if (value == null || value.isEmpty) return 'Polje ne smije biti prazno';
+    if (value == null || value.isEmpty || value.trim().isEmpty)
+      return 'Polje ne smije biti prazno';
 
     if (isEmail) {
       final emailRegex =
@@ -195,6 +209,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   void _showChangePasswordDialog() {
     showDialog(
       context: context,
+      barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text('Promijeni lozinku'),
@@ -209,7 +224,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     decoration: InputDecoration(labelText: 'Trenutna lozinka'),
                     obscureText: true,
                     validator: (value) {
-                      if (value == null || value.isEmpty) {
+                      if (value?.trim().isEmpty ?? true) {
                         return 'Polje ne smije biti prazno';
                       }
                       return null;
@@ -220,7 +235,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     decoration: InputDecoration(labelText: 'Nova lozinka'),
                     obscureText: true,
                     validator: (value) {
-                      if (value == null || value.isEmpty) {
+                      if (value?.trim().isEmpty ?? true) {
                         return 'Polje ne smije biti prazno';
                       }
                       return null;
@@ -232,7 +247,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         InputDecoration(labelText: 'Potvrdi novu lozinku'),
                     obscureText: true,
                     validator: (value) {
-                      if (value != _newPasswordController.text) {
+                      if (value?.trim().isEmpty ?? true) {
+                        return 'Polje ne smije biti prazno';
+                      } else if (value != _newPasswordController.text) {
                         return 'Lozinke se ne poklapaju';
                       }
                       return null;
@@ -245,6 +262,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           actions: <Widget>[
             ElevatedButton(
               onPressed: () {
+                _resetPasswordFields();
                 Navigator.of(context).pop();
               },
               child: Text('Odustani'),
@@ -257,6 +275,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
         );
       },
     );
+  }
+
+  void _resetPasswordFields() {
+    _currentPasswordController.clear();
+    _newPasswordController.clear();
+    _confirmPasswordController.clear();
   }
 
   Future<void> _changePassword() async {
@@ -296,7 +320,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             CompanySettingsForm(),
             Divider(height: 32, thickness: 2),
             Text('Dodatne opcije',
-                style: Theme.of(context).textTheme.headline6),
+                style: Theme.of(context).textTheme.titleLarge),
             SizedBox(height: 16),
             ElevatedButton(
               onPressed: _retrainModel,
@@ -306,6 +330,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ElevatedButton(
               onPressed: _showOrdersDialog,
               child: Text('Pregledaj narudžbe'),
+            ),
+            SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: _showSentMailDialog,
+              child: Text('Pregledaj poslane e-mailove'),
             ),
             SizedBox(height: 16),
             ElevatedButton(
@@ -378,16 +407,29 @@ class _SettingsScreenState extends State<SettingsScreen> {
               title: Text('Detalji narudžbe #${order.id}'),
               content: Container(
                 width: double.maxFinite,
-                child: ListView.builder(
-                  itemCount: order.orderItems?.length ?? 0,
-                  itemBuilder: (BuildContext context, int index) {
-                    final orderItem = order.orderItems![index];
-                    return ListTile(
-                      title: Text(orderItem.product?.name ?? 'Proizvod'),
-                      subtitle: Text('Količina: ${orderItem.quantity}'),
-                      trailing: Text('Cijena: ${orderItem.price} KM'),
-                    );
-                  },
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text('Ime: ${order.user?.firstName ?? ''}'),
+                    Text('Prezime: ${order.user?.lastName ?? ''}'),
+                    Text(
+                        'Broj transakcije: ${order.payment?.paymentNumber ?? 'N/A'}'),
+                    SizedBox(height: 10),
+                    Text('Proizvodi:'),
+                    ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: order.orderItems?.length ?? 0,
+                      itemBuilder: (BuildContext context, int index) {
+                        final orderItem = order.orderItems![index];
+                        return ListTile(
+                          title: Text(orderItem.product?.name ?? 'Proizvod'),
+                          subtitle: Text('Količina: ${orderItem.quantity}'),
+                          trailing: Text('Cijena: ${orderItem.price} KM'),
+                        );
+                      },
+                    ),
+                  ],
                 ),
               ),
               actions: [
@@ -404,16 +446,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 order.status = newValue.index;
                               });
 
-                              ScaffoldMessenger.of(context)
-                                  .showSnackBar(SnackBar(
-                                content: Text('Status narudžbe je ažuriran.'),
-                              ));
+                              Navigator.pop(context);
+
+                              _showMessageDialog(
+                                title: 'Uspjeh',
+                                message:
+                                    'Status narudžbe je uspješno ažuriran.',
+                              );
                             } else {
-                              ScaffoldMessenger.of(context)
-                                  .showSnackBar(SnackBar(
-                                content: Text(
-                                    'Greška pri ažuriranju statusa narudžbe.'),
-                              ));
+                              Navigator.pop(context);
+
+                              _showMessageDialog(
+                                title: 'Greška',
+                                message:
+                                    'Greška pri ažuriranju statusa narudžbe.',
+                              );
                             }
                           },
                     items: OrderStatus.values.map((status) {
@@ -431,6 +478,92 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ],
             );
           },
+        );
+      },
+    );
+  }
+
+  void _showSentMailDialog() async {
+    await _loadSentMail();
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Poslani e-mailovi'),
+          content: Container(
+            width: double.maxFinite,
+            child: ListView.builder(
+              shrinkWrap: true,
+              itemCount: _sentMail.length,
+              itemBuilder: (BuildContext context, int index) {
+                final email = _sentMail[index];
+                final user = email.user;
+
+                return Card(
+                  margin: EdgeInsets.symmetric(vertical: 5.0),
+                  child: ListTile(
+                    contentPadding: EdgeInsets.all(10.0),
+                    title: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Naslov: ${email.subject}',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
+                        SizedBox(height: 5),
+                        if (user != null)
+                          Text(
+                            'Primalac: ${user.firstName} ${user.lastName}',
+                            style: TextStyle(
+                              color: Colors.grey[700],
+                            ),
+                          )
+                        else
+                          Text(
+                            'Primalac: Nepoznato',
+                            style: TextStyle(
+                              color: Colors.grey[700],
+                            ),
+                          ),
+                      ],
+                    ),
+                    subtitle: Padding(
+                      padding: const EdgeInsets.only(top: 8.0),
+                      child: Text('Sadrzaj: ${email.body}'),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+          actions: [
+            ElevatedButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text('Zatvori'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showMessageDialog({required String title, required String message}) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(title),
+          content: Text(message),
+          actions: [
+            ElevatedButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text('OK'),
+            ),
+          ],
         );
       },
     );

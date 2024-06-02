@@ -17,10 +17,10 @@ namespace MojStomatolog.Database.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.26")
+                .HasAnnotation("ProductVersion", "8.0.6")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
+            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
             modelBuilder.Entity("MojStomatolog.Models.Core.Appointment", b =>
                 {
@@ -28,7 +28,7 @@ namespace MojStomatolog.Database.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AppointmentId"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AppointmentId"));
 
                     b.Property<DateTime>("AppointmentDateTime")
                         .HasColumnType("datetime2");
@@ -63,7 +63,7 @@ namespace MojStomatolog.Database.Migrations
                         new
                         {
                             AppointmentId = 1,
-                            AppointmentDateTime = new DateTime(2024, 3, 14, 14, 30, 0, 0, DateTimeKind.Local),
+                            AppointmentDateTime = new DateTime(2024, 3, 15, 14, 0, 0, 0, DateTimeKind.Unspecified),
                             EmployeeId = 3,
                             IsConfirmed = true,
                             Notes = "",
@@ -73,7 +73,7 @@ namespace MojStomatolog.Database.Migrations
                         new
                         {
                             AppointmentId = 2,
-                            AppointmentDateTime = new DateTime(2024, 3, 15, 14, 30, 0, 0, DateTimeKind.Local),
+                            AppointmentDateTime = new DateTime(2024, 3, 16, 9, 0, 0, 0, DateTimeKind.Unspecified),
                             EmployeeId = 3,
                             IsConfirmed = true,
                             Notes = "",
@@ -83,7 +83,7 @@ namespace MojStomatolog.Database.Migrations
                         new
                         {
                             AppointmentId = 3,
-                            AppointmentDateTime = new DateTime(2024, 3, 14, 11, 30, 0, 0, DateTimeKind.Local),
+                            AppointmentDateTime = new DateTime(2024, 3, 17, 11, 0, 0, 0, DateTimeKind.Unspecified),
                             EmployeeId = 4,
                             IsConfirmed = true,
                             Notes = "",
@@ -93,7 +93,7 @@ namespace MojStomatolog.Database.Migrations
                         new
                         {
                             AppointmentId = 4,
-                            AppointmentDateTime = new DateTime(2024, 3, 14, 10, 30, 0, 0, DateTimeKind.Local),
+                            AppointmentDateTime = new DateTime(2024, 3, 18, 10, 0, 0, 0, DateTimeKind.Unspecified),
                             EmployeeId = 5,
                             IsConfirmed = true,
                             Notes = "",
@@ -103,7 +103,7 @@ namespace MojStomatolog.Database.Migrations
                         new
                         {
                             AppointmentId = 5,
-                            AppointmentDateTime = new DateTime(2024, 3, 15, 11, 30, 0, 0, DateTimeKind.Local),
+                            AppointmentDateTime = new DateTime(2024, 3, 19, 14, 0, 0, 0, DateTimeKind.Unspecified),
                             EmployeeId = 1,
                             IsConfirmed = true,
                             Notes = "",
@@ -118,7 +118,7 @@ namespace MojStomatolog.Database.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ArticleId"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ArticleId"));
 
                     b.Property<string>("Content")
                         .IsRequired()
@@ -149,7 +149,7 @@ namespace MojStomatolog.Database.Migrations
                         {
                             ArticleId = 1,
                             Content = "Redoviti posjeti stomatologu ključni su za očuvanje oralnog zdravlja. Stomatolog će pregledati vaše zube, desni i ukazati na potencijalne probleme prije nego što postanu ozbiljni.",
-                            PublishDate = new DateTime(2024, 3, 14, 14, 12, 18, 112, DateTimeKind.Local).AddTicks(6545),
+                            PublishDate = new DateTime(2024, 6, 2, 19, 20, 3, 887, DateTimeKind.Local).AddTicks(3463),
                             Summary = "Očuvanje oralnog zdravlja kroz redovite posjete stomatologu.",
                             Title = "Važnost Redovitih Pregleda Kod Stomatologa",
                             UserCreatedId = 4
@@ -158,7 +158,7 @@ namespace MojStomatolog.Database.Migrations
                         {
                             ArticleId = 2,
                             Content = "Pravilna tehnika četkanja zuba ključna je za sprječavanje karijesa i bolesti desni. Obratite pažnju na pritisak, kut četkanja i koristite kvalitetnu četkicu za zube.",
-                            PublishDate = new DateTime(2024, 3, 14, 14, 12, 18, 112, DateTimeKind.Local).AddTicks(6554),
+                            PublishDate = new DateTime(2024, 6, 2, 19, 20, 3, 887, DateTimeKind.Local).AddTicks(3486),
                             Summary = "Savjeti za postizanje savršene tehnike četkanja zuba.",
                             Title = "Pravilno Četkanje Zuba: Kako Postići Savršenu Tehniku",
                             UserCreatedId = 3
@@ -167,7 +167,7 @@ namespace MojStomatolog.Database.Migrations
                         {
                             ArticleId = 3,
                             Content = "Vaša ishrana igra ključnu ulogu u održavanju zdravlja vaših zuba. Ograničite unos šećera, konzumirajte mliječne proizvode i voće te pijte dovoljno vode za optimalnu oralnu hidrataciju.",
-                            PublishDate = new DateTime(2024, 3, 14, 14, 12, 18, 112, DateTimeKind.Local).AddTicks(6607),
+                            PublishDate = new DateTime(2024, 6, 2, 19, 20, 3, 887, DateTimeKind.Local).AddTicks(3503),
                             Summary = "Kako ishrana utječe na zdravlje zuba i desni.",
                             Title = "Zdrava Ishrana za Zdrave Zube",
                             UserCreatedId = 5
@@ -176,7 +176,7 @@ namespace MojStomatolog.Database.Migrations
                         {
                             ArticleId = 4,
                             Content = "Estetski zahvati poput izbjeljivanja zuba, keramičkih faseta i ortodontskih tretmana mogu poboljšati izgled vašeg osmijeha. Posavjetujte se sa stomatologom o opcijama prilagođenim vašim potrebama.",
-                            PublishDate = new DateTime(2024, 3, 14, 14, 12, 18, 112, DateTimeKind.Local).AddTicks(6615),
+                            PublishDate = new DateTime(2024, 6, 2, 19, 20, 3, 887, DateTimeKind.Local).AddTicks(3541),
                             Summary = "Pregled estetskih zahvata za ljepši osmijeh.",
                             Title = "Estetski Zahvati u Stomatologiji: Sve Što Trebate Znati",
                             UserCreatedId = 6
@@ -189,7 +189,7 @@ namespace MojStomatolog.Database.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("EmployeeId"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("EmployeeId"));
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -286,10 +286,13 @@ namespace MojStomatolog.Database.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("OrderDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<int>("PaymentId")
+                        .HasColumnType("int");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
@@ -302,6 +305,8 @@ namespace MojStomatolog.Database.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("PaymentId");
+
                     b.HasIndex("UserId");
 
                     b.ToTable("Orders");
@@ -311,6 +316,7 @@ namespace MojStomatolog.Database.Migrations
                         {
                             Id = 1,
                             OrderDate = new DateTime(2023, 6, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            PaymentId = 1,
                             Status = 2,
                             TotalAmount = 29.30m,
                             UserId = 1
@@ -319,6 +325,7 @@ namespace MojStomatolog.Database.Migrations
                         {
                             Id = 2,
                             OrderDate = new DateTime(2023, 7, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            PaymentId = 2,
                             Status = 2,
                             TotalAmount = 24.10m,
                             UserId = 2
@@ -327,6 +334,7 @@ namespace MojStomatolog.Database.Migrations
                         {
                             Id = 3,
                             OrderDate = new DateTime(2023, 8, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            PaymentId = 3,
                             Status = 2,
                             TotalAmount = 19.80m,
                             UserId = 3
@@ -335,6 +343,7 @@ namespace MojStomatolog.Database.Migrations
                         {
                             Id = 4,
                             OrderDate = new DateTime(2023, 9, 20, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            PaymentId = 4,
                             Status = 2,
                             TotalAmount = 32.10m,
                             UserId = 1
@@ -343,6 +352,7 @@ namespace MojStomatolog.Database.Migrations
                         {
                             Id = 5,
                             OrderDate = new DateTime(2023, 10, 25, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            PaymentId = 5,
                             Status = 2,
                             TotalAmount = 32.21m,
                             UserId = 2
@@ -351,6 +361,7 @@ namespace MojStomatolog.Database.Migrations
                         {
                             Id = 6,
                             OrderDate = new DateTime(2023, 11, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            PaymentId = 6,
                             Status = 2,
                             TotalAmount = 24.80m,
                             UserId = 3
@@ -359,6 +370,7 @@ namespace MojStomatolog.Database.Migrations
                         {
                             Id = 7,
                             OrderDate = new DateTime(2023, 12, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            PaymentId = 7,
                             Status = 2,
                             TotalAmount = 15.95m,
                             UserId = 1
@@ -367,6 +379,7 @@ namespace MojStomatolog.Database.Migrations
                         {
                             Id = 8,
                             OrderDate = new DateTime(2024, 1, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            PaymentId = 8,
                             Status = 2,
                             TotalAmount = 27.10m,
                             UserId = 2
@@ -375,6 +388,7 @@ namespace MojStomatolog.Database.Migrations
                         {
                             Id = 9,
                             OrderDate = new DateTime(2024, 2, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            PaymentId = 9,
                             Status = 2,
                             TotalAmount = 40.26m,
                             UserId = 3
@@ -383,6 +397,7 @@ namespace MojStomatolog.Database.Migrations
                         {
                             Id = 10,
                             OrderDate = new DateTime(2023, 6, 25, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            PaymentId = 10,
                             Status = 2,
                             TotalAmount = 15.00m,
                             UserId = 1
@@ -391,6 +406,7 @@ namespace MojStomatolog.Database.Migrations
                         {
                             Id = 11,
                             OrderDate = new DateTime(2023, 7, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            PaymentId = 11,
                             Status = 2,
                             TotalAmount = 19.80m,
                             UserId = 2
@@ -399,6 +415,7 @@ namespace MojStomatolog.Database.Migrations
                         {
                             Id = 12,
                             OrderDate = new DateTime(2023, 8, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            PaymentId = 12,
                             Status = 2,
                             TotalAmount = 33.25m,
                             UserId = 1
@@ -407,6 +424,7 @@ namespace MojStomatolog.Database.Migrations
                         {
                             Id = 13,
                             OrderDate = new DateTime(2023, 9, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            PaymentId = 13,
                             Status = 2,
                             TotalAmount = 20.41m,
                             UserId = 3
@@ -415,6 +433,7 @@ namespace MojStomatolog.Database.Migrations
                         {
                             Id = 14,
                             OrderDate = new DateTime(2023, 10, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            PaymentId = 14,
                             Status = 2,
                             TotalAmount = 23.10m,
                             UserId = 2
@@ -423,6 +442,7 @@ namespace MojStomatolog.Database.Migrations
                         {
                             Id = 15,
                             OrderDate = new DateTime(2023, 11, 25, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            PaymentId = 15,
                             Status = 2,
                             TotalAmount = 28.45m,
                             UserId = 1
@@ -435,7 +455,7 @@ namespace MojStomatolog.Database.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("OrderId")
                         .HasColumnType("int");
@@ -748,13 +768,143 @@ namespace MojStomatolog.Database.Migrations
                         });
                 });
 
+            modelBuilder.Entity("MojStomatolog.Models.Core.Payment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<double>("Amount")
+                        .HasColumnType("float");
+
+                    b.Property<DateTime>("PaymentDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("PaymentNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Payments");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Amount = 29.300000000000001,
+                            PaymentDate = new DateTime(2023, 6, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            PaymentNumber = "PAY-001"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Amount = 24.100000000000001,
+                            PaymentDate = new DateTime(2023, 7, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            PaymentNumber = "PAY-002"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Amount = 19.800000000000001,
+                            PaymentDate = new DateTime(2023, 8, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            PaymentNumber = "PAY-003"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Amount = 32.100000000000001,
+                            PaymentDate = new DateTime(2023, 9, 20, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            PaymentNumber = "PAY-004"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Amount = 32.210000000000001,
+                            PaymentDate = new DateTime(2023, 10, 25, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            PaymentNumber = "PAY-005"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Amount = 24.800000000000001,
+                            PaymentDate = new DateTime(2023, 11, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            PaymentNumber = "PAY-006"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Amount = 15.949999999999999,
+                            PaymentDate = new DateTime(2023, 12, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            PaymentNumber = "PAY-007"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Amount = 27.100000000000001,
+                            PaymentDate = new DateTime(2024, 1, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            PaymentNumber = "PAY-008"
+                        },
+                        new
+                        {
+                            Id = 9,
+                            Amount = 40.259999999999998,
+                            PaymentDate = new DateTime(2024, 2, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            PaymentNumber = "PAY-009"
+                        },
+                        new
+                        {
+                            Id = 10,
+                            Amount = 15.0,
+                            PaymentDate = new DateTime(2023, 6, 25, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            PaymentNumber = "PAY-010"
+                        },
+                        new
+                        {
+                            Id = 11,
+                            Amount = 19.800000000000001,
+                            PaymentDate = new DateTime(2023, 7, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            PaymentNumber = "PAY-011"
+                        },
+                        new
+                        {
+                            Id = 12,
+                            Amount = 33.25,
+                            PaymentDate = new DateTime(2023, 8, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            PaymentNumber = "PAY-012"
+                        },
+                        new
+                        {
+                            Id = 13,
+                            Amount = 20.41,
+                            PaymentDate = new DateTime(2023, 9, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            PaymentNumber = "PAY-013"
+                        },
+                        new
+                        {
+                            Id = 14,
+                            Amount = 23.100000000000001,
+                            PaymentDate = new DateTime(2023, 10, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            PaymentNumber = "PAY-014"
+                        },
+                        new
+                        {
+                            Id = 15,
+                            Amount = 28.449999999999999,
+                            PaymentDate = new DateTime(2023, 11, 25, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            PaymentNumber = "PAY-015"
+                        });
+                });
+
             modelBuilder.Entity("MojStomatolog.Models.Core.Product", b =>
                 {
                     b.Property<int>("ProductId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProductId"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProductId"));
 
                     b.Property<bool>("Active")
                         .HasColumnType("bit");
@@ -942,7 +1092,7 @@ namespace MojStomatolog.Database.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProductCategoryId"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProductCategoryId"));
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -976,7 +1126,7 @@ namespace MojStomatolog.Database.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RatingId"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RatingId"));
 
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
@@ -1096,13 +1246,146 @@ namespace MojStomatolog.Database.Migrations
                         });
                 });
 
+            modelBuilder.Entity("MojStomatolog.Models.Core.SentEmail", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Body")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Subject")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("SentEmails");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Body = "Vaša narudžba sa brojem 1 je uspješno kreirana.",
+                            Subject = "Narudžba kreirana",
+                            UserId = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Body = "Vaša narudžba sa brojem 2 je uspješno kreirana.",
+                            Subject = "Narudžba kreirana",
+                            UserId = 2
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Body = "Vaša narudžba sa brojem 3 je uspješno kreirana.",
+                            Subject = "Narudžba kreirana",
+                            UserId = 3
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Body = "Vaša narudžba sa brojem 4 je uspješno kreirana.",
+                            Subject = "Narudžba kreirana",
+                            UserId = 1
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Body = "Vaša narudžba sa brojem 5 je uspješno kreirana.",
+                            Subject = "Narudžba kreirana",
+                            UserId = 2
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Body = "Vaša narudžba sa brojem 6 je uspješno kreirana.",
+                            Subject = "Narudžba kreirana",
+                            UserId = 3
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Body = "Vaša narudžba sa brojem 7 je uspješno kreirana.",
+                            Subject = "Narudžba kreirana",
+                            UserId = 1
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Body = "Vaša narudžba sa brojem 8 je uspješno kreirana.",
+                            Subject = "Narudžba kreirana",
+                            UserId = 2
+                        },
+                        new
+                        {
+                            Id = 9,
+                            Body = "Vaša narudžba sa brojem 9 je uspješno kreirana.",
+                            Subject = "Narudžba kreirana",
+                            UserId = 3
+                        },
+                        new
+                        {
+                            Id = 10,
+                            Body = "Vaša narudžba sa brojem 10 je uspješno kreirana.",
+                            Subject = "Narudžba kreirana",
+                            UserId = 1
+                        },
+                        new
+                        {
+                            Id = 11,
+                            Body = "Vaša narudžba sa brojem 11 je uspješno kreirana.",
+                            Subject = "Narudžba kreirana",
+                            UserId = 2
+                        },
+                        new
+                        {
+                            Id = 12,
+                            Body = "Vaša narudžba sa brojem 12 je uspješno kreirana.",
+                            Subject = "Narudžba kreirana",
+                            UserId = 1
+                        },
+                        new
+                        {
+                            Id = 13,
+                            Body = "Vaša narudžba sa brojem 13 je uspješno kreirana.",
+                            Subject = "Narudžba kreirana",
+                            UserId = 3
+                        },
+                        new
+                        {
+                            Id = 14,
+                            Body = "Vaša narudžba sa brojem 14 je uspješno kreirana.",
+                            Subject = "Narudžba kreirana",
+                            UserId = 2
+                        },
+                        new
+                        {
+                            Id = 15,
+                            Body = "Vaša narudžba sa brojem 15 je uspješno kreirana.",
+                            Subject = "Narudžba kreirana",
+                            UserId = 1
+                        });
+                });
+
             modelBuilder.Entity("MojStomatolog.Models.Core.Service", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -1146,7 +1429,7 @@ namespace MojStomatolog.Database.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserId"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserId"));
 
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");
@@ -1250,13 +1533,13 @@ namespace MojStomatolog.Database.Migrations
                         });
                 });
 
-            modelBuilder.Entity("WorkingHours", b =>
+            modelBuilder.Entity("MojStomatolog.Models.Core.WorkingHours", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<TimeSpan>("BreakEndTime")
                         .HasColumnType("time");
@@ -1388,11 +1671,19 @@ namespace MojStomatolog.Database.Migrations
 
             modelBuilder.Entity("MojStomatolog.Models.Core.Order", b =>
                 {
+                    b.HasOne("MojStomatolog.Models.Core.Payment", "Payment")
+                        .WithMany()
+                        .HasForeignKey("PaymentId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
                     b.HasOne("MojStomatolog.Models.Core.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
+
+                    b.Navigation("Payment");
 
                     b.Navigation("User");
                 });
@@ -1446,7 +1737,18 @@ namespace MojStomatolog.Database.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("WorkingHours", b =>
+            modelBuilder.Entity("MojStomatolog.Models.Core.SentEmail", b =>
+                {
+                    b.HasOne("MojStomatolog.Models.Core.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("MojStomatolog.Models.Core.WorkingHours", b =>
                 {
                     b.HasOne("MojStomatolog.Models.Core.User", "UserModified")
                         .WithMany()

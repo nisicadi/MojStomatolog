@@ -11,22 +11,19 @@ namespace MojStomatolog.Controllers
     [Authorize]
     [ApiController]
     [Route("[controller]")]
-    public class ProductController : BaseCrudController<ProductResponse, ProductSearchObject, AddProductRequest, UpdateProductRequest>
+    public class ProductController(
+        ILogger<BaseController<ProductResponse, ProductSearchObject>> logger,
+        IProductService service,
+        ModelTrainingService modelTrainingService)
+        : BaseCrudController<ProductResponse, ProductSearchObject, AddProductRequest, UpdateProductRequest>(logger,
+            service)
     {
-        private readonly IProductService _productService;
-        private readonly ModelTrainingService _modelTrainingService;
-        public ProductController(ILogger<BaseController<ProductResponse, ProductSearchObject>> logger, IProductService service, ModelTrainingService modelTrainingService) : base(logger, service)
-        {
-            _productService = service;
-            _modelTrainingService = modelTrainingService;
-        }
-
         [HttpGet("{productId:int}/recommend")]
         public ActionResult<List<ProductResponse>> Recommend(int productId)
         {
             try
             {
-               return Ok(_productService.GetRecommendedProducts(productId));
+                return Ok(service.GetRecommendedProducts(productId));
             }
             catch (Exception ex)
             {
@@ -40,7 +37,7 @@ namespace MojStomatolog.Controllers
         {
             try
             {
-                _modelTrainingService.RetrainModel();
+                modelTrainingService.RetrainModel();
                 return Ok("Model retraining initiated.");
             }
             catch (Exception ex)

@@ -3,11 +3,18 @@ import 'package:mojstomatolog_desktop/providers/user_provider.dart';
 import 'package:mojstomatolog_desktop/screens/employees.dart';
 import 'package:mojstomatolog_desktop/screens/register_screen.dart';
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
   LoginPage({Key? key});
 
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
   TextEditingController _usernameController = TextEditingController();
+
   TextEditingController _passwordController = TextEditingController();
+
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -41,7 +48,7 @@ class LoginPage extends StatelessWidget {
                       ),
                       controller: _usernameController,
                       validator: (value) {
-                        if (value == null || value.isEmpty) {
+                        if (value?.trim().isEmpty ?? true) {
                           return 'Please enter your username';
                         }
                         return null;
@@ -58,7 +65,7 @@ class LoginPage extends StatelessWidget {
                       ),
                       controller: _passwordController,
                       validator: (value) {
-                        if (value == null || value.isEmpty) {
+                        if (value?.trim().isEmpty ?? true) {
                           return 'Please enter your password';
                         }
                         return null;

@@ -2,13 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:mojstomatolog_desktop/providers/user_provider.dart';
 import 'package:mojstomatolog_desktop/screens/login_screen.dart';
 
-class RegisterPage extends StatelessWidget {
+class RegisterPage extends StatefulWidget {
   RegisterPage({Key? key});
 
+  @override
+  State<RegisterPage> createState() => _RegisterPageState();
+}
+
+class _RegisterPageState extends State<RegisterPage> {
   TextEditingController _usernameController = TextEditingController();
+
   TextEditingController _emailController = TextEditingController();
+
   TextEditingController _passwordController = TextEditingController();
+
   TextEditingController _confirmPasswordController = TextEditingController();
+
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -37,7 +46,7 @@ class RegisterPage extends StatelessWidget {
                       ),
                       controller: _usernameController,
                       validator: (value) {
-                        if (value == null || value.isEmpty) {
+                        if (value?.trim().isEmpty ?? true) {
                           return 'Please enter your username';
                         }
                         return null;
@@ -53,11 +62,11 @@ class RegisterPage extends StatelessWidget {
                       ),
                       controller: _emailController,
                       validator: (value) {
-                        if (value == null || value.isEmpty) {
+                        if (value?.trim().isEmpty ?? true) {
                           return 'Please enter your email';
-                        }
-                        if (!RegExp(r'^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$')
-                            .hasMatch(value)) {
+                        } else if (!RegExp(
+                                r'^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$')
+                            .hasMatch(value ?? '')) {
                           return 'Please enter a valid email address';
                         }
                         return null;
@@ -74,7 +83,7 @@ class RegisterPage extends StatelessWidget {
                       ),
                       controller: _passwordController,
                       validator: (value) {
-                        if (value == null || value.isEmpty) {
+                        if (value?.trim().isEmpty ?? true) {
                           return 'Please enter your password';
                         }
                         return null;
@@ -91,10 +100,9 @@ class RegisterPage extends StatelessWidget {
                       ),
                       controller: _confirmPasswordController,
                       validator: (value) {
-                        if (value == null || value.isEmpty) {
+                        if (value?.trim().isEmpty ?? true) {
                           return 'Please confirm your password';
-                        }
-                        if (value != _passwordController.text) {
+                        } else if (value != _passwordController.text) {
                           return 'Passwords do not match';
                         }
                         return null;
@@ -104,41 +112,42 @@ class RegisterPage extends StatelessWidget {
                       height: 8,
                     ),
                     ElevatedButton(
-                        onPressed: () async {
-                            if (_formKey.currentState!.validate()) {
-                                var username = _usernameController.text;
-                                var email = _emailController.text;
-                                var password = _passwordController.text;
+                      onPressed: () async {
+                        if (_formKey.currentState!.validate()) {
+                          var username = _usernameController.text;
+                          var email = _emailController.text;
+                          var password = _passwordController.text;
 
-                                var userProvider = UserProvider();
+                          var userProvider = UserProvider();
 
-                                var registrationSuccess = await userProvider.register(
-                                username,
-                                email,
-                                password,
-                                );
+                          var registrationSuccess = await userProvider.register(
+                            username,
+                            email,
+                            password,
+                          );
 
-                                if (registrationSuccess) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                    content: Text('Registration successful!'),
-                                    ),
-                                );
+                          if (registrationSuccess) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Registration successful!'),
+                              ),
+                            );
 
-                                Navigator.of(context).pushReplacement(
-                                    MaterialPageRoute(
-                                    builder: (context) => LoginPage(),
-                                    ),
-                                );
-                                } else {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                    content: Text('Registration failed. Please try again.'),
-                                    ),
-                                );
-                                }
-                            }
-                        },
+                            Navigator.of(context).pushReplacement(
+                              MaterialPageRoute(
+                                builder: (context) => LoginPage(),
+                              ),
+                            );
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text(
+                                    'Registration failed. Please try again.'),
+                              ),
+                            );
+                          }
+                        }
+                      },
                       child: const Text('Register'),
                     ),
                   ],

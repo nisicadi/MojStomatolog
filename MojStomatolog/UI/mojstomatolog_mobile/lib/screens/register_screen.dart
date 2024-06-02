@@ -2,13 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:mojstomatolog_mobile/providers/user_provider.dart';
 import 'package:mojstomatolog_mobile/screens/login_screen.dart';
 
-class RegisterPage extends StatelessWidget {
+class RegisterPage extends StatefulWidget {
   RegisterPage({Key? key});
 
+  @override
+  State<RegisterPage> createState() => _RegisterPageState();
+}
+
+class _RegisterPageState extends State<RegisterPage> {
   TextEditingController _usernameController = TextEditingController();
+
   TextEditingController _emailController = TextEditingController();
+
   TextEditingController _passwordController = TextEditingController();
+
   TextEditingController _confirmPasswordController = TextEditingController();
+
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -37,7 +46,7 @@ class RegisterPage extends StatelessWidget {
                       ),
                       controller: _usernameController,
                       validator: (value) {
-                        if (value == null || value.isEmpty) {
+                        if (value == null || value.trim().isEmpty) {
                           return 'Please enter your username';
                         }
                         return null;
@@ -53,7 +62,7 @@ class RegisterPage extends StatelessWidget {
                       ),
                       controller: _emailController,
                       validator: (value) {
-                        if (value == null || value.isEmpty) {
+                        if (value == null || value.trim().isEmpty) {
                           return 'Please enter your email';
                         }
                         if (!RegExp(
@@ -75,7 +84,7 @@ class RegisterPage extends StatelessWidget {
                       ),
                       controller: _passwordController,
                       validator: (value) {
-                        if (value == null || value.isEmpty) {
+                        if (value == null || value.trim().isEmpty) {
                           return 'Please enter your password';
                         }
                         return null;
@@ -92,7 +101,7 @@ class RegisterPage extends StatelessWidget {
                       ),
                       controller: _confirmPasswordController,
                       validator: (value) {
-                        if (value == null || value.isEmpty) {
+                        if (value == null || value.trim().isEmpty) {
                           return 'Please confirm your password';
                         }
                         if (value != _passwordController.text) {

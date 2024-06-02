@@ -124,7 +124,7 @@ class _AddArticleModalState extends State<AddArticleModal> {
           controller: controller,
           decoration: InputDecoration(labelText: labelText),
           validator: (value) {
-            if (value == null || value.isEmpty) {
+            if (value?.trim().isEmpty ?? true) {
               return '$labelText je obavezno polje';
             }
             return null;

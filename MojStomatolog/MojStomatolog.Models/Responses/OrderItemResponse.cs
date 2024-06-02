@@ -1,6 +1,4 @@
-﻿using MojStomatolog.Models.Core;
-
-namespace MojStomatolog.Models.Responses
+﻿namespace MojStomatolog.Models.Responses
 {
     public class OrderItemResponse
     {
@@ -10,6 +8,6 @@ namespace MojStomatolog.Models.Responses
         public int Quantity { get; set; }
         public decimal Price { get; set; }
 
-        public Product Product { get; set; } = null!;
+        public ProductResponse Product { get; set; } = null!;
     }
 }

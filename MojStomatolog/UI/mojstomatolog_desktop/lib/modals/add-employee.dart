@@ -24,7 +24,6 @@ class _AddEmployeeModalState extends State<AddEmployeeModal> {
 
   final TextEditingController _firstNameController = TextEditingController();
   final TextEditingController _lastNameController = TextEditingController();
-  final TextEditingController _genderController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _numberController = TextEditingController();
   final TextEditingController _specializationController =
@@ -146,7 +145,7 @@ class _AddEmployeeModalState extends State<AddEmployeeModal> {
                 return 'Spol mora biti "M" ili "F"';
               }
             } else {
-              if (!isOptional && (value == null || value.isEmpty)) {
+              if (!isOptional && (value?.trim().isEmpty ?? true)) {
                 return '$labelText je obavezno polje';
               }
             }

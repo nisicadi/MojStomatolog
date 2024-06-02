@@ -3,13 +3,8 @@ using MojStomatolog.Models.Core;
 
 namespace MojStomatolog.Database
 {
-    public partial class MojStomatologContext : DbContext
+    public partial class MojStomatologContext(DbContextOptions<MojStomatologContext> options) : DbContext(options)
     {
-
-        public MojStomatologContext(DbContextOptions<MojStomatologContext> options) : base(options)
-        {
-        }
-
         public virtual DbSet<User> Users { get; set; } = null!;
         public virtual DbSet<Employee> Employees { get; set; } = null!;
         public virtual DbSet<Product> Products { get; set; } = null!;
@@ -20,6 +15,8 @@ namespace MojStomatolog.Database
         public virtual DbSet<Order> Orders { get; set; } = null!;
         public virtual DbSet<Rating> Ratings { get; set; } = null!;
         public virtual DbSet<ProductCategory> ProductCategories { get; set; } = null!;
+        public virtual DbSet<Payment> Payments { get; set; } = null!;
+        public virtual DbSet<SentEmail> SentEmails { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

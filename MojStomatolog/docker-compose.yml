@@ -43,6 +43,8 @@ services:
       - RABBITMQ_PASSWORD=mypass
       - RABBITMQ_VIRTUALHOST=/
       - HOSTNAME=localhost
+      - SMTP_HOST=smtp.office365.com
+      - SMTP_PORT=589
     depends_on:
       - mojstomatolog-rabbitmq
     networks:
@@ -53,8 +55,9 @@ services:
     build:
       context: .
     environment:
-      - ConnectionStrings:DefaultConnection=Server=mojstomatolog-sql,1433;Database=IB180160;User=sa;Password=QWElkj132!;TrustServerCertificate=True 
+      - ConnectionStrings:DefaultConnection=Server=mojstomatolog-sql,1433;Database=180160;User=sa;Password=QWElkj132!;TrustServerCertificate=True 
       - ASPNETCORE_ENVIRONMENT=Development
+      - MODEL_PATH=/app/data/trained_model.zip
       - RABBITMQ_HOST=rabbitmq
       - RABBITMQ_PORT=5672
       - RABBITMQ_USERNAME=user
@@ -68,7 +71,12 @@ services:
       - mojstomatolog-sql
     depends_on:
       - mojstomatolog-sql
+    volumes:
+      - model-data:/app/data
 
 networks:
   mojstomatolognet2023:
     driver: bridge
+
+volumes:
+  model-data:

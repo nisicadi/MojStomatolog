@@ -167,7 +167,7 @@ class _AddProductModalState extends State<AddProductModal> {
             return 'Unesite ispravnu numeričku vrijednost';
           }
         } else {
-          if (value == null || value.isEmpty) {
+          if (value?.trim().isEmpty ?? true) {
             return '$labelText je obavezno polje';
           }
         }

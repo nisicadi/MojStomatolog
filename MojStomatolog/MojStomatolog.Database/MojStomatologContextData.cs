@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MojStomatolog.Models.Core;
+#pragma warning disable CA1822
 
 namespace MojStomatolog.Database;
 
@@ -63,7 +64,8 @@ public partial class MojStomatologContext
         {
             ProductId = 1,
             Name = "Colgate 360 Max White Medium",
-            Active = true, ProductCategoryId = 1,
+            Active = true,
+            ProductCategoryId = 1,
             Description =
                 "Colgate 360 Max White medium četkica za zube, odlična je za čišćenje zuba, jezika, obraza i desni. Zahvaljujući jedinstvenim spiralnim vlaknima pomažu u izbjeljivanju zuba, uklanjanju površinskih mrlja i čišćenju čak i teško dostupnih mjesta. Osim toga, čistač jezika na stražnjoj strani četkice efikasno i nježno uklanja bakterije koje uzrokuju loš zadah. Obogatite oralnu higijenu uz Colgate 360 Max white četkicu za zube!",
             ImageUrl =
@@ -251,7 +253,8 @@ public partial class MojStomatologContext
             UserId = 1,
             OrderDate = new DateTime(2023, 06, 15),
             TotalAmount = 29.30M,
-            Status = 2
+            Status = 2,
+            PaymentId = 1
         });
         modelBuilder.Entity<Order>().HasData(new Order
         {
@@ -259,7 +262,8 @@ public partial class MojStomatologContext
             UserId = 2,
             OrderDate = new DateTime(2023, 07, 10),
             TotalAmount = 24.10M,
-            Status = 2
+            Status = 2,
+            PaymentId = 2
         });
         modelBuilder.Entity<Order>().HasData(new Order
         {
@@ -267,7 +271,8 @@ public partial class MojStomatologContext
             UserId = 3,
             OrderDate = new DateTime(2023, 08, 05),
             TotalAmount = 19.80M,
-            Status = 2
+            Status = 2,
+            PaymentId = 3
         });
         modelBuilder.Entity<Order>().HasData(new Order
         {
@@ -275,7 +280,8 @@ public partial class MojStomatologContext
             UserId = 1,
             OrderDate = new DateTime(2023, 09, 20),
             TotalAmount = 32.10M,
-            Status = 2
+            Status = 2,
+            PaymentId = 4
         });
         modelBuilder.Entity<Order>().HasData(new Order
         {
@@ -283,7 +289,8 @@ public partial class MojStomatologContext
             UserId = 2,
             OrderDate = new DateTime(2023, 10, 25),
             TotalAmount = 32.21M,
-            Status = 2
+            Status = 2,
+            PaymentId = 5
         });
         modelBuilder.Entity<Order>().HasData(new Order
         {
@@ -291,7 +298,8 @@ public partial class MojStomatologContext
             UserId = 3,
             OrderDate = new DateTime(2023, 11, 30),
             TotalAmount = 24.80M,
-            Status = 2
+            Status = 2,
+            PaymentId = 6
         });
         modelBuilder.Entity<Order>().HasData(new Order
         {
@@ -299,7 +307,8 @@ public partial class MojStomatologContext
             UserId = 1,
             OrderDate = new DateTime(2023, 12, 15),
             TotalAmount = 15.95M,
-            Status = 2
+            Status = 2,
+            PaymentId = 7
         });
         modelBuilder.Entity<Order>().HasData(new Order
         {
@@ -307,7 +316,8 @@ public partial class MojStomatologContext
             UserId = 2,
             OrderDate = new DateTime(2024, 01, 05),
             TotalAmount = 27.10M,
-            Status = 2
+            Status = 2,
+            PaymentId = 8
         });
         modelBuilder.Entity<Order>().HasData(new Order
         {
@@ -315,7 +325,8 @@ public partial class MojStomatologContext
             UserId = 3,
             OrderDate = new DateTime(2024, 02, 01),
             TotalAmount = 40.26M,
-            Status = 2
+            Status = 2,
+            PaymentId = 9
         });
         modelBuilder.Entity<Order>().HasData(new Order
         {
@@ -323,7 +334,8 @@ public partial class MojStomatologContext
             UserId = 1,
             OrderDate = new DateTime(2023, 06, 25),
             TotalAmount = 15.00M,
-            Status = 2
+            Status = 2,
+            PaymentId = 10
         });
         modelBuilder.Entity<Order>().HasData(new Order
         {
@@ -331,7 +343,8 @@ public partial class MojStomatologContext
             UserId = 2,
             OrderDate = new DateTime(2023, 07, 15),
             TotalAmount = 19.80M,
-            Status = 2
+            Status = 2,
+            PaymentId = 11
         });
         modelBuilder.Entity<Order>().HasData(new Order
         {
@@ -339,7 +352,8 @@ public partial class MojStomatologContext
             UserId = 1,
             OrderDate = new DateTime(2023, 08, 10),
             TotalAmount = 33.25M,
-            Status = 2
+            Status = 2,
+            PaymentId = 12
         });
         modelBuilder.Entity<Order>().HasData(new Order
         {
@@ -347,7 +361,8 @@ public partial class MojStomatologContext
             UserId = 3,
             OrderDate = new DateTime(2023, 09, 05),
             TotalAmount = 20.41M,
-            Status = 2
+            Status = 2,
+            PaymentId = 13
         });
         modelBuilder.Entity<Order>().HasData(new Order
         {
@@ -355,7 +370,8 @@ public partial class MojStomatologContext
             UserId = 2,
             OrderDate = new DateTime(2023, 10, 30),
             TotalAmount = 23.10M,
-            Status = 2
+            Status = 2,
+            PaymentId = 14
         });
         modelBuilder.Entity<Order>().HasData(new Order
         {
@@ -363,7 +379,8 @@ public partial class MojStomatologContext
             UserId = 1,
             OrderDate = new DateTime(2023, 11, 25),
             TotalAmount = 28.45M,
-            Status = 2
+            Status = 2,
+            PaymentId = 15
         });
 
         #endregion
@@ -672,9 +689,9 @@ public partial class MojStomatologContext
             Quantity = 1,
             Price = 9.95M
         });
-        
+
         #endregion
-        
+
         #region Rating
 
         modelBuilder.Entity<Rating>().HasData(new Rating { RatingId = 1, UserId = 1, ProductId = 1, RatingValue = 4 });
@@ -768,7 +785,7 @@ public partial class MojStomatologContext
             PatientId = 1,
             EmployeeId = 3,
             ServiceId = 1,
-            AppointmentDateTime = DateTime.Today.AddHours(14).AddMinutes(30)
+            AppointmentDateTime = new DateTime(2024, 03, 15, 14, 0, 0)
         });
         modelBuilder.Entity<Appointment>().HasData(new Appointment
         {
@@ -778,7 +795,7 @@ public partial class MojStomatologContext
             PatientId = 1,
             EmployeeId = 3,
             ServiceId = 2,
-            AppointmentDateTime = DateTime.Today.AddHours(38).AddMinutes(30)
+            AppointmentDateTime = new DateTime(2024, 03, 16, 9, 0, 0)
         });
         modelBuilder.Entity<Appointment>().HasData(new Appointment
         {
@@ -788,7 +805,7 @@ public partial class MojStomatologContext
             PatientId = 2,
             EmployeeId = 4,
             ServiceId = 3,
-            AppointmentDateTime = DateTime.Today.AddHours(11).AddMinutes(30)
+            AppointmentDateTime = new DateTime(2024, 03, 17, 11, 0, 0)
         });
         modelBuilder.Entity<Appointment>().HasData(new Appointment
         {
@@ -798,7 +815,7 @@ public partial class MojStomatologContext
             PatientId = 3,
             EmployeeId = 5,
             ServiceId = 4,
-            AppointmentDateTime = DateTime.Today.AddHours(10).AddMinutes(30)
+            AppointmentDateTime = new DateTime(2024, 03, 18, 10, 0, 0)
         });
         modelBuilder.Entity<Appointment>().HasData(new Appointment
         {
@@ -808,7 +825,7 @@ public partial class MojStomatologContext
             PatientId = 2,
             EmployeeId = 1,
             ServiceId = 5,
-            AppointmentDateTime = DateTime.Today.AddHours(35).AddMinutes(30)
+            AppointmentDateTime = new DateTime(2024, 03, 19, 14, 0, 0)
         });
 
         #endregion
@@ -955,6 +972,227 @@ public partial class MojStomatologContext
             PasswordSalt = "2irDvagQHwn9bhLo7RopCA==",
             PasswordHash = "eAgjVa5u+yP5GzGoMTpY0Sb5XowehZl3VNOjuUX8kJc=",
             Number = "123789456"
+        });
+
+        #endregion
+
+        #region Payment
+
+        modelBuilder.Entity<Payment>().HasData(new Payment
+        {
+            Id = 1,
+            Amount = 29.30,
+            PaymentDate = new DateTime(2023, 06, 15),
+            PaymentNumber = "PAY-001"
+        });
+        modelBuilder.Entity<Payment>().HasData(new Payment
+        {
+            Id = 2,
+            Amount = 24.10,
+            PaymentDate = new DateTime(2023, 07, 10),
+            PaymentNumber = "PAY-002"
+        });
+        modelBuilder.Entity<Payment>().HasData(new Payment
+        {
+            Id = 3,
+            Amount = 19.80,
+            PaymentDate = new DateTime(2023, 08, 05),
+            PaymentNumber = "PAY-003"
+        });
+        modelBuilder.Entity<Payment>().HasData(new Payment
+        {
+            Id = 4,
+            Amount = 32.10,
+            PaymentDate = new DateTime(2023, 09, 20),
+            PaymentNumber = "PAY-004"
+        });
+        modelBuilder.Entity<Payment>().HasData(new Payment
+        {
+            Id = 5,
+            Amount = 32.21,
+            PaymentDate = new DateTime(2023, 10, 25),
+            PaymentNumber = "PAY-005"
+        });
+        modelBuilder.Entity<Payment>().HasData(new Payment
+        {
+            Id = 6,
+            Amount = 24.80,
+            PaymentDate = new DateTime(2023, 11, 30),
+            PaymentNumber = "PAY-006"
+        });
+        modelBuilder.Entity<Payment>().HasData(new Payment
+        {
+            Id = 7,
+            Amount = 15.95,
+            PaymentDate = new DateTime(2023, 12, 15),
+            PaymentNumber = "PAY-007"
+        });
+        modelBuilder.Entity<Payment>().HasData(new Payment
+        {
+            Id = 8,
+            Amount = 27.10,
+            PaymentDate = new DateTime(2024, 01, 05),
+            PaymentNumber = "PAY-008"
+        });
+        modelBuilder.Entity<Payment>().HasData(new Payment
+        {
+            Id = 9,
+            Amount = 40.26,
+            PaymentDate = new DateTime(2024, 02, 01),
+            PaymentNumber = "PAY-009"
+        });
+        modelBuilder.Entity<Payment>().HasData(new Payment
+        {
+            Id = 10,
+            Amount = 15.00,
+            PaymentDate = new DateTime(2023, 06, 25),
+            PaymentNumber = "PAY-010"
+        });
+        modelBuilder.Entity<Payment>().HasData(new Payment
+        {
+            Id = 11,
+            Amount = 19.80,
+            PaymentDate = new DateTime(2023, 07, 15),
+            PaymentNumber = "PAY-011"
+        });
+        modelBuilder.Entity<Payment>().HasData(new Payment
+        {
+            Id = 12,
+            Amount = 33.25,
+            PaymentDate = new DateTime(2023, 08, 10),
+            PaymentNumber = "PAY-012"
+        });
+        modelBuilder.Entity<Payment>().HasData(new Payment
+        {
+            Id = 13,
+            Amount = 20.41,
+            PaymentDate = new DateTime(2023, 09, 05),
+            PaymentNumber = "PAY-013"
+        });
+        modelBuilder.Entity<Payment>().HasData(new Payment
+        {
+            Id = 14,
+            Amount = 23.10,
+            PaymentDate = new DateTime(2023, 10, 30),
+            PaymentNumber = "PAY-014"
+        });
+        modelBuilder.Entity<Payment>().HasData(new Payment
+        {
+            Id = 15,
+            Amount = 28.45,
+            PaymentDate = new DateTime(2023, 11, 25),
+            PaymentNumber = "PAY-015"
+        });
+
+
+        #endregion
+
+        #region SentEmail
+
+        modelBuilder.Entity<SentEmail>().HasData(new SentEmail
+        {
+            Id = 1,
+            Subject = "Narudžba kreirana",
+            Body = "Vaša narudžba sa brojem 1 je uspješno kreirana.",
+            UserId = 1
+        });
+        modelBuilder.Entity<SentEmail>().HasData(new SentEmail
+        {
+            Id = 2,
+            Subject = "Narudžba kreirana",
+            Body = "Vaša narudžba sa brojem 2 je uspješno kreirana.",
+            UserId = 2
+        });
+        modelBuilder.Entity<SentEmail>().HasData(new SentEmail
+        {
+            Id = 3,
+            Subject = "Narudžba kreirana",
+            Body = "Vaša narudžba sa brojem 3 je uspješno kreirana.",
+            UserId = 3
+        });
+        modelBuilder.Entity<SentEmail>().HasData(new SentEmail
+        {
+            Id = 4,
+            Subject = "Narudžba kreirana",
+            Body = "Vaša narudžba sa brojem 4 je uspješno kreirana.",
+            UserId = 1
+        });
+        modelBuilder.Entity<SentEmail>().HasData(new SentEmail
+        {
+            Id = 5,
+            Subject = "Narudžba kreirana",
+            Body = "Vaša narudžba sa brojem 5 je uspješno kreirana.",
+            UserId = 2
+        });
+        modelBuilder.Entity<SentEmail>().HasData(new SentEmail
+        {
+            Id = 6,
+            Subject = "Narudžba kreirana",
+            Body = "Vaša narudžba sa brojem 6 je uspješno kreirana.",
+            UserId = 3
+        });
+        modelBuilder.Entity<SentEmail>().HasData(new SentEmail
+        {
+            Id = 7,
+            Subject = "Narudžba kreirana",
+            Body = "Vaša narudžba sa brojem 7 je uspješno kreirana.",
+            UserId = 1
+        });
+        modelBuilder.Entity<SentEmail>().HasData(new SentEmail
+        {
+            Id = 8,
+            Subject = "Narudžba kreirana",
+            Body = "Vaša narudžba sa brojem 8 je uspješno kreirana.",
+            UserId = 2
+        });
+        modelBuilder.Entity<SentEmail>().HasData(new SentEmail
+        {
+            Id = 9,
+            Subject = "Narudžba kreirana",
+            Body = "Vaša narudžba sa brojem 9 je uspješno kreirana.",
+            UserId = 3
+        });
+        modelBuilder.Entity<SentEmail>().HasData(new SentEmail
+        {
+            Id = 10,
+            Subject = "Narudžba kreirana",
+            Body = "Vaša narudžba sa brojem 10 je uspješno kreirana.",
+            UserId = 1
+        });
+        modelBuilder.Entity<SentEmail>().HasData(new SentEmail
+        {
+            Id = 11,
+            Subject = "Narudžba kreirana",
+            Body = "Vaša narudžba sa brojem 11 je uspješno kreirana.",
+            UserId = 2
+        });
+        modelBuilder.Entity<SentEmail>().HasData(new SentEmail
+        {
+            Id = 12,
+            Subject = "Narudžba kreirana",
+            Body = "Vaša narudžba sa brojem 12 je uspješno kreirana.",
+            UserId = 1
+        });
+        modelBuilder.Entity<SentEmail>().HasData(new SentEmail
+        {
+            Id = 13,
+            Subject = "Narudžba kreirana",
+            Body = "Vaša narudžba sa brojem 13 je uspješno kreirana.",
+            UserId = 3
+        });
+        modelBuilder.Entity<SentEmail>().HasData(new SentEmail
+        {
+            Id = 14,
+            Subject = "Narudžba kreirana",
+            Body = "Vaša narudžba sa brojem 14 je uspješno kreirana.",
+            UserId = 2
+        });
+        modelBuilder.Entity<SentEmail>().HasData(new SentEmail
+        {
+            Id = 15,
+            Subject = "Narudžba kreirana",
+            Body = "Vaša narudžba sa brojem 15 je uspješno kreirana.",
+            UserId = 1
         });
 
         #endregion

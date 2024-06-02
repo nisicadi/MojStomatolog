@@ -12,22 +12,17 @@ using MojStomatolog.Services.Interfaces;
 
 namespace MojStomatolog.Services.Services
 {
-    public class ProductService : BaseCrudService<ProductResponse, Product, ProductSearchObject, AddProductRequest, UpdateProductRequest>, IProductService
+    public class ProductService(MojStomatologContext context, IMapper mapper, ModelTrainingService modelTrainingService)
+        : BaseCrudService<ProductResponse, Product, ProductSearchObject, AddProductRequest, UpdateProductRequest>(
+            context, mapper), IProductService
     {
-        private readonly MLContext _mlContext;
-        private readonly ModelTrainingService _modelTrainingService;
-
-        public ProductService(MojStomatologContext context, IMapper mapper, ModelTrainingService modelTrainingService) : base(context, mapper)
-        {
-            _mlContext = new MLContext();
-            _modelTrainingService = modelTrainingService;
-        }
+        private readonly MLContext _mlContext = new();
 
         public List<ProductResponse> GetRecommendedProducts(int productId)
         {
             var products = Context.Products.Where(x => x.ProductId != productId);
-            var predictionResult = new List<Tuple<Product, float>>();
-            var model = _modelTrainingService.GetTrainedModel();
+            List<Tuple<Product, float>> predictionResult = [];
+            var model = modelTrainingService.GetTrainedModel();
 
             foreach (var product in products)
             {
@@ -42,7 +37,7 @@ namespace MojStomatolog.Services.Services
                 predictionResult.Add(new Tuple<Product, float>(product, prediction.Score));
             }
 
-            var finalResult = predictionResult.OrderByDescending(x => x.Item2)
+            List<Product> finalResult = predictionResult.OrderByDescending(x => x.Item2)
                 .Select(x => x.Item1)
                 .Take(3)
                 .ToList();
@@ -59,9 +54,7 @@ namespace MojStomatolog.Services.Services
 
             if (!string.IsNullOrWhiteSpace(search.SearchTerm))
             {
-                var searchTermLower = search.SearchTerm.ToLower();
-
-                query = query.Where(x => x.Name.Contains(searchTermLower));
+                query = query.Where(x => EF.Functions.Like(x.Name, $"%{search.SearchTerm}%"));
             }
 
             if (search.PriceFrom is not null)

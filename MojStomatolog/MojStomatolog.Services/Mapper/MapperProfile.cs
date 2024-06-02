@@ -5,9 +5,11 @@ using MojStomatolog.Models.Requests.Article;
 using MojStomatolog.Models.Requests.Employee;
 using MojStomatolog.Models.Requests.Order;
 using MojStomatolog.Models.Requests.OrderItem;
+using MojStomatolog.Models.Requests.Payment;
 using MojStomatolog.Models.Requests.Product;
 using MojStomatolog.Models.Requests.ProductCategory;
 using MojStomatolog.Models.Requests.Rating;
+using MojStomatolog.Models.Requests.SentEmail;
 using MojStomatolog.Models.Requests.Service;
 using MojStomatolog.Models.Requests.User;
 using MojStomatolog.Models.Requests.WorkingHours;
@@ -81,7 +83,7 @@ namespace MojStomatolog.Services.Mapper
                 .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId))
                 .ForMember(dest => dest.RatingValue, opt => opt.MapFrom(src => src.RatingValue))
                 .ForMember(dest => dest.Product, opt => opt.Ignore());
-            
+
             CreateMap<UpdateRatingRequest, Rating>();
             CreateMap<Rating, RatingResponse>();
 
@@ -108,6 +110,22 @@ namespace MojStomatolog.Services.Mapper
             CreateMap<AddWorkingHoursRequest, WorkingHours>();
             CreateMap<UpdateWorkingHoursRequest, WorkingHours>();
             CreateMap<WorkingHours, WorkingHoursResponse>();
+
+            #endregion
+
+            #region Payment
+
+            CreateMap<AddPaymentRequest, Payment>();
+            CreateMap<UpdatePaymentRequest, Payment>();
+            CreateMap<Payment, PaymentResponse>();
+
+            #endregion
+
+            #region SentEmail
+
+            CreateMap<AddSentEmailRequest, SentEmail>();
+            CreateMap<UpdateSentEmailRequest, SentEmail>();
+            CreateMap<SentEmail, SentEmailResponse>();
 
             #endregion
         }

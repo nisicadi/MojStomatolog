@@ -16,7 +16,8 @@ class _CompanySettingsFormState extends State<CompanySettingsForm> {
   final _workingHoursFormKey = GlobalKey<FormState>();
   final TextEditingController _startTimeController = TextEditingController();
   final TextEditingController _endTimeController = TextEditingController();
-  final TextEditingController _breakStartTimeController = TextEditingController();
+  final TextEditingController _breakStartTimeController =
+      TextEditingController();
   final TextEditingController _breakEndTimeController = TextEditingController();
   Map<int, WorkingHours> _workingHoursMap = {};
   int? _selectedDay;
@@ -47,10 +48,13 @@ class _CompanySettingsFormState extends State<CompanySettingsForm> {
   void _populateFormFields(int dayOfWeek) {
     final workingHours = _workingHoursMap[dayOfWeek];
     if (workingHours != null) {
-      _startTimeController.text = _formatTimeWithoutSeconds(workingHours.startTime);
+      _startTimeController.text =
+          _formatTimeWithoutSeconds(workingHours.startTime);
       _endTimeController.text = _formatTimeWithoutSeconds(workingHours.endTime);
-      _breakStartTimeController.text = _formatTimeWithoutSeconds(workingHours.breakStartTime);
-      _breakEndTimeController.text = _formatTimeWithoutSeconds(workingHours.breakEndTime);
+      _breakStartTimeController.text =
+          _formatTimeWithoutSeconds(workingHours.breakStartTime);
+      _breakEndTimeController.text =
+          _formatTimeWithoutSeconds(workingHours.breakEndTime);
       setState(() {
         _isWorkingDay = true;
       });
@@ -226,7 +230,7 @@ class _CompanySettingsFormState extends State<CompanySettingsForm> {
             ),
             SizedBox(height: 16),
             ElevatedButton(
-              onPressed: _saveWorkingHours,
+              onPressed: _confirmSaveWorkingHours,
               child: Text('Sačuvaj'),
             ),
           ],
@@ -261,11 +265,40 @@ class _CompanySettingsFormState extends State<CompanySettingsForm> {
     );
   }
 
+  void _confirmSaveWorkingHours() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Potvrda'),
+          content: Text(
+              'Ako sačuvate promjene, svi budući termini za odabrani dan u sedmici će biti obrisani. Da li ste sigurni da želite nastaviti?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Odustani'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                _saveWorkingHours();
+              },
+              child: Text('Nastavi'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   void _saveWorkingHours() async {
     if (_workingHoursFormKey.currentState?.validate() ?? false) {
       if (!_isWorkingDay) {
         if (_workingHoursMap.containsKey(_selectedDay)) {
-          await _companySettingsProvider.delete(_workingHoursMap[_selectedDay]!.id!);
+          await _companySettingsProvider
+              .delete(_workingHoursMap[_selectedDay]!.id!);
           _workingHoursMap.remove(_selectedDay);
         }
       } else {
@@ -298,7 +331,8 @@ class _CompanySettingsFormState extends State<CompanySettingsForm> {
             );
           }
         } else {
-          final addedData = await _companySettingsProvider.insert(workingHours.toJson());
+          final addedData =
+              await _companySettingsProvider.insert(workingHours.toJson());
 
           if (addedData != null) {
             ScaffoldMessenger.of(context).showSnackBar(

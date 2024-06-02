@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using MojStomatolog;
@@ -7,6 +6,7 @@ using MojStomatolog.Services.Common.RecommenderModel;
 using MojStomatolog.Services.Interfaces;
 using MojStomatolog.Services.Services;
 #pragma warning disable CA1825
+#pragma warning disable CA1861
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,11 +23,14 @@ builder.Services.AddTransient<IOrderService, OrderService>();
 builder.Services.AddTransient<IRatingService, RatingService>();
 builder.Services.AddTransient<IProductCategoryService, ProductCategoryService>();
 builder.Services.AddTransient<IServiceService, ServiceService>();
+builder.Services.AddTransient<IPaymentService, PaymentService>();
+builder.Services.AddTransient<ISentEmailService, SentEmailService>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(c => {
+builder.Services.AddSwaggerGen(c =>
+{
     c.AddSecurityDefinition("basicAuth", new OpenApiSecurityScheme
     {
         Type = SecuritySchemeType.Http,
@@ -50,7 +53,7 @@ builder.Services.AddSwaggerGen(c => {
 });
 
 builder.Services.AddAuthentication("BasicAuthentication")
-    .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("BasicAuthentication", null);
+    .AddScheme<CustomAuthenticationSchemeOptions, BasicAuthenticationHandler>("BasicAuthentication", null);
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<MojStomatologContext>(options =>
@@ -71,7 +74,7 @@ if (app.Environment.IsDevelopment())
 app.UseCors(x => x
     .AllowAnyMethod()
     .AllowAnyHeader()
-    .SetIsOriginAllowed(origin => true) // allow any origin  
+    .SetIsOriginAllowed(_ => true) // allow any origin  
     .AllowCredentials());
 
 app.UseHttpsRedirection();
@@ -84,11 +87,11 @@ app.MapControllers();
 using (var scope = app.Services.CreateAsyncScope())
 {
     var dataContext = scope.ServiceProvider.GetRequiredService<MojStomatologContext>();
-    dataContext.Database.EnsureCreated();
+    dataContext.Database.Migrate();
 }
 
-// Train Recommender model
+// Load or train Recommender model
 var modelTrainingService = app.Services.GetRequiredService<ModelTrainingService>();
-modelTrainingService.TrainModel();
+modelTrainingService.GetTrainedModel();
 
 app.Run();

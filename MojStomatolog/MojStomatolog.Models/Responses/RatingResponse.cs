@@ -1,6 +1,4 @@
-﻿using MojStomatolog.Models.Core;
-
-namespace MojStomatolog.Models.Responses
+﻿namespace MojStomatolog.Models.Responses
 {
     public class RatingResponse
     {
@@ -9,6 +7,6 @@ namespace MojStomatolog.Models.Responses
         public int UserId { get; set; }
         public int RatingValue { get; set; }
 
-        public Product Product { get; set; } = new Product();
+        public ProductResponse Product { get; set; } = null!;
     }
 }
