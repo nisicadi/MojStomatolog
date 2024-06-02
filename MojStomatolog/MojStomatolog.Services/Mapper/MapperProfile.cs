@@ -9,6 +9,7 @@ using MojStomatolog.Models.Requests.Payment;
 using MojStomatolog.Models.Requests.Product;
 using MojStomatolog.Models.Requests.ProductCategory;
 using MojStomatolog.Models.Requests.Rating;
+using MojStomatolog.Models.Requests.SentEmail;
 using MojStomatolog.Models.Requests.Service;
 using MojStomatolog.Models.Requests.User;
 using MojStomatolog.Models.Requests.WorkingHours;
@@ -117,6 +118,14 @@ namespace MojStomatolog.Services.Mapper
             CreateMap<AddPaymentRequest, Payment>();
             CreateMap<UpdatePaymentRequest, Payment>();
             CreateMap<Payment, PaymentResponse>();
+
+            #endregion
+
+            #region SentEmail
+
+            CreateMap<AddSentEmailRequest, SentEmail>();
+            CreateMap<UpdateSentEmailRequest, SentEmail>();
+            CreateMap<SentEmail, SentEmailResponse>();
 
             #endregion
         }

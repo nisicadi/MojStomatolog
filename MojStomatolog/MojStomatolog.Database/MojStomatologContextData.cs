@@ -1086,5 +1086,115 @@ public partial class MojStomatologContext
 
 
         #endregion
+
+        #region SentEmail
+
+        modelBuilder.Entity<SentEmail>().HasData(new SentEmail
+        {
+            Id = 1,
+            Subject = "Narudžba kreirana",
+            Body = "Vaša narudžba sa brojem 1 je uspješno kreirana.",
+            UserId = 1
+        });
+        modelBuilder.Entity<SentEmail>().HasData(new SentEmail
+        {
+            Id = 2,
+            Subject = "Narudžba kreirana",
+            Body = "Vaša narudžba sa brojem 2 je uspješno kreirana.",
+            UserId = 2
+        });
+        modelBuilder.Entity<SentEmail>().HasData(new SentEmail
+        {
+            Id = 3,
+            Subject = "Narudžba kreirana",
+            Body = "Vaša narudžba sa brojem 3 je uspješno kreirana.",
+            UserId = 3
+        });
+        modelBuilder.Entity<SentEmail>().HasData(new SentEmail
+        {
+            Id = 4,
+            Subject = "Narudžba kreirana",
+            Body = "Vaša narudžba sa brojem 4 je uspješno kreirana.",
+            UserId = 1
+        });
+        modelBuilder.Entity<SentEmail>().HasData(new SentEmail
+        {
+            Id = 5,
+            Subject = "Narudžba kreirana",
+            Body = "Vaša narudžba sa brojem 5 je uspješno kreirana.",
+            UserId = 2
+        });
+        modelBuilder.Entity<SentEmail>().HasData(new SentEmail
+        {
+            Id = 6,
+            Subject = "Narudžba kreirana",
+            Body = "Vaša narudžba sa brojem 6 je uspješno kreirana.",
+            UserId = 3
+        });
+        modelBuilder.Entity<SentEmail>().HasData(new SentEmail
+        {
+            Id = 7,
+            Subject = "Narudžba kreirana",
+            Body = "Vaša narudžba sa brojem 7 je uspješno kreirana.",
+            UserId = 1
+        });
+        modelBuilder.Entity<SentEmail>().HasData(new SentEmail
+        {
+            Id = 8,
+            Subject = "Narudžba kreirana",
+            Body = "Vaša narudžba sa brojem 8 je uspješno kreirana.",
+            UserId = 2
+        });
+        modelBuilder.Entity<SentEmail>().HasData(new SentEmail
+        {
+            Id = 9,
+            Subject = "Narudžba kreirana",
+            Body = "Vaša narudžba sa brojem 9 je uspješno kreirana.",
+            UserId = 3
+        });
+        modelBuilder.Entity<SentEmail>().HasData(new SentEmail
+        {
+            Id = 10,
+            Subject = "Narudžba kreirana",
+            Body = "Vaša narudžba sa brojem 10 je uspješno kreirana.",
+            UserId = 1
+        });
+        modelBuilder.Entity<SentEmail>().HasData(new SentEmail
+        {
+            Id = 11,
+            Subject = "Narudžba kreirana",
+            Body = "Vaša narudžba sa brojem 11 je uspješno kreirana.",
+            UserId = 2
+        });
+        modelBuilder.Entity<SentEmail>().HasData(new SentEmail
+        {
+            Id = 12,
+            Subject = "Narudžba kreirana",
+            Body = "Vaša narudžba sa brojem 12 je uspješno kreirana.",
+            UserId = 1
+        });
+        modelBuilder.Entity<SentEmail>().HasData(new SentEmail
+        {
+            Id = 13,
+            Subject = "Narudžba kreirana",
+            Body = "Vaša narudžba sa brojem 13 je uspješno kreirana.",
+            UserId = 3
+        });
+        modelBuilder.Entity<SentEmail>().HasData(new SentEmail
+        {
+            Id = 14,
+            Subject = "Narudžba kreirana",
+            Body = "Vaša narudžba sa brojem 14 je uspješno kreirana.",
+            UserId = 2
+        });
+        modelBuilder.Entity<SentEmail>().HasData(new SentEmail
+        {
+            Id = 15,
+            Subject = "Narudžba kreirana",
+            Body = "Vaša narudžba sa brojem 15 je uspješno kreirana.",
+            UserId = 1
+        });
+
+        #endregion
     }
 }

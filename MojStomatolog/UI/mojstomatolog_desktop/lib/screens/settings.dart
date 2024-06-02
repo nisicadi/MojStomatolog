@@ -3,9 +3,11 @@ import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:mojstomatolog_desktop/enums/order_status.dart';
 import 'package:mojstomatolog_desktop/models/order.dart';
+import 'package:mojstomatolog_desktop/models/sent_email.dart';
 import 'package:mojstomatolog_desktop/providers/company_settings_provider.dart';
 import 'package:mojstomatolog_desktop/providers/order_provider.dart';
 import 'package:mojstomatolog_desktop/providers/product_provider.dart';
+import 'package:mojstomatolog_desktop/providers/sent_email_provider.dart';
 import 'package:mojstomatolog_desktop/providers/user_provider.dart';
 import 'package:mojstomatolog_desktop/utils/util.dart';
 import 'package:mojstomatolog_desktop/widgets/company_settings_form.dart';
@@ -24,7 +26,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
   final _userProvider = UserProvider();
   final _companySettingsProvider = CompanySettingsProvider();
   final _orderProvider = OrderProvider();
+  final _sentMailProvider = SentEmailProvider();
   List<Order> _orders = [];
+  List<SentEmail> _sentMail = [];
 
   final _nameController = TextEditingController();
   final _surnameController = TextEditingController();
@@ -80,6 +84,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
       setState(() => _orders = orders.results);
     } catch (e) {
       print('Error loading orders: $e');
+    }
+  }
+
+  Future<void> _loadSentMail() async {
+    try {
+      final sentMail = await _sentMailProvider.get();
+      setState(() => _sentMail = sentMail.results);
+    } catch (e) {
+      print('Error loading sent emails: $e');
     }
   }
 
@@ -320,6 +333,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
             SizedBox(height: 16),
             ElevatedButton(
+              onPressed: _showSentMailDialog,
+              child: Text('Pregledaj poslane e-mailove'),
+            ),
+            SizedBox(height: 16),
+            ElevatedButton(
               onPressed: _generatePdfReport,
               child: Text('Napravi izvještaj'),
             ),
@@ -460,6 +478,74 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ],
             );
           },
+        );
+      },
+    );
+  }
+
+  void _showSentMailDialog() async {
+    await _loadSentMail();
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Poslani e-mailovi'),
+          content: Container(
+            width: double.maxFinite,
+            child: ListView.builder(
+              shrinkWrap: true,
+              itemCount: _sentMail.length,
+              itemBuilder: (BuildContext context, int index) {
+                final email = _sentMail[index];
+                final user = email.user;
+
+                return Card(
+                  margin: EdgeInsets.symmetric(vertical: 5.0),
+                  child: ListTile(
+                    contentPadding: EdgeInsets.all(10.0),
+                    title: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Naslov: ${email.subject}',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
+                        SizedBox(height: 5),
+                        if (user != null)
+                          Text(
+                            'Primalac: ${user.firstName} ${user.lastName}',
+                            style: TextStyle(
+                              color: Colors.grey[700],
+                            ),
+                          )
+                        else
+                          Text(
+                            'Primalac: Nepoznato',
+                            style: TextStyle(
+                              color: Colors.grey[700],
+                            ),
+                          ),
+                      ],
+                    ),
+                    subtitle: Padding(
+                      padding: const EdgeInsets.only(top: 8.0),
+                      child: Text('Sadrzaj: ${email.body}'),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+          actions: [
+            ElevatedButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text('Zatvori'),
+            ),
+          ],
         );
       },
     );

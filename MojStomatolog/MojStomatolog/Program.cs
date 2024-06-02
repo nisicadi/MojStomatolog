@@ -24,6 +24,7 @@ builder.Services.AddTransient<IRatingService, RatingService>();
 builder.Services.AddTransient<IProductCategoryService, ProductCategoryService>();
 builder.Services.AddTransient<IServiceService, ServiceService>();
 builder.Services.AddTransient<IPaymentService, PaymentService>();
+builder.Services.AddTransient<ISentEmailService, SentEmailService>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -86,7 +87,7 @@ app.MapControllers();
 using (var scope = app.Services.CreateAsyncScope())
 {
     var dataContext = scope.ServiceProvider.GetRequiredService<MojStomatologContext>();
-    dataContext.Database.EnsureCreated();
+    dataContext.Database.Migrate();
 }
 
 // Load or train Recommender model

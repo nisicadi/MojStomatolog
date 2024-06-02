@@ -4,6 +4,7 @@ using MojStomatolog.Database;
 using MojStomatolog.Models;
 using MojStomatolog.Models.Core;
 using MojStomatolog.Models.Requests.Order;
+using MojStomatolog.Models.Requests.SentEmail;
 using MojStomatolog.Models.Responses;
 using MojStomatolog.Services.Common;
 using MojStomatolog.Services.Common.Enums;
@@ -12,7 +13,7 @@ using MojStomatolog.Services.Interfaces;
 
 namespace MojStomatolog.Services.Services
 {
-    public class OrderService(MojStomatologContext context, IMapper mapper)
+    public class OrderService(MojStomatologContext context, IMapper mapper, ISentEmailService sentEmailService)
         : BaseService<OrderResponse, Order, OrderSearchObject>(context, mapper), IOrderService
     {
         public async Task<bool> CreateOrder(AddOrderRequest request)
@@ -32,11 +33,20 @@ namespace MojStomatolog.Services.Services
                     {
                         Email = user.Email,
                         Subject = "Narudžba kreirana",
-                        Message = "Vaša narudžba je uspješno kreirana."
+                        Message = $"Vaša narudžba sa brojem {order.Id} je uspješno kreirana."
                     };
 
                     MessageSender messageSender = new();
                     messageSender.SendMessage(sendEmailRequest);
+
+                    AddSentEmailRequest sentEmailRequest = new()
+                    {
+                        Subject = sendEmailRequest.Subject,
+                        Body = sendEmailRequest.Message,
+                        UserId = user.UserId
+                    };
+
+                    await sentEmailService.Insert(sentEmailRequest);
                 }
 
                 return true;

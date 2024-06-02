@@ -16,6 +16,7 @@ namespace MojStomatolog.Database
         public virtual DbSet<Rating> Ratings { get; set; } = null!;
         public virtual DbSet<ProductCategory> ProductCategories { get; set; } = null!;
         public virtual DbSet<Payment> Payments { get; set; } = null!;
+        public virtual DbSet<SentEmail> SentEmails { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
